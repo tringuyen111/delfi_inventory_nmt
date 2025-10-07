@@ -1,0 +1,250 @@
+{
+  "task": "refine_ui_state_matrix",
+  "module": "Goods Receipt",
+  "scope": ["web", "pda"],
+  "status_lifecycle": ["Draft", "New", "Receiving", "Submitted", "Completed", "Rejected", "Cancelled"],
+
+  "web": {
+    "header_sections": [
+      "Basic Info (receipt_type, ref_no, partner, source_warehouse, dest_warehouse, doc_date, note)",
+      "Status & Meta (status_badge, created_by, created_at, updated_by, updated_at, handler)",
+      "Actions (state-driven buttons)",
+      "Right Sidebar: History (timeline)"
+    ],
+    "line_grid_columns": [
+      "Item", "Description", "UoM", "Qty Planned",
+      {"name": "Qty Received", "visible_from_status": ["Submitted","Completed","Rejected","Cancelled"]},
+      {"name": "Diff Quantity", "visible_from_status": ["Submitted","Completed","Rejected","Cancelled"]},
+      "Tracking Type", "Location", "Lot/Serial"
+    ],
+    "conditional_fields": [
+      {"if": {"receipt_type": ["PO","Return"]}, "show": ["partner"], "hide": ["source_warehouse"]},
+      {"if": {"receipt_type": ["Transfer"]}, "show": ["source_warehouse"], "hide": ["partner"]},
+      {"if": {"receipt_type": ["Other"]}, "hide": ["partner","source_warehouse"]}
+    ],
+
+    "ui_states": {
+      "Draft": {
+        "header_editable": true,
+        "lines_editable": true,
+        "readonly_fields": ["status_badge", "handler"],
+        "show_sections": ["Basic Info", "Status & Meta", "Actions", "Right Sidebar: History"],
+        "hide_sections": [],
+        "buttons": {
+          "primary": [
+            {"id": "btn_save", "label": "Lưu", "enabled": true},
+            {"id": "btn_send_new", "label": "Gửi Nhân viên (→ New)", "enabled": true}
+          ],
+          "secondary": [
+            {"id": "btn_cancel", "label": "Hủy phiếu (→ Cancelled)", "enabled": true}
+          ],
+          "hidden": ["btn_approve", "btn_reject"]
+        },
+        "notes": [
+          "Không hiển thị Qty Received/Diff trên lưới (theo rule visible_from_status).",
+          "History hiển thị các bước đã có (nếu có)."
+        ]
+      },
+
+      "New": {
+        "header_editable": false,
+        "lines_editable": false,
+        "readonly_fields": ["handler"],
+        "show_sections": ["Basic Info", "Status & Meta", "Actions", "Right Sidebar: History"],
+        "hide_sections": [],
+        "buttons": {
+          "primary": [],
+          "secondary": [
+            {"id": "btn_cancel", "label": "Hủy phiếu (→ Cancelled)", "enabled": true}
+          ],
+          "hidden": ["btn_save", "btn_send_new", "btn_approve", "btn_reject"]
+        },
+        "notes": [
+          "Chỉ Quản lý kho nhìn thấy nút Hủy.",
+          "Không hiển thị Qty Received/Diff."
+        ]
+      },
+
+      "Receiving": {
+        "header_editable": false,
+        "lines_editable": false,
+        "readonly_fields": ["handler"],
+        "show_sections": ["Basic Info", "Status & Meta", "Right Sidebar: History"],
+        "hide_sections": ["Actions"],
+        "buttons": {
+          "primary": [],
+          "secondary": [],
+          "hidden": ["btn_save", "btn_send_new", "btn_cancel", "btn_approve", "btn_reject"]
+        },
+        "notes": [
+          "Trạng thái vận hành trên PDA; Web chỉ xem.",
+          "Không hiển thị Qty Received/Diff."
+        ]
+      },
+
+      "Submitted": {
+        "header_editable": false,
+        "lines_editable": false,
+        "readonly_fields": ["handler"],
+        "show_sections": ["Basic Info", "Status & Meta", "Actions", "Right Sidebar: History"],
+        "hide_sections": [],
+        "buttons": {
+          "primary": [
+            {"id": "btn_approve", "label": "Duyệt (→ Completed)", "enabled": true}
+          ],
+          "secondary": [
+            {"id": "btn_reject", "label": "Từ chối (→ Rejected)", "enabled": true}
+          ],
+          "hidden": ["btn_save", "btn_send_new", "btn_cancel"]
+        },
+        "notes": [
+          "Bắt đầu hiển thị Qty Received & Diff trên lưới.",
+          "Handler đã được hệ thống ghi nhận từ PDA khi Submit."
+        ]
+      },
+
+      "Completed": {
+        "header_editable": false,
+        "lines_editable": false,
+        "readonly_fields": ["handler"],
+        "show_sections": ["Basic Info", "Status & Meta", "Right Sidebar: History"],
+        "hide_sections": ["Actions"],
+        "buttons": {
+          "primary": [],
+          "secondary": [],
+          "hidden": ["btn_save", "btn_send_new", "btn_cancel", "btn_approve", "btn_reject"]
+        },
+        "notes": [
+          "Chứng từ đã post tăng tồn kho, mọi dữ liệu chỉ-đọc.",
+          "Hiển thị Qty Received & Diff (chỉ-đọc)."
+        ]
+      },
+
+      "Rejected": {
+        "header_editable": false,
+        "lines_editable": false,
+        "readonly_fields": ["handler"],
+        "show_sections": ["Basic Info", "Status & Meta", "Right Sidebar: History"],
+        "hide_sections": ["Actions"],
+        "buttons": {
+          "primary": [],
+          "secondary": [],
+          "hidden": ["btn_save", "btn_send_new", "btn_cancel", "btn_approve", "btn_reject"]
+        },
+        "notes": [
+          "Luồng kết thúc, không xử lý lại.",
+          "Hiển thị Qty Received & Diff (nếu đã có dữ liệu)."
+        ]
+      },
+
+      "Cancelled": {
+        "header_editable": false,
+        "lines_editable": false,
+        "readonly_fields": ["handler"],
+        "show_sections": ["Basic Info", "Status & Meta", "Right Sidebar: History"],
+        "hide_sections": ["Actions"],
+        "buttons": {
+          "primary": [],
+          "secondary": [],
+          "hidden": ["btn_save", "btn_send_new", "btn_cancel", "btn_approve", "btn_reject"]
+        },
+        "notes": [
+          "Huỷ chỉ khả dụng ở Draft/New; sau huỷ: chỉ-đọc.",
+          "Không hiển thị Qty Received/Diff nếu chưa có dữ liệu thực nhận."
+        ]
+      }
+    }
+  },
+
+  "pda": {
+    "screens": {
+      "assigned_list": {
+        "visible_status": ["New", "Receiving"],
+        "item_tap_behavior": "auto_transition_New_to_Receiving"
+      },
+      "receiving": {
+        "header_display": ["GR No", "Warehouse", "Receipt Type", "Status (Receiving)"],
+        "line_card_fields": ["Item", "Desc", "UoM", "Qty Planned", "Qty Received (editable)", "Tracking Type", "Location"],
+        "buttons": {
+          "primary": [
+            {"id": "btn_submit", "label": "Hoàn tất / Submit", "enabled": true}
+          ],
+          "secondary": [
+            {"id": "btn_save_progress", "label": "Lưu tiến độ", "enabled": true},
+            {"id": "btn_scan_item", "label": "Quét mã", "enabled": true}
+          ],
+          "hidden": ["btn_cancel", "btn_reject", "btn_approve"]
+        },
+        "popups": [
+          {
+            "id": "popup_over_receive",
+            "trigger": "qty_received > qty_planned",
+            "message_vi": "Cảnh báo: Số lượng thực nhận ({qty_received}) lớn hơn số lượng kế hoạch ({qty_planned}). Bạn có chắc chắn muốn tiếp tục?",
+            "require_confirm": true
+          },
+          {
+            "id": "popup_tracking_lot",
+            "visible_when": "tracking_type == 'Lot'",
+            "content": "Danh sách Lot + Onhand từng Lot; chặn nhập nếu qty_input > lot_onhand"
+          },
+          {
+            "id": "popup_tracking_serial",
+            "visible_when": "tracking_type == 'Serial'",
+            "content": "Chọn/scan serial từ danh sách còn tồn; bắt buộc đếm = qty_received"
+          }
+        ],
+        "notes": [
+          "Có thể lưu tiến độ nhiều lần, trạng thái vẫn là Receiving.",
+          "Submit sẽ ghi handler = current_user và chuyển trạng thái → Submitted."
+        ]
+      },
+
+      "submitted_readonly": {
+        "visible_status": ["Submitted", "Completed", "Rejected", "Cancelled"],
+        "header_display": ["GR No", "Warehouse", "Receipt Type", "Status"],
+        "buttons": {
+          "primary": [],
+          "secondary": [],
+          "hidden": ["btn_submit", "btn_save_progress", "btn_scan_item", "btn_cancel", "btn_reject", "btn_approve"]
+        },
+        "notes": ["PDA chỉ xem sau khi Submit."]
+      }
+    }
+  },
+
+  "guards_and_disables": [
+    {
+      "button_id": "btn_cancel",
+      "disable_when": "status not in ['Draft','New']",
+      "tooltip_vi": "Chỉ có thể hủy khi phiếu ở Draft hoặc New"
+    },
+    {
+      "button_id": "btn_approve",
+      "disable_when": "status != 'Submitted'",
+      "tooltip_vi": "Chỉ duyệt khi phiếu đã được Submit"
+    },
+    {
+      "button_id": "btn_reject",
+      "disable_when": "status != 'Submitted'",
+      "tooltip_vi": "Chỉ từ chối khi phiếu đã được Submit"
+    },
+    {
+      "field": "Qty Received / Diff",
+      "hide_when": "status in ['Draft','New','Receiving']",
+      "why": "Chỉ hiển thị từ Submitted trở đi"
+    }
+    ,
+    {
+      "field": "handler",
+      "readonly_always": true,
+      "autofill_on": {"event": "pda_submit", "value": "current_user"}
+    }
+  ],
+
+  "acceptance_checklist": [
+    "Mỗi trạng thái có tập nút đúng như ma trận; các nút ngoài danh sách phải ẨN.",
+    "Các nút bị disable phải có tooltip lý do.",
+    "Qty Received & Diff chỉ hiển thị từ Submitted trở đi trên Web.",
+    "PDA Receiving có đủ: Scan, Lưu tiến độ, Submit; không có Cancel/Approve/Reject."
+  ]
+}

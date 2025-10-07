@@ -1,0 +1,69 @@
+
+[
+  {
+    "id": "NYC-CEN-A1-R1",
+    "loc_code": "A1-R1",
+    "loc_name": "Aisle 1, Rack 1",
+    "wh_code": "NYC-CEN",
+    "allowed_goods_types": ["FG"],
+    "blocked_goods_types": [],
+    "status": "Active",
+    "updated_at": "2023-11-26T09:00:00Z",
+    "onhand_qty": 150
+  },
+  {
+    "id": "NYC-CEN-B2-R3",
+    "loc_code": "B2-R3",
+    "loc_name": "Aisle 2, Rack 3",
+    "wh_code": "NYC-CEN",
+    "allowed_goods_types": [],
+    "blocked_goods_types": ["RAW"],
+    "status": "Active",
+    "updated_at": "2023-11-26T09:05:00Z",
+    "onhand_qty": 0
+  },
+  {
+    "id": "LDN-SUB-DOCK-01",
+    "loc_code": "DOCK-01",
+    "loc_name": "Receiving Dock 01",
+    "wh_code": "LDN-SUB",
+    "allowed_goods_types": [],
+    "blocked_goods_types": [],
+    "status": "Inactive",
+    "updated_at": "2023-10-15T11:00:00Z",
+    "onhand_qty": 0
+  },
+  {
+    "id": "MIA-MAIN-PICK-A",
+    "loc_code": "PICK-A",
+    "loc_name": "Picking Zone A",
+    "wh_code": "MIA-MAIN",
+    "allowed_goods_types": ["RAW", "SEMI"],
+    "blocked_goods_types": [],
+    "status": "Active",
+    "updated_at": "2023-11-24T14:20:00Z",
+    "onhand_qty": 2000
+  },
+  {
+    "id": "AUS-TECH-QC-01",
+    "loc_code": "QC-01",
+    "loc_name": "Quality Control Area 1",
+    "wh_code": "AUS-TECH",
+    "allowed_goods_types": [],
+    "blocked_goods_types": [],
+    "status": "Active",
+    "updated_at": "2023-11-25T16:00:00Z",
+    "onhand_qty": 0
+  },
+  {
+    "id": "MIA-MAIN-STAGING",
+    "loc_code": "STAGING",
+    "loc_name": "Staging Area",
+    "wh_code": "MIA-MAIN",
+    "allowed_goods_types": [],
+    "blocked_goods_types": ["FG"],
+    "status": "Active",
+    "updated_at": "2023-11-25T18:00:00Z",
+    "onhand_qty": 50
+  }
+]

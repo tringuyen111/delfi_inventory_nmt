@@ -1,0 +1,81 @@
+
+[
+  {
+    "id": "uom-1",
+    "uom_code": "PCS",
+    "uom_name": "Piece",
+    "measurement_type": "Piece",
+    "uom_type": "Base",
+    "base_uom": null,
+    "conv_factor": null,
+    "description": "Single unit",
+    "status": "Active",
+    "updated_at": "2023-10-27T10:00:00Z",
+    "is_used_in_model_goods": true
+  },
+  {
+    "id": "uom-2",
+    "uom_code": "BOX12",
+    "uom_name": "Box of 12",
+    "measurement_type": "Piece",
+    "uom_type": "Alt",
+    "base_uom": "PCS",
+    "conv_factor": 12,
+    "description": "A box containing 12 pieces",
+    "status": "Active",
+    "updated_at": "2023-10-27T10:05:00Z",
+    "is_used_in_model_goods": true
+  },
+  {
+    "id": "uom-3",
+    "uom_code": "KG",
+    "uom_name": "Kilogram",
+    "measurement_type": "Weight",
+    "uom_type": "Base",
+    "base_uom": null,
+    "conv_factor": null,
+    "description": "Base unit for weight",
+    "status": "Active",
+    "updated_at": "2023-09-15T14:30:00Z",
+    "is_used_in_model_goods": true
+  },
+  {
+    "id": "uom-4",
+    "uom_code": "G",
+    "uom_name": "Gram",
+    "measurement_type": "Weight",
+    "uom_type": "Alt",
+    "base_uom": "KG",
+    "conv_factor": 0.001,
+    "description": "1000 grams in 1 kilogram",
+    "status": "Active",
+    "updated_at": "2023-09-15T14:32:00Z",
+    "is_used_in_model_goods": false
+  },
+  {
+    "id": "uom-5",
+    "uom_code": "M",
+    "uom_name": "Meter",
+    "measurement_type": "Length",
+    "uom_type": "Base",
+    "base_uom": null,
+    "conv_factor": null,
+    "description": "Base unit for length",
+    "status": "Active",
+    "updated_at": "2023-11-01T08:00:00Z",
+    "is_used_in_model_goods": false
+  },
+  {
+    "id": "uom-6",
+    "uom_code": "OLD_UNIT",
+    "uom_name": "Old Obsolete Unit",
+    "measurement_type": "Volume",
+    "uom_type": "Base",
+    "base_uom": null,
+    "conv_factor": null,
+    "description": "This unit is no longer in use.",
+    "status": "Inactive",
+    "updated_at": "2022-01-20T12:00:00Z",
+    "is_used_in_model_goods": false
+  }
+]

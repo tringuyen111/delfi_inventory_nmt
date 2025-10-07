@@ -1,0 +1,104 @@
+
+{
+  "task": "build_system_guidelines",
+  "system": "Inventory XCloud",
+  "goal": "Define global UI/UX standards, behavior, and reusable design rules for all modules within the Inventory XCloud system.",
+  "context": {
+    "themes": ["light", "dark"],
+    "layout": {
+      "header": {
+        "position": "fixed_top",
+        "left": "company_logo",
+        "center": "breadcrumb",
+        "right": ["notification_icon", "language_switcher (EN/VN)", "user_avatar", "theme_toggle"]
+      },
+      "sidebar": {
+        "position": "fixed_left",
+        "behavior": "collapsible",
+        "highlight": "brand_color_on_hover_or_active"
+      },
+      "footer": {
+        "position": "fixed_bottom",
+        "content": "© 2025 Delfi Tri Nguyen • Version: 1.0.1"
+      }
+    }
+  },
+  "design_rules": {
+    "brand_colors": {
+      "primary": "#1E88E5",
+      "success": "#43A047",
+      "danger": "#E53935",
+      "secondary": "#757575"
+    },
+    "forms": {
+      "layout": "2_columns",
+      "label_position": "left",
+      "actions_position": "bottom_right",
+      "actions": ["Save", "Save & Close", "Cancel"]
+    },
+    "list_view": {
+      "search": {
+        "position": "top_left",
+        "trigger": "enter_or_300ms_debounce"
+      },
+      "filter": {
+        "type": "drawer_or_popup",
+        "multi_select": true,
+        "trigger_button": "Filter"
+      },
+      "column_visibility": {
+        "trigger_button": "Customize Columns",
+        "storage": "local_storage_persistence"
+      },
+      "navigation": {
+        "double_click_action": "open_detail_view_readonly"
+      }
+    },
+    "notifications": {
+      "success_toast": {
+        "type": "non_blocking",
+        "position": "bottom_right",
+        "style": "green_background_with_check_icon",
+        "duration_sec": 3,
+        "use_case": ["save_success", "delete_success", "update_success"]
+      },
+      "error_modal": {
+        "type": "blocking_popup",
+        "title_color": "red",
+        "icon": "exclamation_mark",
+        "actions": ["OK", "Close"],
+        "use_case": ["server_error", "critical_validation_error"]
+      },
+      "confirmation_modal": {
+        "type": "blocking_popup",
+        "icon": "question_mark",
+        "actions": ["Confirm", "Cancel"],
+        "use_case": ["delete", "cancel_document"]
+      },
+      "inline_validation": {
+        "placement": "below_field",
+        "color": "red",
+        "trigger": ["on_blur", "on_submit"]
+      }
+    }
+  },
+  "output_format": {
+    "type": "UI_blueprint",
+    "sections": [
+      "Theme / Layout / Behavior / Form rules / List view / Notifications / Validation"
+    ],
+    "expected_use": "All future module prompts must inherit these standards."
+  },
+  "examples": [
+    {
+      "module": "UoM (Unit of Measure)",
+      "inherits": "system_guidelines",
+      "applies": ["light/dark mode", "breadcrumb", "form layout", "filter drawer", "success_toast"]
+    },
+    {
+      "module": "Goods Receipt",
+      "inherits": "system_guidelines",
+      "applies": ["2-column form", "inline_validation", "confirmation_modal"]
+    }
+  ]
+}

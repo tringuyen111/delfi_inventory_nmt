@@ -1,0 +1,67 @@
+[
+  {
+    "id": "SUP001",
+    "partner_code": "SUP001",
+    "partner_name": "Global Office Supplies",
+    "partner_type": ["Supplier"],
+    "tax_code": "VAT12345678",
+    "address": "123 Supply Chain Rd, Industrial Park, 54321",
+    "phone": "+1 (800) 555-0199",
+    "email": "orders@globalofficesupplies.com",
+    "status": "Active",
+    "updated_at": "2023-11-22T10:00:00Z",
+    "has_active_docs": true
+  },
+  {
+    "id": "CUS001",
+    "partner_code": "CUS001",
+    "partner_name": "Innovate Corp",
+    "partner_type": ["Customer", "Supplier"],
+    "tax_code": "CUST98765",
+    "address": "456 Tech Avenue, Silicon Valley, 94043",
+    "phone": "+1 (650) 555-0150",
+    "email": "accounts@innovatecorp.com",
+    "status": "Active",
+    "updated_at": "2023-11-20T15:30:00Z",
+    "has_active_docs": false
+  },
+  {
+    "id": "3PL-FAST",
+    "partner_code": "3PL-FAST",
+    "partner_name": "FastTrack Logistics",
+    "partner_type": ["3PL"],
+    "tax_code": "FTL456789",
+    "address": "789 Distribution Way, Logistics City, 60601",
+    "phone": "+1 (312) 555-0177",
+    "email": "ops@fasttracklog.com",
+    "status": "Active",
+    "updated_at": "2023-10-28T09:00:00Z",
+    "has_active_docs": false
+  },
+  {
+    "id": "INT-HQ",
+    "partner_code": "INT-HQ",
+    "partner_name": "Internal Transfer - HQ",
+    "partner_type": ["Internal"],
+    "tax_code": null,
+    "address": "1 Central Plaza, Corporate Town, 10001",
+    "phone": null,
+    "email": "internal@mycompany.com",
+    "status": "Active",
+    "updated_at": "2023-01-01T00:00:00Z",
+    "has_active_docs": false
+  },
+  {
+    "id": "SUP-INAC",
+    "partner_code": "SUP-INAC",
+    "partner_name": "Old Paper Mill Co.",
+    "partner_type": ["Supplier"],
+    "tax_code": "OLDVAT001",
+    "address": "99 Old Factory Lane, Bygone Era, 00000",
+    "phone": "+1 (888) 555-0100",
+    "email": "closed@oldpapermill.com",
+    "status": "Inactive",
+    "updated_at": "2022-05-15T12:00:00Z",
+    "has_active_docs": false
+  }
+]

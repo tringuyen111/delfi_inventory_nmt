@@ -1,0 +1,69 @@
+
+[
+  {
+    "id": "GTC-NY",
+    "branch_code": "GTC-NY",
+    "branch_name": "Global Trade New York",
+    "org_code": "ORG-202311-0001",
+    "address": "500 5th Avenue, New York, NY 10110",
+    "phone": "+1 (212) 555-0201",
+    "email": "ny@globaltrade.com",
+    "status": "Active",
+    "updated_at": "2023-11-16T10:00:00Z"
+  },
+  {
+    "id": "GTC-LDN",
+    "branch_code": "GTC-LDN",
+    "branch_name": "Global Trade London",
+    "org_code": "ORG-202311-0001",
+    "address": "1 Canada Square, London E14 5AB, UK",
+    "phone": "+44 20 7123 4567",
+    "email": "london@globaltrade.com",
+    "status": "Active",
+    "updated_at": "2023-11-16T10:05:00Z"
+  },
+  {
+    "id": "SL-MIA",
+    "branch_code": "SL-MIA",
+    "branch_name": "Sunrise Logistics Miami",
+    "org_code": "ORG-202310-0025",
+    "address": "1000 Brickell Ave, Miami, FL 33131",
+    "phone": "+1 (305) 555-0301",
+    "email": "miami@sunriselogistics.net",
+    "status": "Active",
+    "updated_at": "2023-10-29T09:15:00Z"
+  },
+  {
+    "id": "PW-SF",
+    "branch_code": "PW-SF",
+    "branch_name": "Pacific Wholesalers SF",
+    "org_code": "ORG-202309-0013",
+    "address": "1 Market St, San Francisco, CA 94105",
+    "phone": "+1 (415) 555-0401",
+    "email": "sf@pacificwhole.com",
+    "status": "Active",
+    "updated_at": "2023-11-21T13:00:00Z"
+  },
+  {
+    "id": "AM-DET",
+    "branch_code": "AM-DET",
+    "branch_name": "Apex Manufacturing Detroit",
+    "org_code": "ORG-202205-0004",
+    "address": "2000 Motor City Dr, Detroit, MI 48226",
+    "phone": "+1 (313) 555-0501",
+    "email": "detroit@apex-mfg.com",
+    "status": "Inactive",
+    "updated_at": "2023-01-11T10:30:00Z"
+  },
+  {
+    "id": "QI-AUS",
+    "branch_code": "QI-AUS",
+    "branch_name": "Quantum Innovations Austin",
+    "org_code": "ORG-202311-0002",
+    "address": "300 W 6th St, Austin, TX 78701",
+    "phone": "+1 (512) 555-0601",
+    "email": "austin@quantum.dev",
+    "status": "Active",
+    "updated_at": "2023-11-19T11:00:00Z"
+  }
+]

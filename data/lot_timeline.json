@@ -1,0 +1,37 @@
+{
+    "CHEM-A-LOT2024A": [
+        {
+            "id": "lt-1",
+            "txn_date": "2023-11-28T09:30:00Z",
+            "doc_type": "GI",
+            "doc_no": "GI-WO-556",
+            "qty_change": -10,
+            "wh_code": "AUS-TECH",
+            "loc_code": "QC-01",
+            "actor": "Alex Nguyen",
+            "note": "Allocated to Work Order 556"
+        },
+        {
+            "id": "lt-2",
+            "txn_date": "2023-11-15T15:00:00Z",
+            "doc_type": "IC",
+            "doc_no": "IC-2023-11-045",
+            "qty_change": 5,
+            "wh_code": "AUS-TECH",
+            "loc_code": "QC-01",
+            "actor": "System",
+            "note": "Cycle count adjustment, quantity updated."
+        },
+        {
+            "id": "lt-3",
+            "txn_date": "2023-11-01T12:00:00Z",
+            "doc_type": "GR",
+            "doc_no": "GR-2023-11-012",
+            "qty_change": 55,
+            "wh_code": "AUS-TECH",
+            "loc_code": "RECEIVING",
+            "actor": "Jane Doe",
+            "note": "Received lot with expiry 2024-12-31"
+        }
+    ]
+}

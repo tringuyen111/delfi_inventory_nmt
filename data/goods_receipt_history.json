@@ -1,0 +1,144 @@
+{
+  "GR-202311-001": [
+    {
+      "id": "hist-1-1",
+      "gr_id": "GR-202311-001",
+      "status": "Draft",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-11-28T09:00:00Z",
+      "note": "Document created."
+    },
+    {
+      "id": "hist-1-2",
+      "gr_id": "GR-202311-001",
+      "status": "New",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-11-28T09:05:00Z",
+      "note": "Sent to warehouse staff."
+    },
+    {
+      "id": "hist-1-3",
+      "gr_id": "GR-202311-001",
+      "status": "Receiving",
+      "user": "PDA System",
+      "timestamp": "2023-11-28T10:15:00Z",
+      "note": "PDA user started receiving."
+    },
+    {
+      "id": "hist-1-4",
+      "gr_id": "GR-202311-001",
+      "status": "Submitted",
+      "user": "Jane Doe",
+      "timestamp": "2023-11-28T16:45:00Z",
+      "note": "Receiving complete. Awaiting approval."
+    },
+    {
+      "id": "hist-1-5",
+      "gr_id": "GR-202311-001",
+      "status": "Completed",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-11-29T14:30:00Z",
+      "note": "Approved. Inventory updated."
+    }
+  ],
+  "GR-202311-002": [
+    {
+      "id": "hist-2-1",
+      "gr_id": "GR-202311-002",
+      "status": "New",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-11-29T11:00:00Z",
+      "note": "Created and sent to staff."
+    }
+  ],
+  "GR-202311-003": [
+    {
+      "id": "hist-3-1",
+      "gr_id": "GR-202311-003",
+      "status": "New",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-11-29T15:00:00Z",
+      "note": "Created and sent to staff."
+    },
+    {
+      "id": "hist-3-2",
+      "gr_id": "GR-202311-003",
+      "status": "Submitted",
+      "user": "John Smith (PDA)",
+      "timestamp": "2023-11-30T10:00:00Z",
+      "note": "Customer return processed."
+    }
+  ],
+  "GR-202311-004": [
+    {
+      "id": "hist-4-1",
+      "gr_id": "GR-202311-004",
+      "status": "New",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-11-30T08:30:00Z",
+      "note": "Created and sent to staff."
+    },
+    {
+      "id": "hist-4-2",
+      "gr_id": "GR-202311-004",
+      "status": "Receiving",
+      "user": "PDA User 1",
+      "timestamp": "2023-11-30T11:45:00Z",
+      "note": "Started receiving process."
+    }
+  ],
+   "GR-202311-005": [
+    {
+      "id": "hist-5-1",
+      "gr_id": "GR-202311-005",
+      "status": "Draft",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-12-01T09:15:00Z",
+      "note": "Document created."
+    }
+  ],
+  "GR-202310-095": [
+    {
+      "id": "hist-95-1",
+      "gr_id": "GR-202310-095",
+      "status": "New",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-10-25T10:00:00Z",
+      "note": "Document created."
+    },
+    {
+      "id": "hist-95-2",
+      "gr_id": "GR-202310-095",
+      "status": "Cancelled",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-10-26T12:00:00Z",
+      "note": "Cancelled due to supplier issue."
+    }
+  ],
+  "GR-202311-006": [
+     {
+      "id": "hist-6-1",
+      "gr_id": "GR-202311-006",
+      "status": "New",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-11-20T13:00:00Z",
+      "note": "Created and sent to staff."
+    },
+     {
+      "id": "hist-6-2",
+      "gr_id": "GR-202311-006",
+      "status": "Submitted",
+      "user": "PDA User 2",
+      "timestamp": "2023-11-20T18:00:00Z",
+      "note": "Receiving complete."
+    },
+    {
+      "id": "hist-6-3",
+      "gr_id": "GR-202311-006",
+      "status": "Rejected",
+      "user": "Alex Nguyen",
+      "timestamp": "2023-11-21T09:00:00Z",
+      "note": "Rejected: wrong item returned by customer."
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+
+[
+  {
+    "id": "RAW",
+    "goods_type_code": "RAW",
+    "goods_type_name": "Raw Material",
+    "description": "Materials used in the primary production or manufacturing of goods.",
+    "status": "Active",
+    "updated_at": "2023-11-25T10:00:00Z",
+    "usage_count": 5
+  },
+  {
+    "id": "FG",
+    "goods_type_code": "FG",
+    "goods_type_name": "Finished Good",
+    "description": "Completed products ready for sale, distribution, or use.",
+    "status": "Active",
+    "updated_at": "2023-11-25T10:05:00Z",
+    "usage_count": 12
+  },
+  {
+    "id": "SEMI",
+    "goods_type_code": "SEMI",
+    "goods_type_name": "Semi-Finished Good",
+    "description": "Partially completed goods awaiting final processing steps before they become finished goods.",
+    "status": "Active",
+    "updated_at": "2023-11-20T14:30:00Z",
+    "usage_count": 0
+  },
+  {
+    "id": "PKG",
+    "goods_type_code": "PKG",
+    "goods_type_name": "Packaging Material",
+    "description": "Materials used for packaging products for shipment or sale, such as boxes, bags, and labels.",
+    "status": "Active",
+    "updated_at": "2023-11-18T09:15:00Z",
+    "usage_count": 2
+  },
+  {
+    "id": "OBSOLETE",
+    "goods_type_code": "OBSOLETE",
+    "goods_type_name": "Obsolete Materials",
+    "description": "Old materials that are no longer in use and are typically scheduled for disposal.",
+    "status": "Inactive",
+    "updated_at": "2022-08-10T16:00:00Z",
+    "usage_count": 0
+  }
+]

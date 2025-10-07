@@ -1,0 +1,37 @@
+{
+    "SN-PRINTER-2023-1002": [
+        {
+            "id": "st-1",
+            "txn_date": "2023-11-25T14:20:00Z",
+            "doc_type": "GI",
+            "doc_no": "GI-2023-11-211",
+            "qty_change": 0,
+            "wh_code": "MIA-MAIN",
+            "loc_code": "PICK-A",
+            "actor": "Alex Nguyen",
+            "note": "Allocated to order for Innovate Corp."
+        },
+        {
+            "id": "st-2",
+            "txn_date": "2023-11-22T11:00:00Z",
+            "doc_type": "Putaway",
+            "doc_no": "PA-2023-11-091",
+            "qty_change": 0,
+            "wh_code": "MIA-MAIN",
+            "loc_code": "PICK-A",
+            "actor": "System",
+            "note": "Moved from DOCK-01 to PICK-A."
+        },
+        {
+            "id": "st-3",
+            "txn_date": "2023-11-20T10:00:00Z",
+            "doc_type": "GR",
+            "doc_no": "GR-2023-11-085",
+            "qty_change": 1,
+            "wh_code": "MIA-MAIN",
+            "loc_code": "DOCK-01",
+            "actor": "Jane Doe",
+            "note": "Received from supplier 'Global Office Supplies'."
+        }
+    ]
+}

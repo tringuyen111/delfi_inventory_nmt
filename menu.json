@@ -1,0 +1,61 @@
+
+[
+  { "id": "menu", "type": "separator", "label": "MENU" },
+  {
+    "id": "ui_blueprint",
+    "type": "item",
+    "label": "Guidelines",
+    "icon": "BookOpen",
+    "path": "/guidelines"
+  },
+  { 
+    "id": "dashboards",
+    "type": "group", 
+    "label": "Dashboards", 
+    "icon": "Dashboard", 
+    "children": [
+      { "id": "dashboard", "type": "item", "label": "Dashboard", "path": "/dashboard" }
+    ]
+  },
+  { 
+    "id": "warehouse",
+    "type": "group", 
+    "label": "Warehouse", 
+    "icon": "Warehouse",
+    "children": [
+        { "id": "onhand", "type": "item", "label": "Onhand", "path": "/onhand" },
+        { "id": "inventory", "type": "item", "label": "Inventory", "path": "/inventory" },
+        { "id": "goods_receipt", "type": "item", "label": "Goods Receipt", "path": "/goods-receipt" },
+        { "id": "goods_issue", "type": "item", "label": "Goods Issue", "path": "/goods-issue" },
+        { "id": "goods_transfer", "type": "item", "label": "Goods Transfer", "path": "/goods-transfer" },
+        { "id": "putaway", "type": "item", "label": "Putaway", "path": "/putaway" }
+    ]
+  },
+  { 
+    "id": "goods",
+    "type": "group", 
+    "label": "Goods", 
+    "icon": "Goods",
+    "children": [
+        { "id": "goods_type_management", "type": "item", "label": "Goods Type", "path": "/goods-type" },
+        { "id": "goods_model", "type": "item", "label": "Goods Model", "path": "/goods-model" }
+    ]
+  },
+  { "id": "reports", "type": "item", "label": "Reports", "icon": "Reports", "path": "/reports" },
+  { "id": "admin", "type": "separator", "label": "Admin" },
+  { "id": "authentication", "type": "item", "label": "Authentication", "icon": "Authentication", "path": "/authentication" },
+  {
+    "id": "catalog",
+    "type": "group",
+    "label": "Catalog",
+    "icon": "Catalog",
+    "children": [
+        { "id": "uom_management", "type": "item", "label": "UoM", "path": "/uom" },
+        { "id": "partner_management", "type": "item", "label": "Partner", "path": "/partner" },
+        { "id": "organization_management", "type": "item", "label": "Organization", "path": "/organization" },
+        { "id": "branch_management", "type": "item", "label": "Branch", "path": "/branch" },
+        { "id": "warehouse_config", "type": "item", "label": "Warehouse", "path": "/warehouse-config" },
+        { "id": "location", "type": "item", "label": "Location", "path": "/location" }
+    ]
+  }
+]

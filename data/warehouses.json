@@ -1,0 +1,68 @@
+[
+  {
+    "id": "NYC-CEN",
+    "wh_code": "NYC-CEN",
+    "wh_name": "New York Central Warehouse",
+    "branch_code": "GTC-NY",
+    "address": "100 Warehouse Way, Bronx, NY 10454",
+    "capacity": 50000,
+    "warehouse_type": "Central",
+    "status": "Active",
+    "updated_at": "2023-11-20T14:00:00Z"
+  },
+  {
+    "id": "LDN-SUB",
+    "wh_code": "LDN-SUB",
+    "wh_name": "London Sub Warehouse",
+    "branch_code": "GTC-LDN",
+    "address": "25 Docklands Rd, London E16 1AH, UK",
+    "capacity": 25000,
+    "warehouse_type": "Sub",
+    "status": "Active",
+    "updated_at": "2023-11-21T11:30:00Z"
+  },
+  {
+    "id": "MIA-MAIN",
+    "wh_code": "MIA-MAIN",
+    "wh_name": "Miami Main Hub",
+    "branch_code": "SL-MIA",
+    "address": "3000 Port Blvd, Miami, FL 33132",
+    "capacity": 75000,
+    "warehouse_type": "Central",
+    "status": "Active",
+    "updated_at": "2023-11-05T18:00:00Z"
+  },
+  {
+    "id": "SFO-VIRT",
+    "wh_code": "SFO-VIRT",
+    "wh_name": "San Francisco Virtual WH",
+    "branch_code": "PW-SF",
+    "address": null,
+    "capacity": null,
+    "warehouse_type": "Virtual",
+    "status": "Active",
+    "updated_at": "2023-11-22T09:00:00Z"
+  },
+  {
+    "id": "DET-OLD",
+    "wh_code": "DET-OLD",
+    "wh_name": "Detroit Old Facility",
+    "branch_code": "AM-DET",
+    "address": "500 Assembly Line, Detroit, MI 48226",
+    "capacity": 30000,
+    "warehouse_type": "Sub",
+    "status": "Inactive",
+    "updated_at": "2023-02-15T12:00:00Z"
+  },
+  {
+    "id": "AUS-TECH",
+    "wh_code": "AUS-TECH",
+    "wh_name": "Austin Tech Storage",
+    "branch_code": "QI-AUS",
+    "address": "800 Innovation Dr, Austin, TX 78701",
+    "capacity": 10000,
+    "warehouse_type": "Sub",
+    "status": "Active",
+    "updated_at": "2023-11-20T16:45:00Z"
+  }
+]

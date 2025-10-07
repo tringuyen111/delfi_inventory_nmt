@@ -1,0 +1,67 @@
+[
+  {
+    "id": "MDL-202311-00001",
+    "model_code": "MDL-202311-00001",
+    "model_name": "Premium A4 Paper Ream (500 Sheets)",
+    "goods_type_code": "FG",
+    "base_uom": "PCS",
+    "tracking_type": "None",
+    "description": "High-quality 80gsm A4 paper for office use.",
+    "status": "Active",
+    "updated_at": "2023-11-26T14:00:00Z",
+    "total_onhand_qty": 1500,
+    "low_stock_threshold": 100
+  },
+  {
+    "id": "MDL-202311-00002",
+    "model_code": "MDL-202311-00002",
+    "model_name": "Industrial Laser Printer, Model X",
+    "goods_type_code": "FG",
+    "base_uom": "PCS",
+    "tracking_type": "Serial",
+    "description": "Heavy-duty laser printer with network capabilities.",
+    "status": "Active",
+    "updated_at": "2023-11-26T14:05:00Z",
+    "total_onhand_qty": 50,
+    "low_stock_threshold": 5
+  },
+  {
+    "id": "MDL-202311-00003",
+    "model_code": "MDL-202311-00003",
+    "model_name": "Chemical Compound A (25kg Bag)",
+    "goods_type_code": "RAW",
+    "base_uom": "KG",
+    "tracking_type": "Lot",
+    "description": "Specialty chemical compound for manufacturing.",
+    "status": "Active",
+    "updated_at": "2023-11-22T10:30:00Z",
+    "total_onhand_qty": 500,
+    "low_stock_threshold": 50
+  },
+  {
+    "id": "MDL-202311-00004",
+    "model_code": "MDL-202311-00004",
+    "model_name": "Standard Packing Box (Medium)",
+    "goods_type_code": "PKG",
+    "base_uom": "PCS",
+    "tracking_type": "None",
+    "description": "Cardboard boxes for general packaging.",
+    "status": "Active",
+    "updated_at": "2023-11-18T11:00:00Z",
+    "total_onhand_qty": 0,
+    "low_stock_threshold": null
+  },
+  {
+    "id": "MDL-202208-00015",
+    "model_code": "MDL-202208-00015",
+    "model_name": "Obsolete Part XY-123",
+    "goods_type_code": "OBSOLETE",
+    "base_uom": "PCS",
+    "tracking_type": "None",
+    "description": "Old model part, no longer in production.",
+    "status": "Inactive",
+    "updated_at": "2023-01-20T16:00:00Z",
+    "total_onhand_qty": 0,
+    "low_stock_threshold": 0
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "AUS-TECH-QC-01-MDL-202311-00003": [
+    {
+      "id": "LOT2024A",
+      "lot_code": "CHEM-A-LOT2024A",
+      "onhand_qty": 50,
+      "allocated_qty": 10,
+      "available_qty": 40,
+      "expiry_date": "2024-12-31T00:00:00Z",
+      "received_date": "2023-11-01T00:00:00Z",
+      "age_days": 37,
+      "supplier_lot": "SPL-CHEM-XYZ-987",
+      "pallet_id": "PALLET-C05",
+      "notes": "Reserved for WO-556"
+    },
+    {
+      "id": "LOT2023B-NEAR-EXPIRY",
+      "lot_code": "CHEM-A-LOT2023B",
+      "onhand_qty": 50,
+      "allocated_qty": 0,
+      "available_qty": 50,
+      "expiry_date": "2024-01-15T00:00:00Z",
+      "received_date": "2023-10-15T00:00:00Z",
+      "age_days": 54,
+      "supplier_lot": "SPL-CHEM-XYZ-980",
+      "pallet_id": "PALLET-C06",
+      "notes": "Store in cool environment"
+    }
+  ]
+}

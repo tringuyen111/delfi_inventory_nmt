@@ -1,0 +1,5 @@
+{
+  "name": "Inventory XCloud UI Blueprint",
+  "description": "An interactive UI blueprint generator that defines global UI/UX standards, behavior, and reusable design rules for the Inventory XCloud system based on a JSON input.",
+  "requestFramePermissions": []
+}

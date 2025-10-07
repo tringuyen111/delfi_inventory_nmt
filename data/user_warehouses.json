@@ -1,0 +1,14 @@
+[
+  {
+    "wh_code": "NYC-CEN",
+    "wh_name": "New York Central Warehouse"
+  },
+  {
+    "wh_code": "MIA-MAIN",
+    "wh_name": "Miami Main Hub"
+  },
+  {
+    "wh_code": "AUS-TECH",
+    "wh_name": "Austin Tech Storage"
+  }
+]

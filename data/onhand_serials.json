@@ -1,0 +1,49 @@
+{
+  "MIA-MAIN-PICK-A-MDL-202311-00002": [
+    {
+      "id": "SN1001",
+      "serial_no": "SN-PRINTER-2023-1001",
+      "status": "Available",
+      "reserved_doc_no": null,
+      "reserved_partner": null,
+      "received_date": "2023-11-20T10:00:00Z",
+      "last_movement_at": "2023-11-20T10:00:00Z",
+      "age_days": 18,
+      "warranty_expiry": "2025-11-20T00:00:00Z",
+      "qc_status": "Passed",
+      "condition": "New",
+      "pallet_id": "PALLET-A01",
+      "notes": "Initial receipt from GR-2023-11-085"
+    },
+    {
+      "id": "SN1002",
+      "serial_no": "SN-PRINTER-2023-1002",
+      "status": "Allocated",
+      "reserved_doc_no": "GI-2023-11-211",
+      "reserved_partner": "Innovate Corp",
+      "received_date": "2023-11-20T10:00:00Z",
+      "last_movement_at": "2023-11-25T14:20:00Z",
+      "age_days": 18,
+      "warranty_expiry": "2025-11-20T00:00:00Z",
+      "qc_status": "Passed",
+      "condition": "New",
+      "pallet_id": "PALLET-A01",
+      "notes": "Allocated to GI-2023-11-211 for Innovate Corp"
+    },
+    {
+      "id": "SN1003",
+      "serial_no": "SN-PRINTER-2023-1003",
+      "status": "In QC",
+      "reserved_doc_no": null,
+      "reserved_partner": null,
+      "received_date": "2023-11-20T10:00:00Z",
+      "last_movement_at": "2023-12-01T09:00:00Z",
+      "age_days": 18,
+      "warranty_expiry": "2025-11-20T00:00:00Z",
+      "qc_status": "Pending",
+      "condition": "New",
+      "pallet_id": null,
+      "notes": "Moved to Quality Control area"
+    }
+  ]
+}

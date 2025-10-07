@@ -1,0 +1,58 @@
+
+[
+  {
+    "id": "ORG-202311-0001",
+    "org_code": "ORG-202311-0001",
+    "org_name": "Global Trade Corp",
+    "address": "123 International Blvd, Trade City, 10001",
+    "phone": "+1 (212) 555-0101",
+    "email": "contact@globaltrade.com",
+    "status": "Active",
+    "updated_at": "2023-11-15T09:00:00Z",
+    "has_active_docs": true
+  },
+  {
+    "id": "ORG-202310-0025",
+    "org_code": "ORG-202310-0025",
+    "org_name": "Sunrise Logistics",
+    "address": "456 Dawn Avenue, Port City, 20202",
+    "phone": "+1 (305) 555-0102",
+    "email": "info@sunriselogistics.net",
+    "status": "Active",
+    "updated_at": "2023-10-28T14:20:00Z",
+    "has_active_docs": false
+  },
+  {
+    "id": "ORG-202309-0013",
+    "org_code": "ORG-202309-0013",
+    "org_name": "Pacific Wholesalers",
+    "address": "789 Ocean Drive, Bay Area, 94107",
+    "phone": "+1 (415) 555-0103",
+    "email": "sales@pacificwhole.com",
+    "status": "Active",
+    "updated_at": "2023-11-20T11:45:00Z",
+    "has_active_docs": true
+  },
+  {
+    "id": "ORG-202205-0004",
+    "org_code": "ORG-202205-0004",
+    "org_name": "Apex Manufacturing",
+    "address": "101 Factory Lane, Industrio, 50505",
+    "phone": "+1 (515) 555-0104",
+    "email": "support@apex-mfg.com",
+    "status": "Inactive",
+    "updated_at": "2023-01-10T16:00:00Z",
+    "has_active_docs": false
+  },
+  {
+    "id": "ORG-202311-0002",
+    "org_code": "ORG-202311-0002",
+    "org_name": "Quantum Innovations",
+    "address": "202 Future Road, Tech Park, 70707",
+    "phone": "+1 (713) 555-0105",
+    "email": "innovate@quantum.dev",
+    "status": "Active",
+    "updated_at": "2023-11-18T18:30:00Z",
+    "has_active_docs": false
+  }
+]

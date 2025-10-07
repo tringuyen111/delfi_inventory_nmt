@@ -1,0 +1,11 @@
+{
+  "id": "user-123",
+  "avatar_url": null,
+  "display_name": "Alex Nguyen",
+  "email": "alex.nguyen@inventory-x.cloud",
+  "phone": "+84 903 123 456",
+  "gender": "Male",
+  "birth_year": 1990,
+  "role": "Warehouse Manager",
+  "avatar_version": 1
+}

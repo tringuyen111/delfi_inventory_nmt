@@ -1,0 +1,14 @@
+{
+  "MDL-202311-00003-QC-01": [
+    { 
+      "lot_code": "CHEM-A-LOT2024A", 
+      "onhand_qty": 40, 
+      "expiry_date": "2024-12-31T00:00:00Z"
+    },
+    { 
+      "lot_code": "CHEM-A-LOT2023B", 
+      "onhand_qty": 50, 
+      "expiry_date": "2024-01-15T00:00:00Z"
+    }
+  ]
+}
