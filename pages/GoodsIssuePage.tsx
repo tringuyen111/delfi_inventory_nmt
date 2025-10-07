@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { GoodsIssue, Partner, Warehouse, ModelGoods, Location, OnhandByLocation } from '../types';
 import { Icon } from '../components/Icons';
@@ -52,8 +53,7 @@ const GoodsIssuePage: React.FC = () => {
             if (!issuesRes.ok || !partnersRes.ok || !warehousesRes.ok || !modelsRes.ok || !locationsRes.ok || !onhandRes.ok || !onhandLotsRes.ok || !onhandSerialsRes.ok) {
                 throw new Error('Failed to fetch required data');
             }
-            const issuesResponse = await issuesRes.json();
-            const issuesData: GoodsIssue[] = issuesResponse.records;
+            const issuesData: GoodsIssue[] = await issuesRes.json();
             const partnersData: Partner[] = await partnersRes.json();
             const warehousesData: Warehouse[] = await warehousesRes.json();
             const modelsData: ModelGoods[] = await modelsRes.json();

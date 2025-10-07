@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 import { GoodsIssueLine, GoodsIssueLotDetail, GoodsIssueSerialDetail, GoodsIssueNoneDetail } from '../../types';
@@ -74,7 +75,8 @@ const NoneEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueNoneDetail[
 const LotEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueLotDetail[]; setDetails: (d: GoodsIssueLotDetail[]) => void; availableLots: {lot_code: string; onhand_qty: number; expiry_date?: string}[]}> = ({line, details, setDetails, availableLots}) => {
     const handleQtyChange = (lot_code: string, newQty: number) => {
         const lotOnhand = availableLots.find(l => l.lot_code === lot_code)?.onhand_qty || 0;
-        if (newQty > lotOnhand) newQty = lotOnhand;
+        // As per requirement, allow over-picking but show a warning (handled by browser validation for now)
+        // if (newQty > lotOnhand) newQty = lotOnhand;
         if (newQty < 0) newQty = 0;
         
         const existingDetail = details.find(d => d.lot_code === lot_code);
@@ -99,7 +101,7 @@ const LotEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueLotDetail[];
               <td className="p-2 font-mono">{lot.lot_code}</td>
               <td className="p-2 text-right">{lot.onhand_qty}</td>
               <td className="p-2">{lot.expiry_date ? new Date(lot.expiry_date).toLocaleDateString() : 'N/A'}</td>
-              <td className="p-2 text-right"><input type="number" value={details.find(d => d.lot_code === lot.lot_code)?.qty || ''} onChange={e => handleQtyChange(lot.lot_code, parseInt(e.target.value) || 0)} className="w-24 p-1 text-right border rounded bg-white dark:bg-gray-700" max={lot.onhand_qty} min="0" /></td>
+              <td className="p-2 text-right"><input type="number" value={details.find(d => d.lot_code === lot.lot_code)?.qty || ''} onChange={e => handleQtyChange(lot.lot_code, parseInt(e.target.value) || 0)} className="w-24 p-1 text-right border rounded bg-white dark:bg-gray-700" min="0" /></td>
             </tr>
           ))}
           </tbody>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Modal } from '../ui/Modal';
 import { GoodsIssue, Partner, Warehouse, ModelGoods, GoodsIssueLine, OnhandByLocation, Location, TrackingType } from '../../types';
@@ -27,7 +28,7 @@ interface GoodsIssueFormModalProps {
 }
 
 const getInitialState = (): Omit<GoodsIssue, 'id' | 'gi_no' | 'created_at' | 'updated_at' | 'created_by' | 'handler' | 'lines' | 'history'> => ({
-    issue_type: 'Other',
+    issue_type: 'Sales Order',
     issue_mode: 'Summary',
     status: 'Draft',
     ref_no: '',
@@ -115,7 +116,7 @@ export const GoodsIssueFormModal: React.FC<GoodsIssueFormModalProps> = ({
         setConfirmation({
             isOpen: true,
             onConfirm: switchMode,
-            message: "Thay đổi chế độ xuất sẽ xóa toàn bộ dữ liệu hàng hóa đã nhập. Bạn có chắc chắn muốn tiếp tục?",
+            message: "Changing the issue mode will clear all line items. Are you sure you want to continue?",
         });
     } else {
         switchMode();
@@ -218,7 +219,7 @@ export const GoodsIssueFormModal: React.FC<GoodsIssueFormModalProps> = ({
           return isEditable ? (
               <select value={line.location_code} onChange={(e) => handleLineChange(index!, 'location_code', e.target.value)} className="w-full p-1 border rounded bg-white dark:bg-gray-700" disabled={!line.model_code}>
                   <option value="">Select Location</option>
-                  {onhandForModel.map(o => <option key={o.loc_code} value={o.loc_code}>{o.loc_code} (Onhand: {o.available_qty})</option>)}
+                  {onhandForModel.map(o => <option key={o.loc_code} value={o.loc_code}>{o.loc_code} (Avail: {o.available_qty})</option>)}
               </select>
           ) : line.location_code;
       }},
@@ -269,10 +270,14 @@ export const GoodsIssueFormModal: React.FC<GoodsIssueFormModalProps> = ({
       }>
         <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <FormField label="Issue Type" required><select name="issue_type" value={formData.issue_type} onChange={handleChange} className="w-full" disabled={!isEditable}>{['Other', 'Sales Order', 'Transfer', 'Adjustment'].map(t=><option key={t} value={t}>{t}</option>)}</select></FormField>
+                <FormField label="Issue Type" required><select name="issue_type" value={formData.issue_type} onChange={handleChange} className="w-full" disabled={!isEditable}>{['Sales Order', 'Transfer', 'Return to Supplier', 'Manual'].map(t=><option key={t} value={t}>{t}</option>)}</select></FormField>
                 <FormField label="Source Warehouse" required><select name="source_wh_code" value={formData.source_wh_code} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="">Select...</option>{activeWarehouses.map(w=><option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}</select></FormField>
                 <FormField label="Reference No"><input type="text" name="ref_no" value={formData.ref_no} onChange={handleChange} className="w-full" disabled={!isEditable} /></FormField>
-                <FormField label="Expected date"><input type="date" name="expected_date" value={formData.expected_date} onChange={handleChange} className="w-full" disabled={!isEditable} /></FormField>
+                <FormField label="Expected date"><input type="date" name="expected_date" value={formData.expected_date || ''} onChange={handleChange} className="w-full" disabled={!isEditable} /></FormField>
+                
+                {formData.issue_type === 'Transfer' && <FormField label="Destination Warehouse" required><select name="dest_wh_code" value={formData.dest_wh_code} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="">Select...</option>{activeWarehouses.filter(w=>w.wh_code !== formData.source_wh_code).map(w=><option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}</select></FormField>}
+                {(formData.issue_type === 'Sales Order' || formData.issue_type === 'Return to Supplier') && <FormField label="Partner" required><select name="partner_code" value={formData.partner_code} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="">Select...</option>{activePartners.map(p=><option key={p.id} value={p.partner_code}>{p.partner_name}</option>)}</select></FormField>}
+
                 <div className="md:col-span-4"><FormField label="Note"><textarea name="note" value={formData.note} onChange={handleChange} className="w-full" rows={2} disabled={!isEditable}></textarea></FormField></div>
             </div>
             
