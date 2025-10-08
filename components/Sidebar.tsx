@@ -1,9 +1,5 @@
-
-
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { MenuItem } from './MenuItem';
-// FIX: Update type import from `../types` which is now a valid module.
 import type { MenuItemType } from '../types';
 import { Icon } from './Icons';
 
@@ -11,7 +7,9 @@ interface SidebarProps {
   activePageId: string;
   onNavigate: (pageId: string, pageLabel: string) => void;
   isCollapsed: boolean;
-  onToggle: () => void;
+  menuData: MenuItemType[];
+  isLoading: boolean;
+  error: string | null;
 }
 
 const SidebarSkeleton: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => (
@@ -30,31 +28,16 @@ const SidebarSkeleton: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) =>
   </div>
 );
 
-export const Sidebar: React.FC<SidebarProps> = ({ activePageId, onNavigate, isCollapsed, onToggle }) => {
-  const [menuData, setMenuData] = useState<MenuItemType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchMenuData = async () => {
-      try {
-        const response = await fetch('./menu.json');
-        if (!response.ok) {
-          throw new Error('Failed to load menu');
-        }
-        const data: MenuItemType[] = await response.json();
-        setMenuData(data);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : 'An unknown error occurred');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchMenuData();
-  }, []);
+export const Sidebar: React.FC<SidebarProps> = ({ activePageId, onNavigate, isCollapsed, menuData, isLoading, error }) => {
 
   return (
-    <aside className={`fixed top-16 bottom-0 flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
+    <aside className={`fixed top-0 bottom-0 flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 z-40 ${isCollapsed ? 'w-20' : 'w-64'}`}>
+        <div className="h-16 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-2">
+                 <Icon name="Layers" className="w-8 h-8 text-brand-primary" />
+                 {!isCollapsed && <span className="font-bold text-lg">InventoryX</span>}
+            </div>
+        </div>
       <nav className={`flex-grow overflow-y-auto ${isCollapsed ? 'p-2' : 'p-4'}`}>
         {isLoading ? (
           <SidebarSkeleton isCollapsed={isCollapsed} />
@@ -76,15 +59,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePageId, onNavigate, isCo
           </ul>
         )}
       </nav>
-      <div className="p-2 border-t border-gray-200 dark:border-gray-700">
-        <button
-          onClick={onToggle}
-          className="w-full flex items-center justify-center p-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          <Icon name={isCollapsed ? 'ChevronRight' : 'ChevronLeft'} className="w-6 h-6" />
-        </button>
-      </div>
     </aside>
   );
 };

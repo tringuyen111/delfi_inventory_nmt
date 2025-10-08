@@ -16,7 +16,12 @@ const CURRENT_USER = "Alex Nguyen"; // Mock current user for actions
 const ITEMS_PER_PAGE = 8;
 const COLUMN_VISIBILITY_KEY = 'goods_receipt_column_visibility';
 
-const GoodsReceiptPage: React.FC = () => {
+interface GoodsReceiptPageProps {
+  docToOpen?: string | null;
+  onDeepLinkHandled?: () => void;
+}
+
+const GoodsReceiptPage: React.FC<GoodsReceiptPageProps> = ({ docToOpen, onDeepLinkHandled }) => {
     const { t } = useLanguage();
     const [receipts, setReceipts] = useState<GoodsReceipt[]>([]);
     const [lines, setLines] = useState<Record<string, GoodsReceiptLine[]>>({});
@@ -80,6 +85,25 @@ const GoodsReceiptPage: React.FC = () => {
         fetchData();
     }, [fetchData]);
 
+    const handleView = useCallback((receipt: GoodsReceipt) => {
+        const fullReceipt = {
+            ...receipt,
+            lines: lines[receipt.gr_no] || [],
+            history: history[receipt.gr_no] || [],
+        };
+        setModalState({ isOpen: true, mode: 'view', receipt: fullReceipt });
+    }, [lines, history]);
+
+    useEffect(() => {
+        if (docToOpen && !isLoading && receipts.length > 0) {
+            const receiptToView = receipts.find(r => r.gr_no === docToOpen);
+            if (receiptToView) {
+                handleView(receiptToView);
+            }
+            onDeepLinkHandled?.();
+        }
+    }, [docToOpen, isLoading, receipts, onDeepLinkHandled, handleView]);
+
      const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
@@ -88,15 +112,6 @@ const GoodsReceiptPage: React.FC = () => {
 
     const handleCreate = () => {
         setModalState({ isOpen: true, mode: 'create', receipt: null });
-    };
-    
-    const handleView = (receipt: GoodsReceipt) => {
-        const fullReceipt = {
-            ...receipt,
-            lines: lines[receipt.gr_no] || [],
-            history: history[receipt.gr_no] || [],
-        };
-        setModalState({ isOpen: true, mode: 'view', receipt: fullReceipt });
     };
 
     const switchToEditMode = () => {
@@ -281,9 +296,6 @@ const GoodsReceiptPage: React.FC = () => {
 
     return (
         <div className="space-y-4">
-             <div className="text-sm text-gray-500 dark:text-gray-400">
-                {t('menu.warehouseOps')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.goodsReceipt')}</span>
-            </div>
             <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
                 <header className="p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center mb-4">

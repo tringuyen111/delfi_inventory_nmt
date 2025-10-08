@@ -1,0 +1,47 @@
+[
+  {
+    "id": "notif-001",
+    "type": "SUBMITTED",
+    "titleKey": "notifications.submitted.title",
+    "docNo": "GR-202311-003",
+    "timestamp": "2023-11-30T10:00:00Z",
+    "pageId": "goods_receipt",
+    "pageLabel": "menu.goodsReceipt"
+  },
+  {
+    "id": "notif-002",
+    "type": "ASSIGNED",
+    "titleKey": "notifications.assigned.title",
+    "docNo": "GI-202312-002",
+    "timestamp": "2023-12-03T09:30:00Z",
+    "pageId": "goods_issue",
+    "pageLabel": "menu.goodsIssue"
+  },
+  {
+    "id": "notif-003",
+    "type": "ADJUSTMENT_REQUEST",
+    "titleKey": "notifications.adjustmentRequest.title",
+    "docNo": "GI-202312-006",
+    "timestamp": "2023-12-07T10:00:00Z",
+    "pageId": "goods_issue",
+    "pageLabel": "menu.goodsIssue"
+  },
+  {
+    "id": "notif-004",
+    "type": "ADJUSTMENT_RESOLVED",
+    "titleKey": "notifications.adjustmentResolved.title",
+    "docNo": "GI-000-DUMMY",
+    "timestamp": "2023-12-08T11:00:00Z",
+    "pageId": "goods_issue",
+    "pageLabel": "menu.goodsIssue"
+  },
+  {
+    "id": "notif-005",
+    "type": "SUBMITTED",
+    "titleKey": "notifications.submitted.title",
+    "docNo": "IC-202405-004",
+    "timestamp": "2024-05-14T15:00:00Z",
+    "pageId": "inventory_count",
+    "pageLabel": "menu.inventoryCount"
+  }
+]

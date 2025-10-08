@@ -26,7 +26,10 @@ export const Dropdown: React.FC<DropdownProps> = ({ trigger, children }) => {
   
   // Allow children to close the dropdown after an action
   const childrenWithProps = React.Children.map(children, child => {
-    if (React.isValidElement(child) && typeof child.type !== 'string' && (child.type as React.FC).name === 'DropdownItem') {
+    // FIX: Pass the `close` prop to all valid custom component children.
+    // The previous implementation only targeted `DropdownItem`, causing a type error
+    // when `NotificationDropdown` was used, as it also requires the `close` prop.
+    if (React.isValidElement(child) && typeof child.type !== 'string') {
        return React.cloneElement(child, { close: () => setIsOpen(false) } as any);
     }
     return child;

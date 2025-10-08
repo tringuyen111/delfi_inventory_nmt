@@ -16,7 +16,12 @@ const CURRENT_USER = "Alex Nguyen";
 const ITEMS_PER_PAGE = 8;
 const COLUMN_VISIBILITY_KEY = 'goods_transfer_column_visibility';
 
-const GoodsTransferPage: React.FC = () => {
+interface GoodsTransferPageProps {
+  docToOpen?: string | null;
+  onDeepLinkHandled?: () => void;
+}
+
+const GoodsTransferPage: React.FC<GoodsTransferPageProps> = ({ docToOpen, onDeepLinkHandled }) => {
     const { t } = useLanguage();
     const [transfers, setTransfers] = useState<GoodsTransfer[]>([]);
     const [transferLines, setTransferLines] = useState<Record<string, GoodsTransferLine[]>>({});
@@ -154,11 +159,21 @@ const GoodsTransferPage: React.FC = () => {
         setModalState({isOpen: false, mode: 'view', transfer: null});
     };
 
-    const handleView = (transfer: GoodsTransfer) => {
+    const handleView = useCallback((transfer: GoodsTransfer) => {
         const fullTransfer = { ...transfer, lines: transferLines[transfer.gt_no] || [] };
         const newMode = transfer.status === 'Draft' ? 'edit' : 'view';
         setModalState({ isOpen: true, mode: newMode, transfer: fullTransfer });
-    };
+    }, [transferLines]);
+
+    useEffect(() => {
+        if (docToOpen && !isLoading && transfers.length > 0) {
+            const transferToView = transfers.find(t => t.gt_no === docToOpen);
+            if (transferToView) {
+                handleView(transferToView);
+            }
+            onDeepLinkHandled?.();
+        }
+    }, [docToOpen, isLoading, transfers, onDeepLinkHandled, handleView]);
 
     const handleCreate = () => {
         setModalState({ isOpen: true, mode: 'create', transfer: null });
@@ -230,10 +245,6 @@ const GoodsTransferPage: React.FC = () => {
 
     return (
         <div className="space-y-4">
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-                {t('menu.warehouseOps')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.goodsTransfer')}</span>
-            </div>
-
             <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
                 <header className="p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center mb-4">

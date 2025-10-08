@@ -96,140 +96,135 @@ const GoodsReceiptUIPage: React.FC = () => {
     const activeState = matrix.web.ui_states[activeTab];
 
     return (
-        <div className="space-y-4">
-             <div className="text-sm text-gray-500 dark:text-gray-400">
-                {t('menu.system')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.pdaUiMatrix')}</span>
-            </div>
-            <div className="space-y-8 max-w-7xl mx-auto">
-                <SectionCard title={`UI State Matrix: ${matrix.module}`} icon="BookOpen">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <GuidelineItem label="Scope">
-                            <div className="flex gap-2">{matrix.scope.map(s => <Tag key={s}>{s}</Tag>)}</div>
-                        </GuidelineItem>
-                        <GuidelineItem label="Status Lifecycle">
-                            <div className="flex flex-wrap gap-2">{matrix.status_lifecycle.map(s => <Tag key={s} color="blue">{s}</Tag>)}</div>
-                        </GuidelineItem>
-                    </div>
-                </SectionCard>
+        <div className="space-y-8 max-w-7xl mx-auto">
+            <SectionCard title={`UI State Matrix: ${matrix.module}`} icon="BookOpen">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <GuidelineItem label="Scope">
+                        <div className="flex gap-2">{matrix.scope.map(s => <Tag key={s}>{s}</Tag>)}</div>
+                    </GuidelineItem>
+                    <GuidelineItem label="Status Lifecycle">
+                        <div className="flex flex-wrap gap-2">{matrix.status_lifecycle.map(s => <Tag key={s} color="blue">{s}</Tag>)}</div>
+                    </GuidelineItem>
+                </div>
+            </SectionCard>
 
-                <SectionCard title="Web Platform Rules" icon="Monitor">
-                    <div className="border-b border-gray-200 dark:border-gray-700">
-                        <nav className="-mb-px flex space-x-6 overflow-x-auto">
-                            {matrix.status_lifecycle.map(status => (
-                                <button key={status} onClick={() => setActiveTab(status)} className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === status ? 'border-brand-primary text-brand-primary' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:hover:text-gray-200'}`}>
-                                    {status}
-                                </button>
-                            ))}
-                        </nav>
+            <SectionCard title="Web Platform Rules" icon="Monitor">
+                <div className="border-b border-gray-200 dark:border-gray-700">
+                    <nav className="-mb-px flex space-x-6 overflow-x-auto">
+                        {matrix.status_lifecycle.map(status => (
+                            <button key={status} onClick={() => setActiveTab(status)} className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === status ? 'border-brand-primary text-brand-primary' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:hover:text-gray-200'}`}>
+                                {status}
+                            </button>
+                        ))}
+                    </nav>
+                </div>
+                {activeState && (
+                    <div className="pt-6 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
+                        <div className="space-y-4">
+                             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Editable State</h3>
+                             <GuidelineItem label="Header Editable"><BooleanIndicator value={activeState.header_editable} /></GuidelineItem>
+                             <GuidelineItem label="Lines Editable"><BooleanIndicator value={activeState.lines_editable} /></GuidelineItem>
+                             <GuidelineItem label="Read-Only Fields">
+                                 <div className="flex flex-wrap gap-2">
+                                     {activeState.readonly_fields.length > 0 ? activeState.readonly_fields.map(f => <Code key={f}>{f}</Code>) : 'None'}
+                                 </div>
+                             </GuidelineItem>
+                        </div>
+                         <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Section Visibility</h3>
+                            <GuidelineItem label="Visible Sections">
+                                <ul className="list-disc list-inside space-y-1">{activeState.show_sections.map(s => <li key={s}>{s}</li>)}</ul>
+                            </GuidelineItem>
+                            <GuidelineItem label="Hidden Sections">
+                                {activeState.hide_sections.length > 0 ? <ul className="list-disc list-inside space-y-1">{activeState.hide_sections.map(s => <li key={s}>{s}</li>)}</ul> : 'None'}
+                            </GuidelineItem>
+                        </div>
+                        <div className="lg:col-span-2 space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Available Actions</h3>
+                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <h4 className="font-semibold mb-2">Primary</h4>
+                                    <div className="flex flex-col items-start gap-2">
+                                        {activeState.buttons.primary.length > 0 ? activeState.buttons.primary.map(b => <button key={b.id} disabled={!b.enabled} className="px-3 py-1.5 text-xs font-medium rounded-md bg-brand-primary text-white disabled:bg-blue-300 dark:disabled:bg-blue-800">{b.label}</button>) : <p className="text-sm text-gray-500">None</p>}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold mb-2">Secondary</h4>
+                                    <div className="flex flex-col items-start gap-2">
+                                         {activeState.buttons.secondary.length > 0 ? activeState.buttons.secondary.map(b => <button key={b.id} disabled={!b.enabled} className="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-100 disabled:opacity-50">{b.label}</button>) : <p className="text-sm text-gray-500">None</p>}
+                                    </div>
+                                </div>
+                                 <div>
+                                    <h4 className="font-semibold mb-2">Hidden</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {activeState.buttons.hidden.length > 0 ? activeState.buttons.hidden.map(b => <Code key={b}>{b}</Code>) : <p className="text-sm text-gray-500">None</p>}
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                         <div className="lg:col-span-2 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <h4 className="font-semibold mb-2 flex items-center gap-2"><Icon name="Info" className="w-4 h-4"/> Notes</h4>
+                            <ul className="list-disc list-inside text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                                {activeState.notes.map((note, i) => <li key={i}>{note}</li>)}
+                            </ul>
+                        </div>
                     </div>
-                    {activeState && (
-                        <div className="pt-6 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
-                            <div className="space-y-4">
-                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Editable State</h3>
-                                 <GuidelineItem label="Header Editable"><BooleanIndicator value={activeState.header_editable} /></GuidelineItem>
-                                 <GuidelineItem label="Lines Editable"><BooleanIndicator value={activeState.lines_editable} /></GuidelineItem>
-                                 <GuidelineItem label="Read-Only Fields">
-                                     <div className="flex flex-wrap gap-2">
-                                         {activeState.readonly_fields.length > 0 ? activeState.readonly_fields.map(f => <Code key={f}>{f}</Code>) : 'None'}
-                                     </div>
-                                 </GuidelineItem>
-                            </div>
-                             <div className="space-y-4">
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Section Visibility</h3>
-                                <GuidelineItem label="Visible Sections">
-                                    <ul className="list-disc list-inside space-y-1">{activeState.show_sections.map(s => <li key={s}>{s}</li>)}</ul>
-                                </GuidelineItem>
-                                <GuidelineItem label="Hidden Sections">
-                                    {activeState.hide_sections.length > 0 ? <ul className="list-disc list-inside space-y-1">{activeState.hide_sections.map(s => <li key={s}>{s}</li>)}</ul> : 'None'}
-                                </GuidelineItem>
-                            </div>
-                            <div className="lg:col-span-2 space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Available Actions</h3>
-                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <h4 className="font-semibold mb-2">Primary</h4>
-                                        <div className="flex flex-col items-start gap-2">
-                                            {activeState.buttons.primary.length > 0 ? activeState.buttons.primary.map(b => <button key={b.id} disabled={!b.enabled} className="px-3 py-1.5 text-xs font-medium rounded-md bg-brand-primary text-white disabled:bg-blue-300 dark:disabled:bg-blue-800">{b.label}</button>) : <p className="text-sm text-gray-500">None</p>}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h4 className="font-semibold mb-2">Secondary</h4>
-                                        <div className="flex flex-col items-start gap-2">
-                                             {activeState.buttons.secondary.length > 0 ? activeState.buttons.secondary.map(b => <button key={b.id} disabled={!b.enabled} className="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-100 disabled:opacity-50">{b.label}</button>) : <p className="text-sm text-gray-500">None</p>}
-                                        </div>
-                                    </div>
-                                     <div>
-                                        <h4 className="font-semibold mb-2">Hidden</h4>
-                                        <div className="flex flex-wrap gap-2">
-                                            {activeState.buttons.hidden.length > 0 ? activeState.buttons.hidden.map(b => <Code key={b}>{b}</Code>) : <p className="text-sm text-gray-500">None</p>}
-                                        </div>
-                                    </div>
+                )}
+            </SectionCard>
+
+            <SectionCard title="PDA Platform Rules" icon="Smartphone">
+                 <div className="space-y-6">
+                    {/* FIX: Use Object.keys() to iterate over PDA screens. This provides better type inference for screenData than Object.entries(), resolving errors where properties were accessed on an 'unknown' type. */}
+                    {Object.keys(matrix.pda.screens).map((screenKey) => {
+                        const screenData = matrix.pda.screens[screenKey];
+                        return (
+                            <div key={screenKey} className="p-4 border rounded-lg dark:border-gray-700">
+                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 capitalize mb-3">{screenKey.replace('_', ' ')}</h3>
+                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {screenData.visible_status && (
+                                        <GuidelineItem label="Visible Statuses">
+                                            <div className="flex flex-wrap gap-2">
+                                                {screenData.visible_status.map((s: string) => <Tag key={s}>{s}</Tag>)}
+                                            </div>
+                                        </GuidelineItem>
+                                    )}
+                                    {screenData.item_tap_behavior && <GuidelineItem label="Tap Behavior" value={screenData.item_tap_behavior}/>}
+                                    {screenData.header_display && <GuidelineItem label="Header Display"><div className="flex flex-wrap gap-2">{screenData.header_display.map((s: string) => <Tag key={s} color="purple">{s}</Tag>)}</div></GuidelineItem>}
                                  </div>
                             </div>
-                             <div className="lg:col-span-2 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                                <h4 className="font-semibold mb-2 flex items-center gap-2"><Icon name="Info" className="w-4 h-4"/> Notes</h4>
-                                <ul className="list-disc list-inside text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                                    {activeState.notes.map((note, i) => <li key={i}>{note}</li>)}
-                                </ul>
-                            </div>
-                        </div>
-                    )}
-                </SectionCard>
+                        );
+                    })}
+                </div>
+            </SectionCard>
 
-                <SectionCard title="PDA Platform Rules" icon="Smartphone">
-                     <div className="space-y-6">
-                        {/* FIX: Use Object.keys() to iterate over PDA screens. This provides better type inference for screenData than Object.entries(), resolving errors where properties were accessed on an 'unknown' type. */}
-                        {Object.keys(matrix.pda.screens).map((screenKey) => {
-                            const screenData = matrix.pda.screens[screenKey];
-                            return (
-                                <div key={screenKey} className="p-4 border rounded-lg dark:border-gray-700">
-                                     <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 capitalize mb-3">{screenKey.replace('_', ' ')}</h3>
-                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {screenData.visible_status && (
-                                            <GuidelineItem label="Visible Statuses">
-                                                <div className="flex flex-wrap gap-2">
-                                                    {screenData.visible_status.map((s: string) => <Tag key={s}>{s}</Tag>)}
-                                                </div>
-                                            </GuidelineItem>
-                                        )}
-                                        {screenData.item_tap_behavior && <GuidelineItem label="Tap Behavior" value={screenData.item_tap_behavior}/>}
-                                        {screenData.header_display && <GuidelineItem label="Header Display"><div className="flex flex-wrap gap-2">{screenData.header_display.map((s: string) => <Tag key={s} color="purple">{s}</Tag>)}</div></GuidelineItem>}
-                                     </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </SectionCard>
-
-                 <SectionCard title="Guards & Disables" icon="AlertTriangle">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                            <thead className="text-left bg-gray-50 dark:bg-gray-700/50">
-                                <tr>
-                                    <th className="p-3 font-semibold">Target</th>
-                                    <th className="p-3 font-semibold">Condition</th>
-                                    <th className="p-3 font-semibold">Tooltip/Reason</th>
+             <SectionCard title="Guards & Disables" icon="AlertTriangle">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                        <thead className="text-left bg-gray-50 dark:bg-gray-700/50">
+                            <tr>
+                                <th className="p-3 font-semibold">Target</th>
+                                <th className="p-3 font-semibold">Condition</th>
+                                <th className="p-3 font-semibold">Tooltip/Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {matrix.guards_and_disables.map((guard, i) => (
+                                <tr key={i}>
+                                    <td className="p-3"><Code>{guard.button_id || guard.field}</Code></td>
+                                    <td className="p-3"><Code>{guard.disable_when || guard.hide_when}</Code></td>
+                                    <td className="p-3 text-gray-600 dark:text-gray-300">{guard.tooltip_vi || guard.why}</td>
                                 </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                                {matrix.guards_and_disables.map((guard, i) => (
-                                    <tr key={i}>
-                                        <td className="p-3"><Code>{guard.button_id || guard.field}</Code></td>
-                                        <td className="p-3"><Code>{guard.disable_when || guard.hide_when}</Code></td>
-                                        <td className="p-3 text-gray-600 dark:text-gray-300">{guard.tooltip_vi || guard.why}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                 </SectionCard>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+             </SectionCard>
 
-                <SectionCard title="Acceptance Checklist" icon="CheckCircle">
-                    <ul className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-200">
-                        {matrix.acceptance_checklist.map((item, i) => <li key={i}>{item}</li>)}
-                    </ul>
-                </SectionCard>
-            </div>
+            <SectionCard title="Acceptance Checklist" icon="CheckCircle">
+                <ul className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-200">
+                    {matrix.acceptance_checklist.map((item, i) => <li key={i}>{item}</li>)}
+                </ul>
+            </SectionCard>
         </div>
     );
 };

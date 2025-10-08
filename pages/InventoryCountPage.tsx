@@ -16,7 +16,12 @@ const CURRENT_USER = "Alex Nguyen";
 const ITEMS_PER_PAGE = 8;
 const COLUMN_VISIBILITY_KEY = 'inventory_count_column_visibility';
 
-const InventoryCountPage: React.FC = () => {
+interface InventoryCountPageProps {
+  docToOpen?: string | null;
+  onDeepLinkHandled?: () => void;
+}
+
+const InventoryCountPage: React.FC<InventoryCountPageProps> = ({ docToOpen, onDeepLinkHandled }) => {
     const { t } = useLanguage();
     const [counts, setCounts] = useState<InventoryCount[]>([]);
     const [lines, setLines] = useState<Record<string, InventoryCountLine[]>>({});
@@ -81,11 +86,7 @@ const InventoryCountPage: React.FC = () => {
         fetchData();
     }, [fetchData]);
 
-    const handleCreate = () => {
-        setModalState({ isOpen: true, mode: 'create', count: null });
-    };
-    
-    const handleView = (count: InventoryCount) => {
+    const handleView = useCallback((count: InventoryCount) => {
         const fullCount = {
             ...count,
             lines: lines[count.ic_no] || [],
@@ -93,6 +94,20 @@ const InventoryCountPage: React.FC = () => {
         };
         const newMode = count.status === 'Draft' ? 'edit' : 'view';
         setModalState({ isOpen: true, mode: newMode, count: fullCount });
+    }, [lines, history]);
+
+    useEffect(() => {
+        if (docToOpen && !isLoading && counts.length > 0) {
+            const countToView = counts.find(c => c.ic_no === docToOpen);
+            if (countToView) {
+                handleView(countToView);
+            }
+            onDeepLinkHandled?.();
+        }
+    }, [docToOpen, isLoading, counts, onDeepLinkHandled, handleView]);
+
+    const handleCreate = () => {
+        setModalState({ isOpen: true, mode: 'create', count: null });
     };
 
     const handleSave = (
@@ -205,9 +220,6 @@ const InventoryCountPage: React.FC = () => {
 
     return (
         <div className="space-y-4">
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-                {t('menu.warehouseOps')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.inventoryCount')}</span>
-            </div>
             <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
                 <header className="p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center mb-4">

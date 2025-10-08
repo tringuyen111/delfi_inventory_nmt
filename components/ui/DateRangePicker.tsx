@@ -30,7 +30,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({ value, onChang
       flatpickrInstance.current = flatpickr(flatpickrInputRef.current, {
         mode: "range",
         dateFormat: "Y-m-d", // Internal format, doesn't affect display
-        defaultDate: value,
+        defaultDate: value.filter(d => d) as Date[],
         onClose: (selectedDates: Date[]) => {
           if (selectedDates.length === 2) {
             onChange([selectedDates[0], selectedDates[1]]);

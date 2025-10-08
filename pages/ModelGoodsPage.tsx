@@ -154,7 +154,7 @@ const ModelGoodsPage: React.FC = () => {
         if (modalState.mode === 'edit' && modalState.model) {
             savedModel = { ...modalState.model, ...modelToSave, updated_at: new Date().toISOString() };
             setModelGoods(prev => prev.map(m => m.id === savedModel.id ? savedModel : m));
-            setToastInfo({ message: 'Model Goods updated successfully', type: 'success' });
+            setToastInfo({ message: t('pages.modelGoods.toast.updated'), type: 'success' });
         } else {
             const now = new Date();
             const year = now.getFullYear();
@@ -170,7 +170,7 @@ const ModelGoodsPage: React.FC = () => {
                 total_onhand_qty: 0,
             };
             setModelGoods(prev => [savedModel, ...prev]);
-            setToastInfo({ message: 'Model Goods created successfully', type: 'success' });
+            setToastInfo({ message: t('pages.modelGoods.toast.created'), type: 'success' });
         }
         return savedModel;
     };
@@ -216,9 +216,6 @@ const ModelGoodsPage: React.FC = () => {
 
     return (
         <div className="space-y-4">
-             <div className="text-sm text-gray-500 dark:text-gray-400">
-                {t('menu.catalog')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.modelGoods')}</span>
-            </div>
             <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
                 <header className="p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center mb-4">
@@ -235,7 +232,7 @@ const ModelGoodsPage: React.FC = () => {
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
-                             placeholder="Search by code/name/goods type..." 
+                             placeholder={t('pages.modelGoods.searchPlaceholder')}
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
                              className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
@@ -288,8 +285,8 @@ const ModelGoodsPage: React.FC = () => {
                 
                 {paginatedModelGoods.length === 0 && !isLoading && (
                     <div className="text-center py-16">
-                        <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">No Model Goods Found</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click 'Create' to add the first model.</p>
+                        <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">{t('pages.modelGoods.empty.title')}</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('pages.modelGoods.empty.message')}</p>
                     </div>
                 )}
                 

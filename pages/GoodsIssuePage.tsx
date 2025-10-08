@@ -16,7 +16,12 @@ const CURRENT_USER = "Alex Nguyen"; // Mock current user for actions
 const ITEMS_PER_PAGE = 8;
 const COLUMN_VISIBILITY_KEY = 'goods_issue_column_visibility';
 
-const GoodsIssuePage: React.FC = () => {
+interface GoodsIssuePageProps {
+  docToOpen?: string | null;
+  onDeepLinkHandled?: () => void;
+}
+
+const GoodsIssuePage: React.FC<GoodsIssuePageProps> = ({ docToOpen, onDeepLinkHandled }) => {
     const { t } = useLanguage();
     const [issues, setIssues] = useState<GoodsIssue[]>([]);
     const [lines, setLines] = useState<Record<string, GoodsIssueLine[]>>({});
@@ -89,6 +94,25 @@ const GoodsIssuePage: React.FC = () => {
         fetchData();
     }, [fetchData]);
 
+    const handleView = useCallback((issue: GoodsIssue) => {
+        const fullIssue = {
+            ...issue,
+            lines: lines[issue.gi_no] || [],
+            history: history[issue.gi_no] || [],
+        };
+        setModalState({ isOpen: true, mode: 'view', issue: fullIssue });
+    }, [lines, history]);
+
+    useEffect(() => {
+        if (docToOpen && !isLoading && issues.length > 0) {
+            const issueToView = issues.find(i => i.gi_no === docToOpen);
+            if (issueToView) {
+                handleView(issueToView);
+            }
+            onDeepLinkHandled?.();
+        }
+    }, [docToOpen, isLoading, issues, onDeepLinkHandled, handleView]);
+
     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
@@ -97,15 +121,6 @@ const GoodsIssuePage: React.FC = () => {
 
     const handleCreate = () => {
         setModalState({ isOpen: true, mode: 'create', issue: null });
-    };
-    
-    const handleView = (issue: GoodsIssue) => {
-        const fullIssue = {
-            ...issue,
-            lines: lines[issue.gi_no] || [],
-            history: history[issue.gi_no] || [],
-        };
-        setModalState({ isOpen: true, mode: 'view', issue: fullIssue });
     };
 
     const switchToEditMode = () => {
@@ -256,9 +271,6 @@ const GoodsIssuePage: React.FC = () => {
 
     return (
         <div className="space-y-4">
-             <div className="text-sm text-gray-500 dark:text-gray-400">
-                {t('menu.warehouseOps')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.goodsIssue')}</span>
-            </div>
             <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
                 <header className="p-4 border-b border-gray-200 dark:border-gray-700">
                      <div className="flex justify-between items-center mb-4">

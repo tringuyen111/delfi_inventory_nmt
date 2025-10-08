@@ -144,18 +144,18 @@ const PartnerPage: React.FC = () => {
         if (modalState.mode === 'edit' && modalState.partner) {
             savedPartner = { ...modalState.partner, ...partnerToSave, updated_at: new Date().toISOString() };
             setPartners(prev => prev.map(p => p.id === savedPartner.id ? savedPartner : p));
-            setToastInfo({ message: 'Partner updated successfully', type: 'success' });
-        } else {
+            setToastInfo({ message: t('pages.partner.toast.updated'), type: 'success' });
+        } else { // create mode
             const newPartnerCode = partnerToSave.partner_code.toUpperCase();
-            savedPartner = { 
-                ...partnerToSave, 
+            savedPartner = {
+                ...partnerToSave,
                 id: newPartnerCode,
                 partner_code: newPartnerCode,
                 updated_at: new Date().toISOString(),
-                has_active_docs: false // New partners don't have active docs
+                has_active_docs: false,
             };
             setPartners(prev => [savedPartner, ...prev]);
-            setToastInfo({ message: 'Partner created successfully', type: 'success' });
+            setToastInfo({ message: t('pages.partner.toast.created'), type: 'success' });
         }
         return savedPartner;
     };
@@ -196,11 +196,9 @@ const PartnerPage: React.FC = () => {
         return Math.ceil(filteredPartners.length / ITEMS_PER_PAGE);
     }, [filteredPartners]);
 
+
     return (
         <div className="space-y-4">
-             <div className="text-sm text-gray-500 dark:text-gray-400">
-                {t('menu.masterData')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.partner')}</span>
-            </div>
             <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
                 <header className="p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center mb-4">
@@ -217,15 +215,15 @@ const PartnerPage: React.FC = () => {
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
-                             placeholder="Search by code/name/type..." 
+                             placeholder={t('pages.partner.searchPlaceholder')}
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
                              className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
                            />
                         </div>
-                         <select name="partner_type" value={filters.partner_type} onChange={handleFilterChange} className="text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md py-2 px-3 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none">
+                        <select name="partner_type" value={filters.partner_type} onChange={handleFilterChange} className="text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md py-2 px-3 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none">
                             <option value="all">All Partner Types</option>
-                            {["Supplier", "Customer", "3PL", "Internal"].map(o => <option key={o} value={o}>{o}</option>)}
+                            {['Supplier', 'Customer', '3PL', 'Internal'].map(o => <option key={o} value={o}>{o}</option>)}
                         </select>
                         <select name="status" value={filters.status} onChange={handleFilterChange} className="text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md py-2 px-3 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none">
                             <option value="all">All Statuses</option>
@@ -234,7 +232,7 @@ const PartnerPage: React.FC = () => {
                         <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600">
                             <Icon name="Download" className="w-4 h-4"/> {t('common.exportExcel')}
                         </button>
-                         <Dropdown 
+                        <Dropdown 
                           trigger={
                             <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <Icon name="Columns" className="w-4 h-4"/> {t('common.columnVisibility')}
@@ -266,16 +264,16 @@ const PartnerPage: React.FC = () => {
                 
                 {paginatedPartners.length === 0 && !isLoading && (
                     <div className="text-center py-16">
-                        <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">No Partners Found</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click 'Create' to add the first partner.</p>
+                        <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">{t('pages.partner.empty.title')}</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('pages.partner.empty.message')}</p>
                     </div>
                 )}
-                
-                {totalPages > 1 && (
+                 
+                 {totalPages > 1 && (
                     <footer className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
                         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
                     </footer>
-                )}
+                 )}
 
                 {modalState.isOpen && (
                     <PartnerFormModal

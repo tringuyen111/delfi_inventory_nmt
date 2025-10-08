@@ -65,8 +65,8 @@
     "inventoryCount": "Kiểm kê",
     "onhandInventory": "Tồn kho",
     "configuration": "Cấu hình",
-    "catalog": "Danh mục",
-    "modelGoods": "Mặt hàng",
+    "catalog": "Hàng Hóa",
+    "modelGoods": "Mẫu Hàng Hóa",
     "goodsType": "Loại hàng",
     "masterData": "Dữ liệu chủ",
     "organization": "Tổ chức",
@@ -77,7 +77,37 @@
     "uom": "Đơn vị tính",
     "system": "Hệ thống",
     "reports": "Báo cáo",
-    "pdaUiMatrix": "Ma trận UI PDA"
+    "pdaUiMatrix": "Ma trận UI PDA",
+    "notifications": "Thông báo"
+  },
+  "notifications": {
+    "title": "Thông báo",
+    "markAllAsRead": "Đánh dấu tất cả đã đọc",
+    "viewAll": "Xem tất cả thông báo",
+    "noNew": "Không có thông báo mới",
+    "submitted": {
+      "title": "Chứng từ đã gửi chờ duyệt"
+    },
+    "assigned": {
+      "title": "Nhiệm vụ mới được giao"
+    },
+    "adjustmentRequest": {
+      "title": "Nhân viên yêu cầu điều chỉnh"
+    },
+    "adjustmentResolved": {
+      "title": "Yêu cầu điều chỉnh đã được xử lý"
+    },
+    "allNotifications": "Tất cả Thông báo",
+    "filterByStatus": "Lọc theo trạng thái",
+    "all": "Tất cả",
+    "unread": "Chưa đọc",
+    "read": "Đã đọc",
+    "noNotifications": "Bạn không có thông báo nào.",
+    "table": {
+      "title": "Tiêu đề",
+      "document": "Chứng từ",
+      "date": "Ngày"
+    }
   },
   "statuses": {
     "Draft": "Nháp",
@@ -102,6 +132,17 @@
     "Exporting": "Đang xuất"
   },
   "pages": {
+    "modelGoods": {
+      "searchPlaceholder": "Tìm theo mã/tên/loại hàng...",
+      "toast": {
+        "updated": "Đã cập nhật mẫu hàng hóa thành công",
+        "created": "Đã tạo mẫu hàng hóa thành công"
+      },
+      "empty": {
+        "title": "Không tìm thấy Mẫu Hàng Hóa",
+        "message": "Nhấn 'Tạo mới' để thêm mẫu hàng hóa đầu tiên."
+      }
+    },
     "goodsTransfer": {
       "pageTitle": "Điều chuyển Kho",
       "searchPlaceholder": "Tìm theo Số ĐC, Số tham chiếu...",

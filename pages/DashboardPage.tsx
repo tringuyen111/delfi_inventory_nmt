@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Icon, IconName } from '../components/Icons';
 import { SectionCard } from '../components/SectionCard';

@@ -65,7 +65,7 @@
     "inventoryCount": "Inventory Count",
     "onhandInventory": "Onhand Inventory",
     "configuration": "Configuration",
-    "catalog": "Catalog",
+    "catalog": "Goods",
     "modelGoods": "Model Goods",
     "goodsType": "Goods Type",
     "masterData": "Master Data",
@@ -77,7 +77,37 @@
     "uom": "UoM",
     "system": "System",
     "reports": "Reports",
-    "pdaUiMatrix": "PDA UI Matrix"
+    "pdaUiMatrix": "PDA UI Matrix",
+    "notifications": "Notifications"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Mark all as read",
+    "viewAll": "View all notifications",
+    "noNew": "No new notifications",
+    "submitted": {
+      "title": "Document Submitted for Approval"
+    },
+    "assigned": {
+      "title": "New Task Assigned"
+    },
+    "adjustmentRequest": {
+      "title": "Adjustment Requested by Staff"
+    },
+    "adjustmentResolved": {
+      "title": "Adjustment Request Resolved"
+    },
+    "allNotifications": "All Notifications",
+    "filterByStatus": "Filter by status",
+    "all": "All",
+    "unread": "Unread",
+    "read": "Read",
+    "noNotifications": "You have no notifications.",
+    "table": {
+      "title": "Title",
+      "document": "Document",
+      "date": "Date"
+    }
   },
   "statuses": {
     "Draft": "Draft",
@@ -102,6 +132,17 @@
     "Exporting": "Exporting"
   },
   "pages": {
+    "modelGoods": {
+      "searchPlaceholder": "Search by code/name/goods type...",
+      "toast": {
+        "updated": "Model Goods updated successfully",
+        "created": "Model Goods created successfully"
+      },
+      "empty": {
+        "title": "No Model Goods Found",
+        "message": "Click 'Create' to add the first Model Goods."
+      }
+    },
     "goodsTransfer": {
       "pageTitle": "Goods Transfer",
       "searchPlaceholder": "Search by GT No, Ref No...",

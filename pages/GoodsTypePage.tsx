@@ -185,9 +185,6 @@ const GoodsTypePage: React.FC = () => {
 
     return (
         <div className="space-y-4">
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-                {t('menu.catalog')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.goodsType')}</span>
-            </div>
             <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
                 <header className="p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center mb-4">

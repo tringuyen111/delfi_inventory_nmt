@@ -26,6 +26,16 @@ export interface MenuItemType {
   children?: MenuItemType[];
 }
 
+export interface Notification {
+  id: string;
+  type: 'SUBMITTED' | 'ASSIGNED' | 'ADJUSTMENT_REQUEST' | 'ADJUSTMENT_RESOLVED';
+  titleKey: string;
+  docNo: string;
+  timestamp: string;
+  pageId: string;
+  pageLabel: string;
+}
+
 // --- MASTER DATA ---
 export interface Uom {
   id: string;
