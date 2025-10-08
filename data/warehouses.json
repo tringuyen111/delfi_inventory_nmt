@@ -1,3 +1,4 @@
+
 [
   {
     "id": "NYC-CEN",
@@ -64,5 +65,16 @@
     "warehouse_type": "Sub",
     "status": "Active",
     "updated_at": "2023-11-20T16:45:00Z"
+  },
+  {
+    "id": "TKY-CEN",
+    "wh_code": "TKY-CEN",
+    "wh_name": "Tokyo Central Warehouse",
+    "branch_code": "GTC-TKY",
+    "address": "1-5-1 Koto-ku, Tokyo, Japan",
+    "capacity": 60000,
+    "warehouse_type": "Central",
+    "status": "Active",
+    "updated_at": "2024-03-05T10:00:00Z"
   }
 ]

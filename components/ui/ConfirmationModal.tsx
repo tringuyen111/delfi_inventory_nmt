@@ -2,6 +2,7 @@
 import React from 'react';
 import { Modal } from './Modal';
 import { Icon } from '../Icons';
+import { useLanguage } from '../../hooks/useLanguage';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface ConfirmationModalProps {
 }
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, onConfirm, title, message }) => {
+  const { t } = useLanguage();
   return (
     <Modal
       isOpen={isOpen}
@@ -21,10 +23,10 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, on
       footer={
         <>
           <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">
-            Cancel
+            {t('common.cancel')}
           </button>
           <button onClick={onConfirm} className="px-4 py-2 text-sm font-medium rounded-md bg-brand-danger text-white hover:bg-red-700">
-            Confirm
+            {t('common.confirm')}
           </button>
         </>
       }

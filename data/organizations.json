@@ -54,5 +54,27 @@
     "status": "Active",
     "updated_at": "2023-11-18T18:30:00Z",
     "has_active_docs": false
+  },
+  {
+    "id": "ORG-202401-0001",
+    "org_code": "ORG-202401-0001",
+    "org_name": "Evergreen Farms",
+    "address": "303 Orchard Lane, Greenfield, 60606",
+    "phone": "+1 (312) 555-0106",
+    "email": "contact@evergreenfarms.com",
+    "status": "Active",
+    "updated_at": "2024-01-20T10:00:00Z",
+    "has_active_docs": true
+  },
+  {
+    "id": "ORG-202402-0002",
+    "org_code": "ORG-202402-0002",
+    "org_name": "BlueWave Shipping",
+    "address": "404 Port Authority, Seaside, 80808",
+    "phone": "+1 (808) 555-0107",
+    "email": "ops@bluewaveship.com",
+    "status": "Active",
+    "updated_at": "2024-02-15T12:00:00Z",
+    "has_active_docs": false
   }
 ]

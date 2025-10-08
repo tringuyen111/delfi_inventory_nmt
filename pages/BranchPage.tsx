@@ -1,5 +1,7 @@
 
 
+
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Branch, Organization } from '../types';
 import { Icon } from '../components/Icons';
@@ -42,7 +44,7 @@ const BranchPage: React.FC = () => {
             const branchesData: Branch[] = await branchesRes.json();
             const orgsData: Organization[] = await orgsRes.json();
             
-            setBranches(branchesData.map(b => ({ ...b, org_name: orgMap.get(b.org_code) })));
+            setBranches(branchesData);
             setOrganizations(orgsData);
         } catch (e) {
             setError(e instanceof Error ? e.message : 'An unknown error occurred');
@@ -79,7 +81,7 @@ const BranchPage: React.FC = () => {
         if (modalState.mode === 'edit' && modalState.branch) {
             savedBranch = { ...modalState.branch, ...branchToSave, updated_at: new Date().toISOString() };
             setBranches(prev => prev.map(b => b.id === savedBranch.id ? savedBranch : b));
-            setToastInfo({ message: 'Cập nhật Chi nhánh thành công', type: 'success' });
+            setToastInfo({ message: 'Branch updated successfully', type: 'success' });
         } else {
             const newBranchCode = branchToSave.branch_code.toUpperCase();
             savedBranch = { 
@@ -89,7 +91,7 @@ const BranchPage: React.FC = () => {
                 updated_at: new Date().toISOString(),
             };
             setBranches(prev => [savedBranch, ...prev]);
-            setToastInfo({ message: 'Tạo Chi nhánh thành công', type: 'success' });
+            setToastInfo({ message: 'Branch created successfully', type: 'success' });
         }
         return savedBranch;
     };
@@ -128,12 +130,12 @@ const BranchPage: React.FC = () => {
     }, [branches, debouncedSearchTerm, filters, orgMap]);
 
     const columns: Column<Branch>[] = useMemo(() => [
-        { key: 'branch_code', header: 'Mã Chi nhánh' },
-        { key: 'branch_name', header: 'Tên Chi nhánh' },
-        { key: 'org_code', header: 'Tổ chức', render: (branch) => orgMap.get(branch.org_code) || branch.org_code },
-        { key: 'phone', header: 'Số điện thoại' },
+        { key: 'branch_code', header: 'Branch Code' },
+        { key: 'branch_name', header: 'Branch Name' },
+        { key: 'org_code', header: 'Organization', render: (branch) => orgMap.get(branch.org_code) || branch.org_code },
+        { key: 'phone', header: 'Phone' },
         { key: 'email', header: 'Email' },
-        { key: 'status', header: 'Trạng thái', render: (branch) => (
+        { key: 'status', header: 'Status', render: (branch) => (
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                 branch.status === 'Active' 
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
@@ -142,7 +144,7 @@ const BranchPage: React.FC = () => {
                 {branch.status}
             </span>
         )},
-        { key: 'updated_at', header: 'Cập nhật', render: (branch) => new Date(branch.updated_at).toLocaleDateString() },
+        { key: 'updated_at', header: 'Updated At', render: (branch) => new Date(branch.updated_at).toLocaleDateString() },
         { key: 'actions', header: '', render: (branch) => (
             <div className="flex justify-end items-center gap-2">
                 <button onClick={() => handleView(branch)} className="p-1 text-gray-500 hover:text-brand-primary dark:hover:text-blue-400">
@@ -166,7 +168,7 @@ const BranchPage: React.FC = () => {
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
-                             placeholder="Tìm theo mã/tên/org..." 
+                             placeholder="Search by code/name/org..." 
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
                              className="w-64 pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
@@ -196,8 +198,8 @@ const BranchPage: React.FC = () => {
             
             {filteredBranches.length === 0 && !isLoading && (
                 <div className="text-center py-16">
-                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">Chưa có Chi nhánh</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Nhấn Create để thêm chi nhánh đầu tiên.</p>
+                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">No Branches Found</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click 'Create' to add the first branch.</p>
                 </div>
             )}
 
@@ -228,8 +230,8 @@ const BranchPage: React.FC = () => {
                 onApplyFilters={setFilters}
                 onClearFilters={() => setFilters({})}
                 filterOptions={[
-                    { key: 'org_code', label: 'Tổ chức', options: organizations.map(o => o.org_code), optionLabels: orgMap },
-                    { key: 'status', label: 'Trạng thái', options: ["Active","Inactive"]}
+                    { key: 'org_code', label: 'Organization', options: organizations.map(o => o.org_code), optionLabels: orgMap },
+                    { key: 'status', label: 'Status', options: ["Active","Inactive"]}
                 ]}
             />
         </div>

@@ -9,7 +9,8 @@ export interface RowAction<T> {
 }
 
 export interface Column<T> {
-  key: keyof T | 'actions' | 'item';
+  // FIX: Broaden `key` to `string` to allow for custom column keys that are not properties of T, like calculated fields.
+  key: string;
   header: string;
   width?: number;
   // FIX: Update the `render` function signature to accept an optional `index` argument. This allows child components to use the row index for actions like editing or deleting specific items, resolving TypeScript errors.
@@ -50,7 +51,7 @@ export const Table = <T extends { id: string | number }>({
               <th
                 key={String(col.key)}
                 scope="col"
-                className={`px-6 py-3 whitespace-nowrap ${col.freeze === 'left' ? 'sticky left-0 bg-gray-50 dark:bg-gray-700 z-10' : ''}`}
+                className={`px-6 py-3 whitespace-nowrap text-${col.align || 'left'} ${col.freeze === 'left' ? 'sticky left-0 bg-gray-50 dark:bg-gray-700 z-10' : ''}`}
                 style={{ width: col.width ? `${col.width}px` : 'auto' }}
               >
                 {col.header}
@@ -72,7 +73,8 @@ export const Table = <T extends { id: string | number }>({
                   className={`px-6 py-4 align-top text-${col.align || 'left'} ${col.freeze === 'left' ? 'sticky left-0 bg-white dark:bg-gray-800 z-10' : ''}`}
                 >
                   {/* FIX: Pass the `itemIndex` to the `render` function to align with the updated type definition. This enables components using the table to access the row index for operations like editing or deleting. */}
-                  {col.render ? col.render(item, itemIndex) : (item[col.key as keyof T] as React.ReactNode) || '—'}
+                  {/* FIX: Use `any` cast for property access to support custom keys that are not properties of T. */}
+                  {col.render ? col.render(item, itemIndex) : ((item as any)[col.key] as React.ReactNode) || '—'}
                 </td>
               ))}
               {hasRowActions && (

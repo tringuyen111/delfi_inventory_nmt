@@ -45,5 +45,24 @@
       "pallet_id": null,
       "notes": "Moved to Quality Control area"
     }
+  ],
+  "AUS-TECH-A1-R1-MDL-202404-00011": [
+    { "id": "SCN001", "serial_no": "SN-SCANNER-Z-001", "status": "Available", "received_date": "2024-04-12T10:00:00Z", "last_movement_at": "2024-04-12T10:00:00Z", "age_days": 30, "notes": "" },
+    { "id": "SCN002", "serial_no": "SN-SCANNER-Z-002", "status": "Available", "received_date": "2024-04-12T10:00:00Z", "last_movement_at": "2024-04-12T10:00:00Z", "age_days": 30, "notes": "" },
+    { "id": "SCN003", "serial_no": "SN-SCANNER-Z-003", "status": "Available", "received_date": "2024-04-12T10:00:00Z", "last_movement_at": "2024-04-12T10:00:00Z", "age_days": 30, "notes": "" },
+    { "id": "SCN004", "serial_no": "SN-SCANNER-Z-004", "status": "Available", "received_date": "2024-04-12T10:00:00Z", "last_movement_at": "2024-04-12T10:00:00Z", "age_days": 30, "notes": "" },
+    { "id": "SCN005", "serial_no": "SN-SCANNER-Z-005", "status": "Allocated", "reserved_doc_no": "GI-2024-05-010", "received_date": "2024-04-12T10:00:00Z", "last_movement_at": "2024-05-10T10:00:00Z", "age_days": 30, "notes": "Allocated for order." }
+  ],
+  "MIA-MAIN-PICK-B-MDL-202404-00013": [
+    { "id": "TRM001", "serial_no": "SN-THERMO-T2-001", "status": "Available", "received_date": "2024-04-16T15:00:00Z", "last_movement_at": "2024-04-16T15:00:00Z", "age_days": 26, "notes": "" },
+    { "id": "TRM002", "serial_no": "SN-THERMO-T2-002", "status": "Available", "received_date": "2024-04-16T15:00:00Z", "last_movement_at": "2024-04-16T15:00:00Z", "age_days": 26, "notes": "" },
+    { "id": "TRM003", "serial_no": "SN-THERMO-T2-003", "status": "Available", "received_date": "2024-04-16T15:00:00Z", "last_movement_at": "2024-04-16T15:00:00Z", "age_days": 26, "notes": "" },
+    { "id": "TRM004", "serial_no": "SN-THERMO-T2-004", "status": "Available", "received_date": "2024-04-16T15:00:00Z", "last_movement_at": "2024-04-16T15:00:00Z", "age_days": 26, "notes": "" },
+    { "id": "TRM005", "serial_no": "SN-THERMO-T2-005", "status": "Available", "received_date": "2024-04-16T15:00:00Z", "last_movement_at": "2024-04-16T15:00:00Z", "age_days": 26, "notes": "" },
+    { "id": "TRM006", "serial_no": "SN-THERMO-T2-006", "status": "Available", "received_date": "2024-04-16T15:00:00Z", "last_movement_at": "2024-04-16T15:00:00Z", "age_days": 26, "notes": "" },
+    { "id": "TRM007", "serial_no": "SN-THERMO-T2-007", "status": "Available", "received_date": "2024-04-16T15:00:00Z", "last_movement_at": "2024-04-16T15:00:00Z", "age_days": 26, "notes": "" },
+    { "id": "TRM008", "serial_no": "SN-THERMO-T2-008", "status": "Available", "received_date": "2024-04-16T15:00:00Z", "last_movement_at": "2024-04-16T15:00:00Z", "age_days": 26, "notes": "" },
+    { "id": "TRM009", "serial_no": "SN-THERMO-T2-009", "status": "Allocated", "reserved_doc_no": "GI-2024-05-011", "received_date": "2024-04-16T15:00:00Z", "last_movement_at": "2024-05-11T11:00:00Z", "age_days": 26, "notes": "" },
+    { "id": "TRM010", "serial_no": "SN-THERMO-T2-010", "status": "Allocated", "reserved_doc_no": "GI-2024-05-011", "received_date": "2024-04-16T15:00:00Z", "last_movement_at": "2024-05-11T11:00:00Z", "age_days": 26, "notes": "" }
   ]
 }

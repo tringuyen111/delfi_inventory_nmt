@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Modal } from '../ui/Modal';
 import { GoodsIssueLine, GoodsIssueLotDetail, GoodsIssueSerialDetail } from '../../types';
@@ -51,14 +50,14 @@ export const ViewCodeModal: React.FC<ViewCodeModalProps> = ({ isOpen, onClose, l
                 {isLot && (
                   <>
                     <td className="px-4 py-2 font-mono">{(detail as GoodsIssueLotDetail).lot_code}</td>
-                    <td className="px-4 py-2 font-mono text-right">{line.onhand.toLocaleString()}</td>
-                    <td className="px-4 py-2 font-mono text-right">{(detail as GoodsIssueLotDetail).qty}</td>
+                    <td className="px-4 py-2 font-mono text-right">{(line.onhand || 0).toLocaleString()}</td>
+                    <td className="px-4 py-2 font-mono text-right">{((detail as GoodsIssueLotDetail).qty || 0).toLocaleString()}</td>
                   </>
                 )}
                 {isNone && (
                   <>
-                    <td className="px-4 py-2 font-mono text-right">{(detail as any).onhand.toLocaleString()}</td>
-                    <td className="px-4 py-2 font-mono text-right">{(detail as any).qty_picked}</td>
+                    <td className="px-4 py-2 font-mono text-right">{((detail as any).onhand || 0).toLocaleString()}</td>
+                    <td className="px-4 py-2 font-mono text-right">{((detail as any).qty_picked || 0).toLocaleString()}</td>
                   </>
                 )}
                 <td className="px-4 py-2 font-mono">{line.location_code}</td>

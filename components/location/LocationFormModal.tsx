@@ -69,26 +69,26 @@ export const LocationFormModal: React.FC<LocationFormModalProps> = ({
   
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
-    if (!formData.loc_code.trim()) newErrors.loc_code = "Mã vị trí bắt buộc, ≤10 ký tự.";
-    if (formData.loc_code.length > 10) newErrors.loc_code = "Mã vị trí bắt buộc, ≤10 ký tự.";
+    if (!formData.loc_code.trim()) newErrors.loc_code = "Location Code is required (<=10 chars).";
+    if (formData.loc_code.length > 10) newErrors.loc_code = "Location Code is required (<=10 chars).";
     
-    if (!formData.loc_name.trim()) newErrors.loc_name = "Tên vị trí bắt buộc, ≤120 ký tự.";
-    if (formData.loc_name.length > 120) newErrors.loc_name = "Tên vị trí bắt buộc, ≤120 ký tự.";
+    if (!formData.loc_name.trim()) newErrors.loc_name = "Location Name is required (<=120 chars).";
+    if (formData.loc_name.length > 120) newErrors.loc_name = "Location Name is required (<=120 chars).";
 
-    if (!formData.wh_code) newErrors.wh_code = "Phải chọn Kho.";
+    if (!formData.wh_code) newErrors.wh_code = "Warehouse must be selected.";
 
     const isDuplicateCode = existingLocations.some(
         l => l.wh_code === formData.wh_code && l.loc_code.toLowerCase() === formData.loc_code.trim().toLowerCase() && l.id !== location?.id
     );
-    if (isDuplicateCode) newErrors.loc_code = "Mã vị trí đã tồn tại trong kho này.";
+    if (isDuplicateCode) newErrors.loc_code = "Location Code already exists in this warehouse.";
 
     const isDuplicateName = existingLocations.some(
         l => l.wh_code === formData.wh_code && l.loc_name.toLowerCase() === formData.loc_name.trim().toLowerCase() && l.id !== location?.id
     );
-    if (isDuplicateName) newErrors.loc_name = "Tên vị trí đã tồn tại trong kho này.";
+    if (isDuplicateName) newErrors.loc_name = "Location Name already exists in this warehouse.";
 
     if (location && location.status === 'Active' && formData.status === 'Inactive' && location.onhand_qty > 0) {
-        const msg = "Không thể vô hiệu hóa vị trí này vì vẫn còn hàng tồn kho.";
+        const msg = "Cannot deactivate this location as it still contains on-hand stock.";
         newErrors.status = msg;
         alert(msg);
     }
@@ -143,49 +143,49 @@ export const LocationFormModal: React.FC<LocationFormModalProps> = ({
       }
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        <FormField label="Mã vị trí" error={errors.loc_code} required>
+        <FormField label="Location Code" error={errors.loc_code} required>
             <input type="text" name="loc_code" value={formData.loc_code} onChange={handleChange} className="w-full" maxLength={10} disabled={!isCreateMode} />
         </FormField>
-         <FormField label="Kho" error={errors.wh_code} required>
+         <FormField label="Warehouse" error={errors.wh_code} required>
             <select name="wh_code" value={formData.wh_code} onChange={handleChange} className="w-full" disabled={!isCreateMode}>
-                <option value="">-- Chọn Kho --</option>
+                <option value="">-- Select Warehouse --</option>
                 {warehouses.map(w => (
                     <option key={w.id} value={w.wh_code}>{w.wh_name}</option>
                 ))}
             </select>
         </FormField>
         <div className="md:col-span-2">
-            <FormField label="Tên vị trí" error={errors.loc_name} required>
+            <FormField label="Location Name" error={errors.loc_name} required>
                 <input type="text" name="loc_name" value={formData.loc_name} onChange={handleChange} className="w-full" maxLength={120} disabled={isViewMode} />
             </FormField>
         </div>
         
         <div className="md:col-span-2">
-             <FormField label="Loại hàng cho phép" error={errors.allowed_goods_types}>
+             <FormField label="Allowed Goods Types" error={errors.allowed_goods_types}>
                 <MultiSelectDropdown
                     options={activeGoodsTypeOptions}
                     selectedOptions={formData.allowed_goods_types || []}
                     onChange={handleAllowedChange}
-                    placeholder="Không có ràng buộc"
+                    placeholder="No restrictions"
                     disabled={isViewMode}
                     disabledOptions={formData.blocked_goods_types}
                 />
             </FormField>
         </div>
         <div className="md:col-span-2">
-             <FormField label="Loại hàng không cho phép" error={errors.blocked_goods_types}>
+             <FormField label="Blocked Goods Types" error={errors.blocked_goods_types}>
                 <MultiSelectDropdown
                     options={activeGoodsTypeOptions}
                     selectedOptions={formData.blocked_goods_types || []}
                     onChange={handleBlockedChange}
-                    placeholder="Không có ràng buộc"
+                    placeholder="No restrictions"
                     disabled={isViewMode}
                     disabledOptions={formData.allowed_goods_types}
                 />
             </FormField>
         </div>
 
-        <FormField label="Trạng thái" error={errors.status}>
+        <FormField label="Status" error={errors.status}>
             <select name="status" value={formData.status} onChange={handleChange} className="w-full" disabled={isViewMode}>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>

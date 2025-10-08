@@ -1,0 +1,46 @@
+[
+  {
+    "id": "IC-202405-001",
+    "ic_no": "IC-202405-001",
+    "wh_code": "NYC-CEN",
+    "status": "Completed",
+    "count_type": "By Location",
+    "created_at": "2024-05-10T09:00:00Z",
+    "updated_at": "2024-05-11T14:00:00Z",
+    "created_by": "Alex Nguyen",
+    "supervisor": "Jane Doe"
+  },
+  {
+    "id": "IC-202405-002",
+    "ic_no": "IC-202405-002",
+    "wh_code": "MIA-MAIN",
+    "status": "Counting",
+    "count_type": "By Item",
+    "created_at": "2024-05-12T10:00:00Z",
+    "updated_at": "2024-05-12T11:00:00Z",
+    "created_by": "Alex Nguyen",
+    "supervisor": "John Smith"
+  },
+  {
+    "id": "IC-202405-003",
+    "ic_no": "IC-202405-003",
+    "wh_code": "AUS-TECH",
+    "status": "Draft",
+    "count_type": "Full",
+    "created_at": "2024-05-13T08:00:00Z",
+    "updated_at": "2024-05-13T08:00:00Z",
+    "created_by": "Alex Nguyen",
+    "supervisor": null
+  },
+  {
+    "id": "IC-202405-004",
+    "ic_no": "IC-202405-004",
+    "wh_code": "NYC-CEN",
+    "status": "Submitted",
+    "count_type": "By Item",
+    "created_at": "2024-05-14T09:00:00Z",
+    "updated_at": "2024-05-14T15:00:00Z",
+    "created_by": "Alex Nguyen",
+    "supervisor": "Jane Doe"
+  }
+]

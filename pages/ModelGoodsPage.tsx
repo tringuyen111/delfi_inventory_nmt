@@ -75,7 +75,7 @@ const ModelGoodsPage: React.FC = () => {
         if (modalState.mode === 'edit' && modalState.model) {
             savedModel = { ...modalState.model, ...modelToSave, updated_at: new Date().toISOString() };
             setModelGoods(prev => prev.map(m => m.id === savedModel.id ? savedModel : m));
-            setToastInfo({ message: 'Cập nhật Model Goods thành công', type: 'success' });
+            setToastInfo({ message: 'Model Goods updated successfully', type: 'success' });
         } else {
             const now = new Date();
             const year = now.getFullYear();
@@ -91,7 +91,7 @@ const ModelGoodsPage: React.FC = () => {
                 total_onhand_qty: 0,
             };
             setModelGoods(prev => [savedModel, ...prev]);
-            setToastInfo({ message: 'Tạo Model Goods thành công', type: 'success' });
+            setToastInfo({ message: 'Model Goods created successfully', type: 'success' });
         }
         return savedModel;
     };
@@ -121,6 +121,7 @@ const ModelGoodsPage: React.FC = () => {
             })
             .filter(model => {
                 return Object.entries(filters).every(([key, values]) => {
+                    // FIX: Add a type guard to ensure `values` is an array before accessing its properties, resolving a potential type inference issue.
                     if (!Array.isArray(values) || values.length === 0) return true;
                     return values.includes(model[key as keyof ModelGoods] as string);
                 });
@@ -137,12 +138,12 @@ const ModelGoodsPage: React.FC = () => {
     }
 
     const columns: Column<ModelGoods>[] = useMemo(() => [
-        { key: 'model_code', header: 'Mã model' },
-        { key: 'model_name', header: 'Tên model' },
-        { key: 'goods_type_code', header: 'Loại Hàng Hóa', render: (m) => gtMap.get(m.goods_type_code) || m.goods_type_code },
-        { key: 'base_uom', header: 'Đơn vị gốc', render: (m) => uomMap.get(m.base_uom) || m.base_uom },
-        { key: 'tracking_type', header: 'Tracking type', render: (m) => trackingTypeBadge(m.tracking_type) },
-        { key: 'status', header: 'Trạng thái', render: (m) => (
+        { key: 'model_code', header: 'Model Code' },
+        { key: 'model_name', header: 'Model Name' },
+        { key: 'goods_type_code', header: 'Goods Type', render: (m) => gtMap.get(m.goods_type_code) || m.goods_type_code },
+        { key: 'base_uom', header: 'Base UoM', render: (m) => uomMap.get(m.base_uom) || m.base_uom },
+        { key: 'tracking_type', header: 'Tracking Type', render: (m) => trackingTypeBadge(m.tracking_type) },
+        { key: 'status', header: 'Status', render: (m) => (
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                 m.status === 'Active' 
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
@@ -151,7 +152,7 @@ const ModelGoodsPage: React.FC = () => {
                 {m.status}
             </span>
         )},
-        { key: 'updated_at', header: 'Cập nhật', render: (m) => new Date(m.updated_at).toLocaleDateString() },
+        { key: 'updated_at', header: 'Updated At', render: (m) => new Date(m.updated_at).toLocaleDateString() },
         { key: 'actions', header: '', render: (m) => (
             <div className="flex justify-end items-center gap-2">
                 <button onClick={() => handleView(m)} className="p-1 text-gray-500 hover:text-brand-primary dark:hover:text-blue-400">
@@ -175,7 +176,7 @@ const ModelGoodsPage: React.FC = () => {
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
-                             placeholder="Tìm theo mã/tên/loại hàng..." 
+                             placeholder="Search by code/name/goods type..." 
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
                              className="w-64 pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
@@ -205,8 +206,8 @@ const ModelGoodsPage: React.FC = () => {
             
             {filteredModelGoods.length === 0 && !isLoading && (
                 <div className="text-center py-16">
-                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">Chưa có Model Goods</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Nhấn Create để thêm model đầu tiên.</p>
+                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">No Model Goods Found</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click 'Create' to add the first model.</p>
                 </div>
             )}
 
@@ -238,9 +239,9 @@ const ModelGoodsPage: React.FC = () => {
                 onApplyFilters={setFilters}
                 onClearFilters={() => setFilters({})}
                 filterOptions={[
-                    { key: 'goods_type_code', label: 'Loại Hàng Hóa', options: goodsTypes.filter(gt => gt.status === 'Active').map(gt => gt.goods_type_code), optionLabels: gtMap },
+                    { key: 'goods_type_code', label: 'Goods Type', options: goodsTypes.filter(gt => gt.status === 'Active').map(gt => gt.goods_type_code), optionLabels: gtMap },
                     { key: 'tracking_type', label: 'Tracking', options: ["None","Serial","Lot"] },
-                    { key: 'status', label: 'Trạng thái', options: ["Active","Inactive"]}
+                    { key: 'status', label: 'Status', options: ["Active","Inactive"]}
                 ]}
             />
         </div>

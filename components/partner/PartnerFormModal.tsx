@@ -72,29 +72,29 @@ export const PartnerFormModal: React.FC<PartnerFormModalProps> = ({
   
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
-    if (!formData.partner_code.trim()) newErrors.partner_code = "Mã đối tác là bắt buộc.";
-    if (formData.partner_code.length > 30) newErrors.partner_code = "Mã đối tác không được quá 30 ký tự.";
+    if (!formData.partner_code.trim()) newErrors.partner_code = "Partner Code is required.";
+    if (formData.partner_code.length > 30) newErrors.partner_code = "Partner Code cannot exceed 30 characters.";
     let isDuplicateCode = existingPartners.some(
         (p) => p.partner_code.toLowerCase() === formData.partner_code.toLowerCase() && p.id !== partner?.id
     );
-    if (isDuplicateCode) newErrors.partner_code = "Mã đối tác đã tồn tại.";
+    if (isDuplicateCode) newErrors.partner_code = "Partner Code already exists.";
 
-    if (!formData.partner_name.trim()) newErrors.partner_name = "Tên đối tác là bắt buộc.";
-    if (formData.partner_name.length > 180) newErrors.partner_name = "Tên đối tác không được quá 180 ký tự.";
+    if (!formData.partner_name.trim()) newErrors.partner_name = "Partner Name is required.";
+    if (formData.partner_name.length > 180) newErrors.partner_name = "Partner Name cannot exceed 180 characters.";
 
-    if (formData.partner_type.length === 0) newErrors.partner_type = "Phải chọn ít nhất một Loại đối tác.";
+    if (formData.partner_type.length === 0) newErrors.partner_type = "At least one Partner Type must be selected.";
 
     if (formData.phone && !/^[0-9()+\-\s]{6,20}$/.test(formData.phone)) {
-        newErrors.phone = "Số điện thoại không hợp lệ.";
+        newErrors.phone = "Invalid phone number format.";
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = "Email không hợp lệ.";
+        newErrors.email = "Invalid email format.";
     }
 
     if (partner && partner.status === 'Active' && formData.status === 'Inactive' && partner.has_active_docs) {
-        newErrors.status = "Không thể vô hiệu hóa đối tác này vì đang có các giao dịch chưa hoàn tất.";
-        alert("Không thể vô hiệu hóa đối tác này vì đang có các giao dịch chưa hoàn tất. Vui lòng xử lý các giao dịch liên quan trước.");
+        newErrors.status = "Cannot deactivate this partner as there are outstanding transactions.";
+        alert("Cannot deactivate this partner as there are outstanding transactions. Please handle related transactions first.");
     }
 
     setErrors(newErrors);
@@ -147,17 +147,17 @@ export const PartnerFormModal: React.FC<PartnerFormModalProps> = ({
       }
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        <FormField label="Mã đối tác" error={errors.partner_code} required>
+        <FormField label="Partner Code" error={errors.partner_code} required>
             <input type="text" name="partner_code" value={formData.partner_code} onChange={handleChange} className="w-full" maxLength={30} disabled={!isCreateMode} />
         </FormField>
          <div className="md:col-span-2">
-            <FormField label="Tên đối tác" error={errors.partner_name} required>
+            <FormField label="Partner Name" error={errors.partner_name} required>
                 <input type="text" name="partner_name" value={formData.partner_name} onChange={handleChange} className="w-full" maxLength={180} disabled={isViewMode} />
             </FormField>
         </div>
         
         <div className="md:col-span-2">
-             <FormField label="Loại đối tác" error={errors.partner_type} required>
+             <FormField label="Partner Type" error={errors.partner_type} required>
                 <MultiSelectDropdown
                     options={partnerTypeOptions}
                     selectedOptions={formData.partner_type}
@@ -169,10 +169,10 @@ export const PartnerFormModal: React.FC<PartnerFormModalProps> = ({
         </div>
 
 
-        <FormField label="Mã số thuế" error={errors.tax_code}>
+        <FormField label="Tax Code" error={errors.tax_code}>
             <input type="text" name="tax_code" value={formData.tax_code} onChange={handleChange} className="w-full" maxLength={20} disabled={isViewMode} />
         </FormField>
-        <FormField label="Số điện thoại" error={errors.phone}>
+        <FormField label="Phone" error={errors.phone}>
             <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full" disabled={isViewMode} />
         </FormField>
 
@@ -183,12 +183,12 @@ export const PartnerFormModal: React.FC<PartnerFormModalProps> = ({
         </div>
         
         <div className="md:col-span-2">
-            <FormField label="Địa chỉ" error={errors.address}>
+            <FormField label="Address" error={errors.address}>
                 <textarea name="address" value={formData.address} onChange={handleChange} className="w-full" rows={3} maxLength={500} disabled={isViewMode}></textarea>
             </FormField>
         </div>
 
-        <FormField label="Trạng thái" error={errors.status}>
+        <FormField label="Status" error={errors.status}>
             <select name="status" value={formData.status} onChange={handleChange} className="w-full" disabled={isViewMode}>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>

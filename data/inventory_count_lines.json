@@ -1,0 +1,56 @@
+{
+  "IC-202405-001": [
+    {
+      "id": "ICL-1-1",
+      "ic_id": "IC-202405-001",
+      "model_code": "MDL-202311-00001",
+      "model_name": "Premium A4 Paper Ream (500 Sheets)",
+      "uom": "PCS",
+      "tracking_type": "None",
+      "location_code": "A1-R1",
+      "system_qty": 1500,
+      "counted_qty": 1498,
+      "variance": -2
+    },
+    {
+      "id": "ICL-1-2",
+      "ic_id": "IC-202405-001",
+      "model_code": "MDL-202404-00012",
+      "model_name": "Epoxy Resin Kit - Part A (20kg Drum)",
+      "uom": "KG",
+      "tracking_type": "Lot",
+      "location_code": "B2-R3",
+      "system_qty": 150,
+      "counted_qty": 150,
+      "variance": 0
+    }
+  ],
+  "IC-202405-002": [
+     {
+      "id": "ICL-2-1",
+      "ic_id": "IC-202405-002",
+      "model_code": "MDL-202311-00002",
+      "model_name": "Industrial Laser Printer, Model X",
+      "uom": "PCS",
+      "tracking_type": "Serial",
+      "location_code": "PICK-A",
+      "system_qty": 50,
+      "counted_qty": null,
+      "variance": 0
+    }
+  ],
+  "IC-202405-004": [
+    {
+      "id": "ICL-4-1",
+      "ic_id": "IC-202405-004",
+      "model_code": "MDL-202404-00011",
+      "model_name": "Wireless Barcode Scanner, Z-Model",
+      "uom": "PCS",
+      "tracking_type": "Serial",
+      "location_code": "A1-R1",
+      "system_qty": 25,
+      "counted_qty": 24,
+      "variance": -1
+    }
+  ]
+}

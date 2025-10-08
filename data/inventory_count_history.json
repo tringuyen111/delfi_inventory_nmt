@@ -1,0 +1,20 @@
+{
+  "IC-202405-001": [
+    { "id": "hist-ic-1-1", "doc_id": "IC-202405-001", "status": "Draft", "user": "Alex Nguyen", "timestamp": "2024-05-10T09:00:00Z", "note": "Count created." },
+    { "id": "hist-ic-1-2", "doc_id": "IC-202405-001", "status": "Counting", "user": "PDA User", "timestamp": "2024-05-10T10:00:00Z", "note": "Counting started." },
+    { "id": "hist-ic-1-3", "doc_id": "IC-202405-001", "status": "Submitted", "user": "PDA User", "timestamp": "2024-05-11T11:00:00Z", "note": "Count submitted for review." },
+    { "id": "hist-ic-1-4", "doc_id": "IC-202405-001", "status": "Completed", "user": "Alex Nguyen", "timestamp": "2024-05-11T14:00:00Z", "note": "Count approved." }
+  ],
+  "IC-202405-002": [
+     { "id": "hist-ic-2-1", "doc_id": "IC-202405-002", "status": "Draft", "user": "Alex Nguyen", "timestamp": "2024-05-12T10:00:00Z", "note": "Count created." },
+     { "id": "hist-ic-2-2", "doc_id": "IC-202405-002", "status": "Counting", "user": "John Smith", "timestamp": "2024-05-12T11:00:00Z", "note": "Counting started." }
+  ],
+  "IC-202405-003": [
+    { "id": "hist-ic-3-1", "doc_id": "IC-202405-003", "status": "Draft", "user": "Alex Nguyen", "timestamp": "2024-05-13T08:00:00Z", "note": "Count created." }
+  ],
+   "IC-202405-004": [
+    { "id": "hist-ic-4-1", "doc_id": "IC-202405-004", "status": "Draft", "user": "Alex Nguyen", "timestamp": "2024-05-14T09:00:00Z", "note": "Count created." },
+    { "id": "hist-ic-4-2", "doc_id": "IC-202405-004", "status": "Counting", "user": "John Smith", "timestamp": "2024-05-14T10:00:00Z", "note": "Counting started." },
+    { "id": "hist-ic-4-3", "doc_id": "IC-202405-004", "status": "Submitted", "user": "John Smith", "timestamp": "2024-05-14T15:00:00Z", "note": "Count submitted for review." }
+  ]
+}

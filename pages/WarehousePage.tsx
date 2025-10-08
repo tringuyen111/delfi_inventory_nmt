@@ -70,7 +70,7 @@ const WarehousePage: React.FC = () => {
         if (modalState.mode === 'edit' && modalState.warehouse) {
             savedWarehouse = { ...modalState.warehouse, ...whToSave, updated_at: new Date().toISOString() };
             setWarehouses(prev => prev.map(w => w.id === savedWarehouse.id ? savedWarehouse : w));
-            setToastInfo({ message: 'Cập nhật Kho thành công', type: 'success' });
+            setToastInfo({ message: 'Warehouse updated successfully', type: 'success' });
         } else {
             const newWhCode = whToSave.wh_code.toUpperCase();
             savedWarehouse = { 
@@ -80,7 +80,7 @@ const WarehousePage: React.FC = () => {
                 updated_at: new Date().toISOString(),
             };
             setWarehouses(prev => [savedWarehouse, ...prev]);
-            setToastInfo({ message: 'Tạo Kho thành công', type: 'success' });
+            setToastInfo({ message: 'Warehouse created successfully', type: 'success' });
         }
         return savedWarehouse;
     };
@@ -114,12 +114,12 @@ const WarehousePage: React.FC = () => {
     }, [warehouses, debouncedSearchTerm, filters, branchMap]);
 
     const columns: Column<Warehouse>[] = useMemo(() => [
-        { key: 'wh_code', header: 'Mã Kho' },
-        { key: 'wh_name', header: 'Tên Kho' },
-        { key: 'branch_code', header: 'Chi nhánh', render: (wh) => branchMap.get(wh.branch_code) || wh.branch_code },
-        { key: 'warehouse_type', header: 'Loại Kho' },
-        { key: 'capacity', header: 'Sức chứa' },
-        { key: 'status', header: 'Trạng thái', render: (wh) => (
+        { key: 'wh_code', header: 'Warehouse Code' },
+        { key: 'wh_name', header: 'Warehouse Name' },
+        { key: 'branch_code', header: 'Branch', render: (wh) => branchMap.get(wh.branch_code) || wh.branch_code },
+        { key: 'warehouse_type', header: 'Warehouse Type' },
+        { key: 'capacity', header: 'Capacity' },
+        { key: 'status', header: 'Status', render: (wh) => (
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                 wh.status === 'Active' 
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
@@ -128,7 +128,7 @@ const WarehousePage: React.FC = () => {
                 {wh.status}
             </span>
         )},
-        { key: 'updated_at', header: 'Cập nhật', render: (wh) => new Date(wh.updated_at).toLocaleDateString() },
+        { key: 'updated_at', header: 'Updated At', render: (wh) => new Date(wh.updated_at).toLocaleDateString() },
         { key: 'actions', header: '', render: (wh) => (
             <div className="flex justify-end items-center gap-2">
                 <button onClick={() => handleView(wh)} className="p-1 text-gray-500 hover:text-brand-primary dark:hover:text-blue-400">
@@ -152,7 +152,7 @@ const WarehousePage: React.FC = () => {
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
-                             placeholder="Tìm theo mã/tên/branch..." 
+                             placeholder="Search by code/name/branch..." 
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
                              className="w-64 pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
@@ -182,8 +182,8 @@ const WarehousePage: React.FC = () => {
             
             {filteredWarehouses.length === 0 && !isLoading && (
                 <div className="text-center py-16">
-                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">Chưa có Kho</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Nhấn Create để thêm kho đầu tiên.</p>
+                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">No Warehouses Found</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click 'Create' to add the first warehouse.</p>
                 </div>
             )}
 
@@ -214,9 +214,9 @@ const WarehousePage: React.FC = () => {
                 onApplyFilters={setFilters}
                 onClearFilters={() => setFilters({})}
                 filterOptions={[
-                    { key: 'branch_code', label: 'Chi nhánh', options: branches.map(b => b.branch_code), optionLabels: branchMap },
-                    { key: 'warehouse_type', label: 'Loại kho', options: ["Central", "Sub", "Virtual"]},
-                    { key: 'status', label: 'Trạng thái', options: ["Active","Inactive"]}
+                    { key: 'branch_code', label: 'Branch', options: branches.map(b => b.branch_code), optionLabels: branchMap },
+                    { key: 'warehouse_type', label: 'Warehouse Type', options: ["Central", "Sub", "Virtual"]},
+                    { key: 'status', label: 'Status', options: ["Active","Inactive"]}
                 ]}
             />
         </div>

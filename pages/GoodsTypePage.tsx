@@ -62,7 +62,7 @@ const GoodsTypePage: React.FC = () => {
         if (modalState.mode === 'edit' && modalState.goodsType) {
             savedGoodsType = { ...modalState.goodsType, ...gtToSave, updated_at: new Date().toISOString() };
             setGoodsTypes(prev => prev.map(gt => gt.id === savedGoodsType.id ? savedGoodsType : gt));
-            setToastInfo({ message: 'Cập nhật Goods Type thành công', type: 'success' });
+            setToastInfo({ message: 'Goods Type updated successfully', type: 'success' });
         } else {
             const newCode = gtToSave.goods_type_code.toUpperCase();
             savedGoodsType = { 
@@ -73,7 +73,7 @@ const GoodsTypePage: React.FC = () => {
                 usage_count: 0
             };
             setGoodsTypes(prev => [savedGoodsType, ...prev]);
-            setToastInfo({ message: 'Tạo Goods Type thành công', type: 'success' });
+            setToastInfo({ message: 'Goods Type created successfully', type: 'success' });
         }
         return savedGoodsType;
     };
@@ -105,14 +105,14 @@ const GoodsTypePage: React.FC = () => {
     }, [goodsTypes, debouncedSearchTerm, filters]);
 
     const columns: Column<GoodsType>[] = useMemo(() => [
-        { key: 'goods_type_code', header: 'Mã loại Hàng Hóa' },
-        { key: 'goods_type_name', header: 'Tên loại Hàng Hóa' },
-        { key: 'description', header: 'Mô tả', render: (gt) => (
+        { key: 'goods_type_code', header: 'Goods Type Code' },
+        { key: 'goods_type_name', header: 'Goods Type Name' },
+        { key: 'description', header: 'Description', render: (gt) => (
             <p title={gt.description} className="max-w-xs truncate">
                 {gt.description || '—'}
             </p>
         )},
-        { key: 'status', header: 'Trạng thái', render: (gt) => (
+        { key: 'status', header: 'Status', render: (gt) => (
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                 gt.status === 'Active' 
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
@@ -121,7 +121,7 @@ const GoodsTypePage: React.FC = () => {
                 {gt.status}
             </span>
         )},
-        { key: 'updated_at', header: 'Cập nhật', render: (gt) => new Date(gt.updated_at).toLocaleDateString() },
+        { key: 'updated_at', header: 'Updated At', render: (gt) => new Date(gt.updated_at).toLocaleDateString() },
         { key: 'actions', header: '', render: (gt) => (
             <div className="flex justify-end items-center gap-2">
                 <button onClick={() => handleView(gt)} className="p-1 text-gray-500 hover:text-brand-primary dark:hover:text-blue-400">
@@ -145,7 +145,7 @@ const GoodsTypePage: React.FC = () => {
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
-                             placeholder="Tìm theo mã/tên..." 
+                             placeholder="Search by code/name..." 
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
                              className="w-64 pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
@@ -175,8 +175,8 @@ const GoodsTypePage: React.FC = () => {
             
             {filteredGoodsTypes.length === 0 && !isLoading && (
                 <div className="text-center py-16">
-                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">Chưa có Goods Type</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Nhấn Create để thêm loại hàng hóa đầu tiên.</p>
+                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">No Goods Types Found</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click 'Create' to add the first goods type.</p>
                 </div>
             )}
 
@@ -206,7 +206,7 @@ const GoodsTypePage: React.FC = () => {
                 onApplyFilters={setFilters}
                 onClearFilters={() => setFilters({})}
                 filterOptions={[
-                    { key: 'status', label: 'Trạng thái', options: ["Active","Inactive"]}
+                    { key: 'status', label: 'Status', options: ["Active","Inactive"]}
                 ]}
             />
         </div>

@@ -71,6 +71,7 @@ const OnhandPage: React.FC = () => {
             })
             .filter(item => {
                 return Object.entries(filters).every(([key, value]) => {
+                    // FIX: Add a type guard to ensure `value` is an array before accessing its properties, resolving a potential type inference issue.
                     if (value === undefined || (Array.isArray(value) && value.length === 0)) return true;
                     if (key === 'only_negative' && value) return item.onhand_qty < 0;
                     if (key === 'only_low_stock' && value) return item.low_stock_threshold != null && item.available_qty <= item.low_stock_threshold;
@@ -81,6 +82,13 @@ const OnhandPage: React.FC = () => {
                     }
                     return true;
                 });
+            })
+            .sort((a, b) => {
+                const whCompare = a.wh_code.localeCompare(b.wh_code);
+                if (whCompare !== 0) return whCompare;
+                const locCompare = a.loc_code.localeCompare(b.loc_code);
+                if (locCompare !== 0) return locCompare;
+                return a.model_code.localeCompare(b.model_code);
             });
     }, [onhandData, debouncedSearchTerm, filters]);
 

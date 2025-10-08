@@ -28,7 +28,7 @@
       "remark": "Cycle count adjustment - Damaged"
     }
   ],
-   "MIA-MAIN-STAGING-MDL-202311-00004": [
+  "MIA-MAIN-STAGING-MDL-202311-00004": [
     {
       "id": "txn-4",
       "txn_date": "2023-11-28T10:00:00Z",
@@ -38,5 +38,105 @@
       "actor": "John Smith",
       "remark": "Urgent shipment, stock went negative"
     }
-   ]
+  ],
+  "MIA-MAIN-PICK-A-MDL-202311-00002": [
+    {
+      "id": "txn-5",
+      "txn_date": "2023-11-20T10:00:00Z",
+      "doc_type": "GR",
+      "doc_no": "GR-2023-11-085",
+      "qty_change": 3,
+      "actor": "Jane Doe",
+      "remark": "Initial receipt of 3 printers."
+    },
+    {
+      "id": "txn-6",
+      "txn_date": "2023-11-25T14:20:00Z",
+      "doc_type": "Allocation",
+      "doc_no": "GI-2023-11-211",
+      "qty_change": 0,
+      "actor": "System",
+      "remark": "1 unit allocated to Innovate Corp"
+    }
+  ],
+  "AUS-TECH-QC-01-MDL-202311-00003": [
+    {
+      "id": "txn-8",
+      "txn_date": "2023-11-01T12:00:00Z",
+      "doc_type": "GR",
+      "doc_no": "GR-2023-11-012",
+      "qty_change": 105,
+      "actor": "Jane Doe",
+      "remark": "Receipt of chemical compound lots."
+    },
+    {
+      "id": "txn-9",
+      "txn_date": "2023-11-15T15:00:00Z",
+      "doc_type": "IC",
+      "doc_no": "IC-2023-11-045",
+      "qty_change": -5,
+      "actor": "System",
+      "remark": "Cycle count adjustment, damaged goods."
+    }
+  ],
+  "AUS-TECH-A1-R1-MDL-202404-00011": [
+    {
+      "id": "txn-10",
+      "txn_date": "2024-04-12T10:00:00Z",
+      "doc_type": "GR",
+      "doc_no": "GR-2024-04-050",
+      "qty_change": 5,
+      "actor": "Alex Nguyen",
+      "remark": "Receipt of 5 barcode scanners."
+    },
+    {
+      "id": "txn-11",
+      "txn_date": "2024-05-10T10:00:00Z",
+      "doc_type": "Allocation",
+      "doc_no": "GI-2024-05-010",
+      "qty_change": 0,
+      "actor": "System",
+      "remark": "1 unit allocated for order."
+    }
+  ],
+  "NYC-CEN-B2-R3-MDL-202404-00012": [
+    {
+      "id": "txn-12",
+      "txn_date": "2024-04-13T11:00:00Z",
+      "doc_type": "GR",
+      "doc_no": "GR-2024-04-055",
+      "qty_change": 150,
+      "actor": "Jane Doe",
+      "remark": "Receipt of 2 lots of Epoxy Resin."
+    },
+    {
+      "id": "txn-13",
+      "txn_date": "2024-05-01T09:00:00Z",
+      "doc_type": "IC",
+      "doc_no": "IC-2024-05-008",
+      "qty_change": -2,
+      "actor": "System",
+      "remark": "Cycle count adjustment for damaged drum."
+    }
+  ],
+  "MIA-MAIN-PICK-B-MDL-202404-00013": [
+    {
+      "id": "txn-14",
+      "txn_date": "2024-04-16T15:00:00Z",
+      "doc_type": "GR",
+      "doc_no": "GR-2024-04-061",
+      "qty_change": 10,
+      "actor": "John Smith",
+      "remark": "Receipt of 10 smart thermostats."
+    },
+    {
+      "id": "txn-15",
+      "txn_date": "2024-05-11T11:00:00Z",
+      "doc_type": "Allocation",
+      "doc_no": "GI-2024-05-011",
+      "qty_change": 0,
+      "actor": "System",
+      "remark": "2 units allocated for sales order."
+    }
+  ]
 }

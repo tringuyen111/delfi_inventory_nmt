@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Icon } from '../Icons';
+import { useLanguage } from '../../hooks/useLanguage';
 
 // FIX: Update FilterOption to support different input types like text, number, and toggle.
 interface FilterOption {
@@ -23,6 +24,7 @@ interface FilterDrawerProps {
 }
 
 export const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, filters, onApplyFilters, onClearFilters, filterOptions }) => {
+  const { t } = useLanguage();
   const [localFilters, setLocalFilters] = useState(filters);
 
   useEffect(() => {
@@ -111,7 +113,7 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, fil
         className={`fixed top-0 right-0 h-full w-80 bg-white dark:bg-gray-800 shadow-xl z-50 transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <header className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold">Filter Options</h2>
+          <h2 className="text-lg font-semibold">{t('common.filterDrawer.title')}</h2>
           <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
             <Icon name="X" className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
@@ -128,10 +130,10 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, fil
         
         <footer className="absolute bottom-0 left-0 right-0 flex justify-end gap-3 p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
             <button onClick={handleClear} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">
-                Clear All
+                {t('common.filterDrawer.clearAll')}
             </button>
             <button onClick={handleApply} className="px-4 py-2 text-sm font-medium rounded-md bg-brand-primary text-white hover:bg-blue-700">
-                Apply Filters
+                {t('common.filterDrawer.apply')}
             </button>
         </footer>
       </div>

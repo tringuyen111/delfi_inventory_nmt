@@ -44,5 +44,23 @@
     "status": "Inactive",
     "updated_at": "2022-08-10T16:00:00Z",
     "usage_count": 0
+  },
+  {
+    "id": "SP",
+    "goods_type_code": "SP",
+    "goods_type_name": "Spare Part",
+    "description": "Parts used for maintenance and repair of equipment.",
+    "status": "Active",
+    "updated_at": "2024-01-20T11:00:00Z",
+    "usage_count": 3
+  },
+  {
+    "id": "CONSUM",
+    "goods_type_code": "CONSUM",
+    "goods_type_name": "Consumable",
+    "description": "Goods consumed in the process of business operations but not part of the final product (e.g., cleaning supplies).",
+    "status": "Active",
+    "updated_at": "2024-02-15T09:45:00Z",
+    "usage_count": 1
   }
 ]

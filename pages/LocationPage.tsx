@@ -75,7 +75,7 @@ const LocationPage: React.FC = () => {
         if (modalState.mode === 'edit' && modalState.location) {
             savedLocation = { ...modalState.location, ...locToSave, updated_at: new Date().toISOString() };
             setLocations(prev => prev.map(l => l.id === savedLocation.id ? savedLocation : l));
-            setToastInfo({ message: 'Cập nhật Location thành công', type: 'success' });
+            setToastInfo({ message: 'Location updated successfully', type: 'success' });
         } else {
             const newLocCode = locToSave.loc_code.toUpperCase();
             savedLocation = { 
@@ -86,7 +86,7 @@ const LocationPage: React.FC = () => {
                 onhand_qty: 0,
             };
             setLocations(prev => [savedLocation, ...prev]);
-            setToastInfo({ message: 'Tạo Location thành công', type: 'success' });
+            setToastInfo({ message: 'Location created successfully', type: 'success' });
         }
         return savedLocation;
     };
@@ -130,12 +130,12 @@ const LocationPage: React.FC = () => {
     );
 
     const columns: Column<Location>[] = useMemo(() => [
-        { key: 'loc_code', header: 'Mã vị trí' },
-        { key: 'loc_name', header: 'Tên vị trí' },
-        { key: 'wh_code', header: 'Kho', render: (loc) => whMap.get(loc.wh_code) || loc.wh_code },
+        { key: 'loc_code', header: 'Location Code' },
+        { key: 'loc_name', header: 'Location Name' },
+        { key: 'wh_code', header: 'Warehouse', render: (loc) => whMap.get(loc.wh_code) || loc.wh_code },
         { key: 'allowed_goods_types', header: 'Allowed GT', render: (loc) => renderGoodsTypeChips(loc.allowed_goods_types) },
         { key: 'blocked_goods_types', header: 'Blocked GT', render: (loc) => renderGoodsTypeChips(loc.blocked_goods_types) },
-        { key: 'status', header: 'Trạng thái', render: (loc) => (
+        { key: 'status', header: 'Status', render: (loc) => (
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                 loc.status === 'Active' 
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
@@ -144,7 +144,7 @@ const LocationPage: React.FC = () => {
                 {loc.status}
             </span>
         )},
-        { key: 'updated_at', header: 'Cập nhật', render: (loc) => new Date(loc.updated_at).toLocaleDateString() },
+        { key: 'updated_at', header: 'Updated At', render: (loc) => new Date(loc.updated_at).toLocaleDateString() },
         { key: 'actions', header: '', render: (loc) => (
             <div className="flex justify-end items-center gap-2">
                 <button onClick={() => handleView(loc)} className="p-1 text-gray-500 hover:text-brand-primary dark:hover:text-blue-400">
@@ -168,7 +168,7 @@ const LocationPage: React.FC = () => {
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
-                             placeholder="Tìm theo mã/tên/kho..." 
+                             placeholder="Search by code/name/warehouse..." 
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
                              className="w-64 pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
@@ -198,8 +198,8 @@ const LocationPage: React.FC = () => {
             
             {filteredLocations.length === 0 && !isLoading && (
                 <div className="text-center py-16">
-                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">Chưa có Location</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Nhấn Create để thêm vị trí đầu tiên.</p>
+                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">No Locations Found</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click 'Create' to add the first location.</p>
                 </div>
             )}
 
@@ -231,8 +231,8 @@ const LocationPage: React.FC = () => {
                 onApplyFilters={setFilters}
                 onClearFilters={() => setFilters({})}
                 filterOptions={[
-                    { key: 'wh_code', label: 'Kho', options: warehouses.map(w => w.wh_code), optionLabels: whMap },
-                    { key: 'status', label: 'Trạng thái', options: ["Active","Inactive"]}
+                    { key: 'wh_code', label: 'Warehouse', options: warehouses.map(w => w.wh_code), optionLabels: whMap },
+                    { key: 'status', label: 'Status', options: ["Active","Inactive"]}
                 ]}
             />
         </div>

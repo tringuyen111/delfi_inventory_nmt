@@ -4,7 +4,8 @@ import { OnhandByLocation, OnhandSerialDetail, OnhandLotDetail, OnhandHistoryDet
 import { Table, Column, RowAction } from '../ui/Table';
 import { Icon } from '../Icons';
 import { TimelineSidePanel } from './TimelineSidePanel';
-import { FilterDrawer } from '../ui/FilterDrawer';
+import { StatusBadge } from '../ui/StatusBadge';
+import { useLanguage } from '../../hooks/useLanguage';
 
 interface OnhandDetailModalProps {
   isOpen: boolean;
@@ -20,9 +21,10 @@ type SidePanelState = {
 }
 
 const DetailHeader: React.FC<{item: OnhandByLocation, onOpenHistory: () => void}> = ({ item, onOpenHistory }) => {
+    const { t } = useLanguage();
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
-        // Add toast feedback if available
+        // In a real app, you might show a toast notification here.
     };
 
     return (
@@ -40,232 +42,189 @@ const DetailHeader: React.FC<{item: OnhandByLocation, onOpenHistory: () => void}
                     <p className="text-gray-600 dark:text-gray-400 max-w-xl truncate">{item.model_name}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                     <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600" onClick={onOpenHistory}><Icon name="History" className="w-4 h-4"/> Open History</button>
-                     <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600" onClick={() => copyToClipboard(item.model_code)}><Icon name="Copy" className="w-4 h-4"/> Copy Code</button>
+                     <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600" onClick={onOpenHistory}><Icon name="History" className="w-4 h-4"/> {t('pages.onhand.detailModal.header.openHistory')}</button>
+                     <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600" onClick={() => copyToClipboard(item.model_code)}><Icon name="Copy" className="w-4 h-4"/> {t('pages.onhand.detailModal.header.copyCode')}</button>
                 </div>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                <Kpi label="ONHAND" value={item.onhand_qty.toLocaleString()} />
-                <Kpi label="ALLOCATED" value={item.allocated_qty.toLocaleString()} />
-                <Kpi label="AVAILABLE" value={item.available_qty.toLocaleString()} isBadge />
-                <Kpi label="WAREHOUSE" value={item.wh_code} />
-                <Kpi label="LOCATION" value={item.loc_code} />
-                <Kpi label="TRACKING" value={<span className="font-semibold text-gray-800 dark:text-gray-100">{item.tracking_type}</span>} />
-                <Kpi label="LAST MOVEMENT" value={new Date(item.last_movement_at).toLocaleString()} />
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600 grid grid-cols-2 md:grid-cols-4 gap-4">
+                 <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{t('pages.onhand.detailModal.header.onhand')}</p>
+                    <p className="text-lg font-bold">{item.onhand_qty.toLocaleString()}</p>
+                </div>
+                <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{t('pages.onhand.detailModal.header.allocated')}</p>
+                    <p className="text-lg font-bold">{item.allocated_qty.toLocaleString()}</p>
+                </div>
+                <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{t('pages.onhand.detailModal.header.available')}</p>
+                    <p className="text-lg font-bold">{item.available_qty.toLocaleString()}</p>
+                </div>
+                <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{t('pages.onhand.detailModal.header.lastMovement')}</p>
+                    <p className="text-sm font-semibold">{new Date(item.last_movement_at).toLocaleDateString()}</p>
+                </div>
             </div>
         </div>
-    )
-}
-
-const Kpi: React.FC<{label: string, value: string | React.ReactNode, isBadge?: boolean}> = ({ label, value, isBadge }) => (
-    <div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">{label}</p>
-        {isBadge ? <span className="text-lg font-bold px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-brand-primary rounded">{value}</span> : <p className="text-lg font-bold text-gray-800 dark:text-gray-100">{value}</p>}
-    </div>
-);
+    );
+};
 
 
 export const OnhandDetailModal: React.FC<OnhandDetailModalProps> = ({ isOpen, onClose, item }) => {
-    if (!isOpen || !item) return null;
+    const { t } = useLanguage();
+    const [activeTab, setActiveTab] = useState<ActiveTab | null>(null);
+    const [sidePanelState, setSidePanelState] = useState<SidePanelState>({ isOpen: false, type: null, id: null });
+    const [details, setDetails] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [serialSearchTerm, setSerialSearchTerm] = useState('');
 
-    const [activeTab, setActiveTab] = useState<ActiveTab>(item.tracking_type === 'Serial' ? 'serial' : item.tracking_type === 'Lot' ? 'lot' : 'history');
-    const [sidePanel, setSidePanel] = useState<SidePanelState>({ isOpen: false, type: null, id: null });
-    
-    // Reset tab when item changes
     useEffect(() => {
         if (item) {
-             setActiveTab(item.tracking_type === 'Serial' ? 'serial' : item.tracking_type === 'Lot' ? 'lot' : 'history');
+            const initialTab = item.tracking_type === 'Serial' ? 'serial' : item.tracking_type === 'Lot' ? 'lot' : 'history';
+            setActiveTab(initialTab);
+        } else {
+            setActiveTab(null);
+            setSerialSearchTerm('');
         }
     }, [item]);
 
-    const handleOpenSidePanel = (type: 'serial' | 'lot', id: string) => {
-        setSidePanel({ isOpen: true, type, id });
+    useEffect(() => {
+        if (item && activeTab) {
+            const fetchData = async () => {
+                setIsLoading(true);
+                let url = '';
+                let dataKey = '';
+                const key = `${item.wh_code}-${item.loc_code}-${item.model_code}`;
+                
+                if (activeTab === 'serial') {
+                    url = './data/onhand_serials.json';
+                    dataKey = key;
+                } else if (activeTab === 'lot') {
+                    url = './data/onhand_lots.json';
+                    dataKey = key;
+                } else if (activeTab === 'history') {
+                    url = './data/onhand_history_detailed.json';
+                    dataKey = key;
+                }
+
+                if (url) {
+                    try {
+                        const res = await fetch(url);
+                        const data = await res.json();
+                        const fetchedDetails = data[dataKey] || [];
+
+                        // Sorting logic for better data presentation
+                        if (activeTab === 'serial') {
+                            fetchedDetails.sort((a: OnhandSerialDetail, b: OnhandSerialDetail) => {
+                                const dateCompare = new Date(a.received_date).getTime() - new Date(b.received_date).getTime();
+                                if (dateCompare !== 0) return dateCompare;
+                                return a.serial_no.localeCompare(b.serial_no);
+                            });
+                        } else if (activeTab === 'lot') {
+                            fetchedDetails.sort((a: OnhandLotDetail, b: OnhandLotDetail) => {
+                                const dateA = a.expiry_date ? new Date(a.expiry_date).getTime() : Infinity;
+                                const dateB = b.expiry_date ? new Date(b.expiry_date).getTime() : Infinity;
+                                if (dateA !== dateB) return dateA - dateB;
+                                return new Date(a.received_date).getTime() - new Date(b.received_date).getTime();
+                            });
+                        } else if (activeTab === 'history') {
+                             fetchedDetails.sort((a: OnhandHistoryDetail, b: OnhandHistoryDetail) => new Date(b.txn_date).getTime() - new Date(a.txn_date).getTime());
+                        }
+
+                        setDetails(fetchedDetails);
+                    } catch (e) {
+                        console.error(`Failed to fetch ${activeTab} details`, e);
+                        setDetails([]);
+                    }
+                }
+                setIsLoading(false);
+            };
+            fetchData();
+        }
+    }, [item, activeTab]);
+
+    if (!isOpen || !item) return null;
+
+    const openTimeline = (type: 'serial' | 'lot', id: string) => {
+        setSidePanelState({ isOpen: true, type, id });
     };
 
-    const TabButton: React.FC<{tabId: ActiveTab, label: string}> = ({ tabId, label }) => (
-        <button onClick={() => setActiveTab(tabId)} className={`px-4 py-2 text-sm font-medium border-b-2 ${activeTab === tabId ? 'border-brand-primary text-brand-primary' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:hover:text-gray-200'}`}>
-            {label}
-        </button>
-    );
+    const serialColumns: Column<OnhandSerialDetail>[] = [
+        { key: 'serial_no', header: t('pages.onhand.detailModal.serialsTable.serialNo') },
+        { key: 'status', header: t('pages.onhand.detailModal.serialsTable.status'), render: s => <StatusBadge status={s.status} /> },
+        { key: 'received_date', header: t('pages.onhand.detailModal.serialsTable.receivedDate'), render: s => new Date(s.received_date).toLocaleDateString() },
+        { key: 'last_movement_at', header: t('pages.onhand.detailModal.serialsTable.lastMovement'), render: s => new Date(s.last_movement_at).toLocaleString() },
+        { key: 'notes', header: t('pages.onhand.detailModal.serialsTable.notes'), render: s => s.notes || '—' },
+    ];
+    const lotColumns: Column<OnhandLotDetail>[] = [
+        { key: 'lot_code', header: t('pages.onhand.detailModal.lotsTable.lotCode') },
+        { key: 'onhand_qty', header: t('pages.onhand.detailModal.lotsTable.onhand'), align: 'right', render: l => l.onhand_qty.toLocaleString() },
+        { key: 'allocated_qty', header: t('pages.onhand.detailModal.lotsTable.allocated'), align: 'right', render: l => l.allocated_qty > 0 ? l.allocated_qty.toLocaleString() : '—' },
+        { key: 'expiry_date', header: t('pages.onhand.detailModal.lotsTable.expiry'), render: l => l.expiry_date ? new Date(l.expiry_date).toLocaleDateString() : 'N/A' },
+        { key: 'received_date', header: t('pages.onhand.detailModal.lotsTable.receivedDate'), render: l => new Date(l.received_date).toLocaleDateString() },
+    ];
+    const historyColumns: Column<OnhandHistoryDetail>[] = [
+        { key: 'txn_date', header: t('pages.onhand.detailModal.historyTable.date'), render: h => new Date(h.txn_date).toLocaleString() },
+        { key: 'doc_type', header: t('pages.onhand.detailModal.historyTable.docType') },
+        { key: 'doc_no', header: t('pages.onhand.detailModal.historyTable.docNo') },
+        { key: 'qty_change', header: t('pages.onhand.detailModal.historyTable.qtyChange'), align: 'right', render: h => <span className={h.qty_change > 0 ? 'text-green-600' : 'text-red-600'}>{h.qty_change > 0 ? `+${h.qty_change}` : h.qty_change}</span> },
+        { key: 'actor', header: t('pages.onhand.detailModal.historyTable.actor') },
+    ];
+    
+    const rowActions: RowAction<any>[] = [
+        { key: 'history', icon: 'History', tooltip: 'View Timeline', action: (row) => openTimeline(activeTab as 'serial' | 'lot', row.serial_no || row.lot_code) }
+    ];
 
     const renderTabContent = () => {
+        if (isLoading) return <p className="text-center py-8">{t('pages.onhand.detailModal.loading')}</p>;
+        if (details.length === 0) return <p className="text-center py-8 text-gray-500">{t('pages.onhand.detailModal.noDetails', { tab: activeTab || '' })}</p>;
+        
         switch (activeTab) {
-            case 'serial': return <SerialsTab item={item} onOpenTimeline={handleOpenSidePanel} />;
-            case 'lot': return <LotsTab item={item} onOpenTimeline={handleOpenSidePanel} />;
-            case 'history': return <HistoryTab item={item} />;
+            case 'serial': {
+                const filteredSerials = (details as OnhandSerialDetail[]).filter(s => s.serial_no.toLowerCase().includes(serialSearchTerm.toLowerCase()));
+                return (
+                    <>
+                        <div className="mb-4">
+                            <input
+                                type="text"
+                                placeholder={t('pages.onhand.detailModal.serialsTable.searchPlaceholder')}
+                                value={serialSearchTerm}
+                                onChange={e => setSerialSearchTerm(e.target.value)}
+                                className="w-full max-w-sm p-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
+                            />
+                        </div>
+                        <Table<OnhandSerialDetail> columns={serialColumns} data={filteredSerials} rowActions={rowActions} />
+                    </>
+                );
+            }
+            case 'lot': return <Table<OnhandLotDetail> columns={lotColumns} data={details} rowActions={rowActions} />;
+            case 'history': return <Table<OnhandHistoryDetail> columns={historyColumns} data={details} />;
             default: return null;
         }
     };
-    
-    const tabs = [];
-    if (item.tracking_type === 'Serial') tabs.push({ id: 'serial', label: 'By Serial' });
-    if (item.tracking_type === 'Lot') tabs.push({ id: 'lot', label: 'By Lot' });
-    tabs.push({ id: 'history', label: 'History' });
-    
+
     return (
-    <>
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            title={`Inventory Details`}
-            size="fullscreen"
-        >
+        <>
+        <Modal isOpen={isOpen} onClose={onClose} title={t('pages.onhand.detailModal.title')} size="fullscreen">
             <div className="flex flex-col h-full">
                 <DetailHeader item={item} onOpenHistory={() => setActiveTab('history')} />
-
-                <div className="border-b border-gray-200 dark:border-gray-700 mt-4">
+                <div className="mt-4 border-b border-gray-200 dark:border-gray-700">
                     <nav className="-mb-px flex space-x-6">
-                        {tabs.map(tab => <TabButton key={tab.id} tabId={tab.id as ActiveTab} label={tab.label} />)}
+                        {item.tracking_type === 'Serial' && <button onClick={() => setActiveTab('serial')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === 'serial' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>{t('pages.onhand.detailModal.tabs.serials')}</button>}
+                        {item.tracking_type === 'Lot' && <button onClick={() => setActiveTab('lot')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === 'lot' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>{t('pages.onhand.detailModal.tabs.lots')}</button>}
+                        <button onClick={() => setActiveTab('history')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === 'history' ? 'border-brand-primary text-brand-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>{t('pages.onhand.detailModal.tabs.history')}</button>
                     </nav>
                 </div>
-                
-                <div className="flex-grow pt-4 overflow-y-auto">
+                <div className="flex-grow overflow-y-auto mt-4">
                     {renderTabContent()}
                 </div>
             </div>
         </Modal>
         <TimelineSidePanel 
-            isOpen={sidePanel.isOpen}
-            onClose={() => setSidePanel({isOpen: false, type: null, id: null})}
-            type={sidePanel.type}
-            itemId={sidePanel.id}
+            isOpen={sidePanelState.isOpen} 
+            onClose={() => setSidePanelState({ isOpen: false, type: null, id: null })} 
+            type={sidePanelState.type} 
+            itemId={sidePanelState.id}
         />
-    </>
+        </>
     );
-};
-
-// --- TABS ---
-
-const SerialsTab: React.FC<{item: OnhandByLocation, onOpenTimeline: (type: 'serial', id: string) => void}> = ({ item, onOpenTimeline }) => {
-    const [serials, setSerials] = useState<OnhandSerialDetail[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    
-    useEffect(() => {
-        const fetchSerials = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const res = await fetch('./data/onhand_serials.json');
-                if (!res.ok) throw new Error("Failed to load serial details.");
-                const data: {[key: string]: OnhandSerialDetail[]} = await res.json();
-                const itemKey = `${item.wh_code}-${item.loc_code}-${item.model_code}`;
-                setSerials(data[itemKey] || []);
-            } catch (e) {
-                setError(e instanceof Error ? e.message : "An unknown error occurred.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchSerials();
-    }, [item]);
-
-    const rowActions: RowAction<OnhandSerialDetail>[] = [
-        { key: 'timeline', icon: 'History', tooltip: 'View Serial History', action: (s) => onOpenTimeline('serial', s.serial_no) },
-        { key: 'copy', icon: 'Copy', tooltip: 'Copy Serial', action: (s) => navigator.clipboard.writeText(s.serial_no) },
-        { key: 'print', icon: 'Printer', tooltip: 'Print Label', action: (s) => alert(`Printing label for ${s.serial_no}`) },
-    ];
-
-    const columns: Column<OnhandSerialDetail>[] = useMemo(() => [
-        { key: 'serial_no', header: 'SERIAL NO', freeze: 'left' },
-        { key: 'status', header: 'STATUS' },
-        { key: 'reserved_doc_no', header: 'RESERVED DOC' },
-        { key: 'reserved_partner', header: 'PARTNER' },
-        { key: 'received_date', header: 'RECEIVED DATE', render: s => new Date(s.received_date).toLocaleDateString() },
-        { key: 'last_movement_at', header: 'LAST MOVEMENT', render: s => new Date(s.last_movement_at).toLocaleString() },
-        { key: 'age_days', header: 'AGE (DAYS)', align: 'right' },
-    ], []);
-
-    if (loading) return <div className="p-4 text-center">Loading serials...</div>;
-    if (error) return <div className="p-4 text-center text-red-500">{error}</div>;
-    if (serials.length === 0) return <div className="p-4 text-center text-gray-500">No serial numbers found for this item at this location.</div>;
-
-    return <Table<OnhandSerialDetail> columns={columns} data={serials} rowActions={rowActions} />;
-};
-
-const LotsTab: React.FC<{item: OnhandByLocation, onOpenTimeline: (type: 'lot', id: string) => void}> = ({ item, onOpenTimeline }) => {
-    const [lots, setLots] = useState<OnhandLotDetail[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchLots = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const res = await fetch('./data/onhand_lots.json');
-                if (!res.ok) throw new Error("Failed to load lot details.");
-                const data: {[key: string]: OnhandLotDetail[]} = await res.json();
-                const itemKey = `${item.wh_code}-${item.loc_code}-${item.model_code}`;
-                setLots(data[itemKey] || []);
-            } catch (e) {
-                setError(e instanceof Error ? e.message : "An unknown error occurred.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchLots();
-    }, [item]);
-
-    const rowActions: RowAction<OnhandLotDetail>[] = [
-        { key: 'timeline', icon: 'History', tooltip: 'View Lot History', action: (l) => onOpenTimeline('lot', l.lot_code) },
-        { key: 'copy', icon: 'Copy', tooltip: 'Copy Lot Code', action: (l) => navigator.clipboard.writeText(l.lot_code) },
-    ];
-    
-    const columns: Column<OnhandLotDetail>[] = useMemo(() => [
-        { key: 'lot_code', header: 'LOT CODE', freeze: 'left' },
-        { key: 'onhand_qty', header: 'ONHAND', align: 'right' },
-        { key: 'allocated_qty', header: 'ALLOCATED', align: 'right' },
-        { key: 'available_qty', header: 'AVAILABLE', align: 'right' },
-        { key: 'expiry_date', header: 'EXPIRY DATE', render: l => l.expiry_date ? new Date(l.expiry_date).toLocaleDateString() : '—' },
-        { key: 'received_date', header: 'RECEIVED DATE', render: l => new Date(l.received_date).toLocaleDateString() },
-        { key: 'age_days', header: 'AGE (DAYS)', align: 'right' },
-        { key: 'supplier_lot', header: 'SUPPLIER LOT' },
-    ], []);
-
-    if (loading) return <div className="p-4 text-center">Loading lot details...</div>;
-    if (error) return <div className="p-4 text-center text-red-500">{error}</div>;
-    if (lots.length === 0) return <div className="p-4 text-center text-gray-500">No lots found for this item at this location.</div>;
-
-    return <Table<OnhandLotDetail> columns={columns} data={lots} rowActions={rowActions} />;
-};
-
-const HistoryTab: React.FC<{item: OnhandByLocation}> = ({ item }) => {
-    const [history, setHistory] = useState<OnhandHistoryDetail[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchHistory = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const res = await fetch('./data/onhand_history_detailed.json');
-                if (!res.ok) throw new Error("Failed to load history details.");
-                const data: {[key: string]: OnhandHistoryDetail[]} = await res.json();
-                const itemKey = `${item.wh_code}-${item.loc_code}-${item.model_code}`;
-                setHistory(data[itemKey] || []);
-            } catch (e) {
-                 setError(e instanceof Error ? e.message : "An unknown error occurred.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchHistory();
-    }, [item]);
-
-    const columns: Column<OnhandHistoryDetail>[] = useMemo(() => [
-        { key: 'txn_date', header: 'DATE/TIME', render: h => new Date(h.txn_date).toLocaleString() },
-        { key: 'doc_type', header: 'DOC TYPE' },
-        { key: 'doc_no', header: 'DOC NO' },
-        { key: 'qty_change', header: 'QTY ±', align: 'right', render: h => <span className={h.qty_change > 0 ? 'text-green-600' : 'text-red-600'}>{h.qty_change > 0 ? `+${h.qty_change}`: h.qty_change}</span> },
-        { key: 'actor', header: 'ACTOR' },
-        { key: 'remark', header: 'REMARK' },
-    ], []);
-
-    if (loading) return <div className="p-4 text-center">Loading history...</div>;
-    if (error) return <div className="p-4 text-center text-red-500">{error}</div>;
-    if (history.length === 0) return <div className="p-4 text-center text-gray-500">No transaction history found.</div>;
-
-    return <Table<OnhandHistoryDetail> columns={columns} data={history} />;
 };

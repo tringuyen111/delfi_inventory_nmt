@@ -51,24 +51,24 @@ export const GoodsTypeFormModal: React.FC<GoodsTypeFormModalProps> = ({
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
     // Code validation
-    if (!formData.goods_type_code.trim()) newErrors.goods_type_code = "Mã loại Hàng Hóa là bắt buộc.";
-    if (formData.goods_type_code.length > 15) newErrors.goods_type_code = "Mã loại Hàng Hóa không được quá 15 ký tự.";
+    if (!formData.goods_type_code.trim()) newErrors.goods_type_code = "Goods Type Code is required.";
+    if (formData.goods_type_code.length > 15) newErrors.goods_type_code = "Goods Type Code cannot exceed 15 characters.";
     let isDuplicateCode = existingGoodsTypes.some(
         (gt) => gt.goods_type_code.toLowerCase() === formData.goods_type_code.toLowerCase() && gt.id !== goodsType?.id
     );
-    if (isDuplicateCode) newErrors.goods_type_code = "Mã loại Hàng Hóa đã tồn tại.";
+    if (isDuplicateCode) newErrors.goods_type_code = "Goods Type Code already exists.";
 
     // Name validation
-    if (!formData.goods_type_name.trim()) newErrors.goods_type_name = "Tên loại Hàng Hóa là bắt buộc.";
-    if (formData.goods_type_name.length > 180) newErrors.goods_type_name = "Tên loại Hàng Hóa không được quá 180 ký tự.";
+    if (!formData.goods_type_name.trim()) newErrors.goods_type_name = "Goods Type Name is required.";
+    if (formData.goods_type_name.length > 180) newErrors.goods_type_name = "Goods Type Name cannot exceed 180 characters.";
     let isDuplicateName = existingGoodsTypes.some(
         (gt) => gt.goods_type_name.toLowerCase() === formData.goods_type_name.toLowerCase() && gt.id !== goodsType?.id
     );
-    if (isDuplicateName) newErrors.goods_type_name = "Tên loại Hàng Hóa đã tồn tại.";
+    if (isDuplicateName) newErrors.goods_type_name = "Goods Type Name already exists.";
     
     // Inactivation Guard
     if (goodsType && goodsType.status === 'Active' && formData.status === 'Inactive' && goodsType.usage_count > 0) {
-        const errorMsg = "Không thể vô hiệu hóa Loại Hàng Hóa này vì đang được sử dụng bởi Model Goods hoặc Location.";
+        const errorMsg = "Cannot deactivate this Goods Type as it is in use by a Model Goods or Location.";
         newErrors.status = errorMsg;
         alert(errorMsg);
     }
@@ -123,20 +123,20 @@ export const GoodsTypeFormModal: React.FC<GoodsTypeFormModalProps> = ({
       }
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        <FormField label="Mã loại Hàng Hóa" error={errors.goods_type_code} required>
+        <FormField label="Goods Type Code" error={errors.goods_type_code} required>
             <input type="text" name="goods_type_code" value={formData.goods_type_code} onChange={handleChange} className="w-full" maxLength={15} disabled={!isCreateMode} />
         </FormField>
-         <FormField label="Tên loại Hàng Hóa" error={errors.goods_type_name} required>
+         <FormField label="Goods Type Name" error={errors.goods_type_name} required>
             <input type="text" name="goods_type_name" value={formData.goods_type_name} onChange={handleChange} className="w-full" maxLength={180} disabled={isViewMode} />
         </FormField>
         
         <div className="md:col-span-2">
-            <FormField label="Mô tả" error={errors.description}>
+            <FormField label="Description" error={errors.description}>
                 <textarea name="description" value={formData.description} onChange={handleChange} className="w-full" rows={3} maxLength={500} disabled={isViewMode}></textarea>
             </FormField>
         </div>
 
-        <FormField label="Trạng thái" error={errors.status}>
+        <FormField label="Status" error={errors.status}>
             <select name="status" value={formData.status} onChange={handleChange} className="w-full" disabled={isViewMode}>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>

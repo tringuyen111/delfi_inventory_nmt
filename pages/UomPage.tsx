@@ -1,7 +1,5 @@
 
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-// FIX: Update type import from `../types` which is now a valid module.
 import { Uom } from '../types';
 import { Icon } from '../components/Icons';
 import { Table, Column } from '../components/ui/Table';
@@ -9,10 +7,12 @@ import { UomFormModal } from '../components/uom/UomFormModal';
 import { Toast } from '../components/ui/Toast';
 import { FilterDrawer } from '../components/ui/FilterDrawer';
 import { useDebounce } from '../hooks/useDebounce';
+import { useLanguage } from '../hooks/useLanguage';
 
 type ModalMode = 'create' | 'edit' | 'view';
 
 const UomPage: React.FC = () => {
+    const { t } = useLanguage();
     const [uoms, setUoms] = useState<Uom[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -62,12 +62,12 @@ const UomPage: React.FC = () => {
 
     const handleDelete = (uom: Uom) => {
         if (uom.is_used_in_model_goods) {
-             alert("This UoM cannot be deleted because it is in use.");
+             alert(t('pages.uom.deleteInUseError'));
              return;
         }
-        if (window.confirm(`Are you sure you want to delete ${uom.uom_code}?`)) {
+        if (window.confirm(t('pages.uom.deleteConfirm', { code: uom.uom_code }))) {
             setUoms(prev => prev.filter(u => u.id !== uom.id));
-            setToastInfo({ message: 'UoM deleted successfully', type: 'success' });
+            setToastInfo({ message: t('pages.uom.toast.deleted'), type: 'success' });
         }
     };
     
@@ -76,11 +76,11 @@ const UomPage: React.FC = () => {
         if (modalState.mode === 'edit' && modalState.uom) {
             savedUom = { ...uomToSave, id: modalState.uom.id };
             setUoms(prev => prev.map(u => u.id === savedUom.id ? savedUom : u));
-            setToastInfo({ message: 'UoM updated successfully', type: 'success' });
+            setToastInfo({ message: t('pages.uom.toast.updated'), type: 'success' });
         } else { // create mode
             savedUom = { ...uomToSave, id: `uom-${Date.now()}` };
             setUoms(prev => [savedUom, ...prev]);
-            setToastInfo({ message: 'UoM created successfully', type: 'success' });
+            setToastInfo({ message: t('pages.uom.toast.created'), type: 'success' });
         }
         return savedUom;
     };
@@ -105,7 +105,6 @@ const UomPage: React.FC = () => {
             })
             .filter(uom => {
                 return Object.entries(filters).every(([key, values]) => {
-                    // FIX: Add a type guard to ensure `values` is an array before accessing its properties, resolving a potential type inference issue.
                     if (!Array.isArray(values) || values.length === 0) return true;
                     return values.includes(uom[key as keyof Uom] as string);
                 });
@@ -113,22 +112,22 @@ const UomPage: React.FC = () => {
     }, [uoms, debouncedSearchTerm, filters]);
 
     const columns: Column<Uom>[] = useMemo(() => [
-        { key: 'uom_code', header: 'Mã UoM' },
-        { key: 'uom_name', header: 'Tên UoM' },
-        { key: 'measurement_type', header: 'Loại đo lường' },
-        { key: 'uom_type', header: 'Loại UoM' },
-        { key: 'base_uom', header: 'UoM Gốc' },
-        { key: 'conv_factor', header: 'Hệ số' },
-        { key: 'status', header: 'Trạng thái', render: (uom) => (
+        { key: 'uom_code', header: t('pages.uom.table.code') },
+        { key: 'uom_name', header: t('pages.uom.table.name') },
+        { key: 'measurement_type', header: t('pages.uom.table.measurementType') },
+        { key: 'uom_type', header: t('pages.uom.table.uomType') },
+        { key: 'base_uom', header: t('pages.uom.table.baseUom') },
+        { key: 'conv_factor', header: t('pages.uom.table.factor') },
+        { key: 'status', header: t('common.status'), render: (uom) => (
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                 uom.status === 'Active' 
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
                 : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}`
             }>
-                {uom.status}
+                {t(`common.${uom.status.toLowerCase()}`)}
             </span>
         )},
-        { key: 'updated_at', header: 'Cập nhật', render: (uom) => new Date(uom.updated_at).toLocaleDateString() },
+        { key: 'updated_at', header: t('common.updatedAt'), render: (uom) => new Date(uom.updated_at).toLocaleDateString() },
         { key: 'actions', header: '', render: (uom) => (
             <div className="flex justify-end items-center gap-2">
                 <button onClick={() => handleView(uom)} className="p-1 text-gray-500 hover:text-brand-primary dark:hover:text-blue-400">
@@ -143,7 +142,7 @@ const UomPage: React.FC = () => {
                 </button>
             </div>
         )}
-    ], []);
+    ], [t]);
 
     return (
         <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
@@ -151,7 +150,7 @@ const UomPage: React.FC = () => {
                 <div className="flex justify-between items-center">
                     <div className="flex gap-2">
                         <button onClick={handleCreate} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700">
-                            <Icon name="Plus" className="w-4 h-4"/> Create
+                            <Icon name="Plus" className="w-4 h-4"/> {t('common.create')}
                         </button>
                     </div>
                     <div className="flex gap-2 items-center">
@@ -159,14 +158,14 @@ const UomPage: React.FC = () => {
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
-                             placeholder="Tìm theo Mã/Tên/Loại..." 
+                             placeholder={t('pages.uom.searchPlaceholder')}
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
                              className="w-64 pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
                            />
                         </div>
                         <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <Icon name="Filter" className="w-4 h-4"/> Filter
+                            <Icon name="Filter" className="w-4 h-4"/> {t('common.filter')}
                         </button>
                          <button onClick={fetchUoms} className="p-2 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600">
                            <Icon name="RefreshCw" className="w-4 h-4"/>
@@ -176,9 +175,9 @@ const UomPage: React.FC = () => {
             </header>
 
             {isLoading ? (
-                <div className="p-8 text-center">Loading data...</div>
+                <div className="p-8 text-center">{t('common.loading')}</div>
             ) : error ? (
-                <div className="p-8 text-center text-red-500">Error: {error}</div>
+                <div className="p-8 text-center text-red-500">{t('common.error')}: {error}</div>
             ) : (
                 <Table<Uom>
                     columns={columns}
@@ -189,8 +188,8 @@ const UomPage: React.FC = () => {
             
             {filteredUoms.length === 0 && !isLoading && (
                 <div className="text-center py-16">
-                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">Chưa có UoM</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Nhấn Create để thêm UoM đầu tiên.</p>
+                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">{t('pages.uom.empty.title')}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('pages.uom.empty.message')}</p>
                 </div>
             )}
 
@@ -220,9 +219,9 @@ const UomPage: React.FC = () => {
                 onApplyFilters={setFilters}
                 onClearFilters={() => setFilters({})}
                 filterOptions={[
-                    { key: 'measurement_type', label: 'Loại đo lường', options: ["Piece","Weight","Volume","Length","Area","Time"]},
-                    { key: 'uom_type', label: 'Loại UoM', options: ["Base","Alt"]},
-                    { key: 'status', label: 'Trạng thái', options: ["Active","Inactive"]}
+                    { key: 'measurement_type', label: t('pages.uom.table.measurementType'), options: ["Piece","Weight","Volume","Length","Area","Time"]},
+                    { key: 'uom_type', label: t('pages.uom.table.uomType'), options: ["Base","Alt"]},
+                    { key: 'status', label: t('common.status'), options: ["Active","Inactive"]}
                 ]}
             />
         </div>

@@ -26,5 +26,29 @@
       "pallet_id": "PALLET-C06",
       "notes": "Store in cool environment"
     }
+  ],
+  "NYC-CEN-B2-R3-MDL-202404-00012": [
+    {
+      "id": "EPOXY001",
+      "lot_code": "EPOXY-A-LOT001",
+      "onhand_qty": 100,
+      "allocated_qty": 0,
+      "available_qty": 100,
+      "expiry_date": "2026-04-13T00:00:00Z",
+      "received_date": "2024-04-13T11:00:00Z",
+      "age_days": 29,
+      "notes": ""
+    },
+    {
+      "id": "EPOXY002",
+      "lot_code": "EPOXY-A-LOT002",
+      "onhand_qty": 50,
+      "allocated_qty": 0,
+      "available_qty": 50,
+      "expiry_date": "2026-04-13T00:00:00Z",
+      "received_date": "2024-04-13T11:00:00Z",
+      "age_days": 29,
+      "notes": ""
+    }
   ]
 }

@@ -1,30 +1,26 @@
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+
+import React, { useState, useEffect, useMemo } from 'react';
 import { Warehouse, ExportHistoryItem } from '../types';
 import { Icon } from '../components/Icons';
 import { SectionCard } from '../components/SectionCard';
-import { MultiSelectDropdown } from '../components/ui/MultiSelectDropdown';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { FormField } from '../components/ui/FormField';
-
-declare const flatpickr: any;
+import { DateRangePicker } from '../components/ui/DateRangePicker';
 
 const CURRENT_USER = "Alex Nguyen"; // Mock current user
 
 const ReportsPage: React.FC = () => {
     // Form state
     const [reportType, setReportType] = useState('transaction_history');
-    const [selectedWarehouses, setSelectedWarehouses] = useState<string[]>([]);
-    const [dateRange, setDateRange] = useState('');
+    const [selectedWarehouse, setSelectedWarehouse] = useState<string>('');
+    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
 
     // Data and UI state
     const [exportHistory, setExportHistory] = useState<ExportHistoryItem[]>([]);
     const [allWarehouses, setAllWarehouses] = useState<Warehouse[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    const dateRangeRef = useRef<HTMLInputElement>(null);
-    const flatpickrInstance = useRef<any>(null);
 
     // Fetch warehouse data for selector
     useEffect(() => {
@@ -42,39 +38,31 @@ const ReportsPage: React.FC = () => {
         };
         fetchWarehouses();
     }, []);
+    
+    const handleReset = () => {
+        setReportType('transaction_history');
+        setSelectedWarehouse('');
+        setDateRange([null, null]);
+    };
 
-    // Initialize and manage flatpickr
-    useEffect(() => {
-        if (dateRangeRef.current && typeof flatpickr !== 'undefined') {
-            flatpickrInstance.current = flatpickr(dateRangeRef.current, {
-                mode: "range",
-                dateFormat: "d/m/Y",
-                onChange: (selectedDates: Date[]) => {
-                    if (selectedDates.length === 2) {
-                        const formatted = selectedDates.map(d => 
-                            `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`
-                        ).join(' - ');
-                        setDateRange(formatted);
-                    }
-                }
-            });
-        }
-        return () => {
-            flatpickrInstance.current?.destroy();
-        };
-    }, []);
 
     const handleExport = () => {
         const reportTypeLabelMap: { [key: string]: string } = {
-            'detailed_inventory': 'Tồn kho Chi tiết',
-            'transaction_history': 'Lịch sử Giao dịch',
-            'inventory_discrepancy': 'Chênh lệch Kiểm kê',
+            'detailed_inventory': 'Detailed Inventory',
+            'transaction_history': 'Transaction History',
+            'inventory_discrepancy': 'Inventory Discrepancy',
         };
         const reportTypeLabel = reportTypeLabelMap[reportType] || 'Unknown Report';
 
-        let params = `Warehouse(s): ${selectedWarehouses.length > 0 ? selectedWarehouses.join(', ') : 'All'}`;
-        if (reportType !== 'detailed_inventory' && dateRange) {
-            params += `; Date Range: ${dateRange}`;
+        let params = `Warehouse: ${selectedWarehouse || 'All'}`;
+        const [from, to] = dateRange;
+        if (showDateRange) {
+             if (from && to) {
+                const formatDate = (d: Date) => `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+                params += `; Date Range: ${formatDate(from)} - ${formatDate(to)}`;
+            } else {
+                params += '; Date Range: All Time';
+            }
         }
         
         const newExportItem: ExportHistoryItem = {
@@ -114,7 +102,6 @@ const ReportsPage: React.FC = () => {
         }, 500);
     };
     
-    const warehouseOptions = useMemo(() => allWarehouses.map(w => w.wh_code), [allWarehouses]);
     const showDateRange = reportType === 'transaction_history' || reportType === 'inventory_discrepancy';
 
     const renderStatus = (item: ExportHistoryItem) => {
@@ -133,7 +120,7 @@ const ReportsPage: React.FC = () => {
 
     const renderAction = (item: ExportHistoryItem) => {
         if (item.status === 'completed') {
-            return <a href="#" onClick={e => e.preventDefault()} className="font-medium text-brand-primary hover:underline flex items-center gap-1"><Icon name="Download" className="w-4 h-4" /> Tải về</a>;
+            return <a href="#" onClick={e => e.preventDefault()} className="font-medium text-brand-primary hover:underline flex items-center gap-1"><Icon name="Download" className="w-4 h-4" /> Download</a>;
         }
         return <span className="text-gray-400 dark:text-gray-500">N/A</span>;
     };
@@ -148,51 +135,56 @@ const ReportsPage: React.FC = () => {
     return (
         <div className="space-y-6">
             <SectionCard title="Export Report" icon="Download">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
-                    <FormField label="Loại báo cáo" required>
-                        <select value={reportType} onChange={e => setReportType(e.target.value)} className="w-full">
-                            <option value="transaction_history">Lịch sử Giao dịch</option>
-                            <option value="inventory_discrepancy">Chênh lệch Kiểm kê</option>
-                            <option value="detailed_inventory">Tồn kho Chi tiết</option>
-                        </select>
-                    </FormField>
+                <div className="flex flex-wrap items-end gap-4">
+                    <div className="flex-1 min-w-[200px]">
+                        <FormField label="Report Type" required>
+                            <select value={reportType} onChange={e => setReportType(e.target.value)} className="w-full">
+                                <option value="transaction_history">Transaction History</option>
+                                <option value="inventory_discrepancy">Inventory Discrepancy</option>
+                                <option value="detailed_inventory">Detailed Inventory</option>
+                            </select>
+                        </FormField>
+                    </div>
                     
-                    <div className="lg:col-span-2">
-                        <FormField label="Kho">
-                            <MultiSelectDropdown 
-                                options={warehouseOptions}
-                                selectedOptions={selectedWarehouses}
-                                onChange={setSelectedWarehouses}
-                                placeholder="All Warehouses"
-                            />
+                    <div className="flex-1 min-w-[200px]">
+                        <FormField label="Warehouse">
+                             <select value={selectedWarehouse} onChange={e => setSelectedWarehouse(e.target.value)} className="w-full">
+                                <option value="">All Warehouses</option>
+                                {allWarehouses.map(w => <option key={w.wh_code} value={w.wh_code}>{w.wh_name}</option>)}
+                            </select>
                         </FormField>
                     </div>
 
-                    <div style={{ visibility: showDateRange ? 'visible' : 'hidden' }}>
-                        <FormField label="Khoảng thời gian">
-                            <input ref={dateRangeRef} type="text" placeholder="Select date range..." className="w-full" readOnly />
-                        </FormField>
+                    <div className="flex-1 min-w-[300px]" style={{ visibility: showDateRange ? 'visible' : 'hidden' }}>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date Range</label>
+                        <DateRangePicker 
+                            value={dateRange}
+                            onChange={setDateRange}
+                        />
                     </div>
                     
-                    <div className="flex items-end">
-                         <button onClick={handleExport} className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700">
-                            <Icon name="Download" className="w-4 h-4"/> Xuất Báo cáo
+                    <div className="flex items-end gap-2 ml-auto">
+                         <button onClick={handleReset} className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">
+                            Reset
+                        </button>
+                         <button onClick={handleExport} className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700">
+                            <Icon name="Download" className="w-4 h-4"/> Export
                         </button>
                     </div>
                 </div>
             </SectionCard>
 
-            <SectionCard title="Lịch sử Xuất Báo cáo" icon="History">
+            <SectionCard title="Export History" icon="History">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead className="text-xs text-left text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th className="px-4 py-3">Loại báo cáo</th>
-                                <th className="px-4 py-3">Ngày xuất</th>
-                                <th className="px-4 py-3">Người xuất</th>
-                                <th className="px-4 py-3">Tham số</th>
-                                <th className="px-4 py-3">Trạng thái</th>
-                                <th className="px-4 py-3">Hành động</th>
+                                <th className="px-4 py-3">Report Type</th>
+                                <th className="px-4 py-3">Export Date</th>
+                                <th className="px-4 py-3">Exporter</th>
+                                <th className="px-4 py-3">Parameters</th>
+                                <th className="px-4 py-3">Status</th>
+                                <th className="px-4 py-3">Action</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -206,7 +198,7 @@ const ReportsPage: React.FC = () => {
                                     <td className="px-4 py-3">{renderAction(item)}</td>
                                 </tr>
                             )) : (
-                                <tr><td colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">Chưa có lịch sử xuất báo cáo.</td></tr>
+                                <tr><td colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">No report export history found.</td></tr>
                             )}
                         </tbody>
                     </table>

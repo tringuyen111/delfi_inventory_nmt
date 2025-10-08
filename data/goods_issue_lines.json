@@ -1,3 +1,4 @@
+
 {
   "GI-202312-001": [
     {
@@ -7,28 +8,13 @@
       "model_name": "Industrial Laser Printer, Model X",
       "uom": "PCS",
       "tracking_type": "Serial",
+      "qty_planned": 2,
+      "qty_picked": 2,
       "location_code": "PICK-A",
-      "onhand": 5,
-      "qty_planned": 1,
-      "qty_picked": 1,
+      "onhand": 45,
       "details": [
-        { "serial_no": "SN-PRINTER-2023-1004" }
-      ]
-    },
-    {
-      "id": "GIL-1-2",
-      "gi_id": "GI-202312-001",
-      "model_code": "MDL-202311-00003",
-      "model_name": "Chemical Compound A (25kg Bag)",
-      "uom": "KG",
-      "tracking_type": "Lot",
-      "location_code": "QC-01",
-      "onhand": 100,
-      "qty_planned": 35,
-      "qty_picked": 35,
-      "details": [
-        { "lot_code": "CHEM-A-LOT2024A", "qty": 30 },
-        { "lot_code": "CHEM-A-LOT2023B", "qty": 5 }
+        { "serial_no": "SN-PRINTER-2023-1004" },
+        { "serial_no": "SN-PRINTER-2023-1005" }
       ]
     }
   ],
@@ -40,20 +26,9 @@
       "model_name": "Premium A4 Paper Ream (500 Sheets)",
       "uom": "PCS",
       "tracking_type": "None",
+      "qty_planned": 100,
       "location_code": "A1-R1",
-      "onhand": 130,
-      "qty_planned": 50
-    },
-    {
-      "id": "GIL-2-2",
-      "gi_id": "GI-202312-002",
-      "model_code": "MDL-202311-00001",
-      "model_name": "Premium A4 Paper Ream (500 Sheets)",
-      "uom": "PCS",
-      "tracking_type": "None",
-      "location_code": "B2-R3",
-      "onhand": 500,
-      "qty_planned": 100
+      "onhand": 1450
     }
   ],
   "GI-202312-003": [
@@ -64,11 +39,10 @@
       "model_name": "Standard Packing Box (Medium)",
       "uom": "PCS",
       "tracking_type": "None",
-      "location_code": "STAGING",
-      "onhand": 0,
       "qty_planned": 10,
       "qty_picked": 8,
-      "details": [{ "qty": 8 }]
+      "location_code": "STAGING",
+      "onhand": -10
     }
   ],
   "GI-202312-004": [
@@ -79,40 +53,27 @@
       "model_name": "Chemical Compound A (25kg Bag)",
       "uom": "KG",
       "tracking_type": "Lot",
+      "qty_planned": 50,
       "location_code": "QC-01",
-      "onhand": 100,
-      "qty_planned": 25,
-      "qty_picked": 20,
+      "onhand": 400,
       "details": [
-        { "lot_code": "CHEM-A-LOT2024A", "qty": 20 }
+        { "lot_code": "CHEM-A-LOT2024A", "qty": 50 }
       ]
     }
   ],
   "GI-202312-005": [],
-  "GI-202311-150": [
-     {
-      "id": "GIL-150-1",
-      "gi_id": "GI-202311-150",
-      "model_code": "MDL-202311-00001",
-      "model_name": "Premium A4 Paper Ream (500 Sheets)",
-      "uom": "PCS",
-      "tracking_type": "None",
-      "location_code": "A1-R1",
-      "onhand": 150,
-      "qty_planned": 10
-    }
-  ],
+  "GI-202311-150": [],
   "GI-202312-006": [
-     {
+    {
       "id": "GIL-6-1",
       "gi_id": "GI-202312-006",
       "model_code": "MDL-202311-00002",
       "model_name": "Industrial Laser Printer, Model X",
       "uom": "PCS",
       "tracking_type": "Serial",
+      "qty_planned": 3,
       "location_code": "PICK-A",
-      "onhand": 4,
-      "qty_planned": 2
+      "onhand": 45
     }
   ],
   "GI-202312-007": []

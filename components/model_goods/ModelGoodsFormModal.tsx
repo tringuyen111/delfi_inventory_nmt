@@ -25,6 +25,7 @@ const INITIAL_STATE: Omit<ModelGoods, 'id' | 'model_code' | 'updated_at' | 'tota
     tracking_type: 'None',
     description: '',
     status: 'Active',
+    low_stock_threshold: undefined,
 };
 
 export const ModelGoodsFormModal: React.FC<ModelGoodsFormModalProps> = ({ 
@@ -45,6 +46,7 @@ export const ModelGoodsFormModal: React.FC<ModelGoodsFormModalProps> = ({
         tracking_type: modelGoods.tracking_type,
         description: modelGoods.description || '',
         status: modelGoods.status,
+        low_stock_threshold: modelGoods.low_stock_threshold,
       });
     } else {
       setFormData(INITIAL_STATE);
@@ -59,20 +61,24 @@ export const ModelGoodsFormModal: React.FC<ModelGoodsFormModalProps> = ({
   
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
-    if (!formData.model_name.trim()) newErrors.model_name = "Tên model bắt buộc, ≤200 ký tự.";
-    if (formData.model_name.length > 200) newErrors.model_name = "Tên model bắt buộc, ≤200 ký tự.";
+    if (!formData.model_name.trim()) newErrors.model_name = "Model Name is required (<=200 chars).";
+    if (formData.model_name.length > 200) newErrors.model_name = "Model Name is required (<=200 chars).";
 
-    if (!formData.goods_type_code) newErrors.goods_type_code = "Phải chọn Loại Hàng Hóa (đang Active).";
-    if (!formData.base_uom) newErrors.base_uom = "Phải chọn UoM gốc (UoM Type=Base & Active).";
-    if (!formData.tracking_type) newErrors.tracking_type = "Phải chọn Tracking type hợp lệ.";
+    if (!formData.goods_type_code) newErrors.goods_type_code = "An active Goods Type must be selected.";
+    if (!formData.base_uom) newErrors.base_uom = "An active Base UoM must be selected.";
+    if (!formData.tracking_type) newErrors.tracking_type = "A valid Tracking Type must be selected.";
     
+    if (formData.low_stock_threshold && Number(formData.low_stock_threshold) < 0) {
+        newErrors.low_stock_threshold = "Low Stock Threshold must be a non-negative number.";
+    }
+
     if (modelGoods && modelGoods.status === 'Active' && formData.status === 'Inactive') {
         if (modelGoods.total_onhand_qty > 0) {
-            const msg = "Không thể vô hiệu hóa Model Goods này vì vẫn còn tồn kho.";
+            const msg = "Cannot deactivate this Model Goods as there is still on-hand stock.";
             newErrors.status = msg;
             alert(msg);
         } else {
-            const confirmed = window.confirm("Vô hiệu hóa Model Goods sẽ chặn phát sinh giao dịch mới. Tiếp tục?");
+            const confirmed = window.confirm("Deactivating this Model Goods will prevent new transactions. Continue?");
             if (!confirmed) {
                 // This is a soft validation fail to prevent submission
                 newErrors.status = "Inactivation not confirmed.";
@@ -90,6 +96,7 @@ export const ModelGoodsFormModal: React.FC<ModelGoodsFormModalProps> = ({
     const finalData = {
         ...formData,
         model_name: formData.model_name.trim(),
+        low_stock_threshold: formData.low_stock_threshold ? Number(formData.low_stock_threshold) : null,
     };
     
     if (andClose) {
@@ -132,35 +139,35 @@ export const ModelGoodsFormModal: React.FC<ModelGoodsFormModalProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         {!isCreateMode && (
              <div className="md:col-span-2">
-                <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mã model</p>
+                <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Model Code</p>
                 <p className="text-sm text-gray-900 dark:text-gray-100 font-mono bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-md">{modelGoods?.model_code}</p>
              </div>
         )}
        
         <div className="md:col-span-2">
-            <FormField label="Tên model" error={errors.model_name} required>
+            <FormField label="Model Name" error={errors.model_name} required>
                 <input type="text" name="model_name" value={formData.model_name} onChange={handleChange} className="w-full" maxLength={200} disabled={isViewMode} />
             </FormField>
         </div>
 
-        <FormField label="Loại Hàng Hóa" error={errors.goods_type_code} required>
+        <FormField label="Goods Type" error={errors.goods_type_code} required>
             <select name="goods_type_code" value={formData.goods_type_code} onChange={handleChange} className="w-full" disabled={isViewMode || isLocked}>
-                <option value="">-- Chọn Loại Hàng Hóa --</option>
+                <option value="">-- Select Goods Type --</option>
                 {activeGoodsTypeOptions.map(gt => (
                     <option key={gt.id} value={gt.goods_type_code}>{gt.goods_type_name}</option>
                 ))}
             </select>
         </FormField>
-         <FormField label="Đơn vị gốc" error={errors.base_uom} required>
+         <FormField label="Base UoM" error={errors.base_uom} required>
             <select name="base_uom" value={formData.base_uom} onChange={handleChange} className="w-full" disabled={isViewMode || isLocked}>
-                <option value="">-- Chọn Đơn vị gốc --</option>
+                <option value="">-- Select Base UoM --</option>
                 {activeBaseUomOptions.map(uom => (
                     <option key={uom.id} value={uom.uom_code}>{uom.uom_name} ({uom.uom_code})</option>
                 ))}
             </select>
         </FormField>
         
-        <FormField label="Tracking type" error={errors.tracking_type} required>
+        <FormField label="Tracking Type" error={errors.tracking_type} required>
             <select name="tracking_type" value={formData.tracking_type} onChange={handleChange} className="w-full" disabled={isViewMode || isLocked}>
                 <option value="None">None</option>
                 <option value="Serial">Serial</option>
@@ -168,18 +175,31 @@ export const ModelGoodsFormModal: React.FC<ModelGoodsFormModalProps> = ({
             </select>
         </FormField>
 
-        <FormField label="Trạng thái" error={errors.status}>
+        <FormField label="Low Stock Threshold" error={errors.low_stock_threshold}>
+            <input 
+                type="number" 
+                name="low_stock_threshold" 
+                value={formData.low_stock_threshold || ''} 
+                onChange={handleChange} 
+                className="w-full"
+                min="0"
+                disabled={isViewMode}
+            />
+        </FormField>
+
+        <div className="md:col-span-2">
+            <FormField label="Description" error={errors.description}>
+                <textarea name="description" value={formData.description} onChange={handleChange} className="w-full" rows={3} maxLength={1000} disabled={isViewMode}></textarea>
+            </FormField>
+        </div>
+        
+        <FormField label="Status" error={errors.status}>
             <select name="status" value={formData.status} onChange={handleChange} className="w-full" disabled={isViewMode}>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
             </select>
         </FormField>
         
-        <div className="md:col-span-2">
-            <FormField label="Mô tả" error={errors.description}>
-                <textarea name="description" value={formData.description} onChange={handleChange} className="w-full" rows={3} maxLength={1000} disabled={isViewMode}></textarea>
-            </FormField>
-        </div>
 
       </div>
     </Modal>

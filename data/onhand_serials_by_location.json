@@ -1,9 +1,19 @@
-
 {
-    "MDL-202311-00002-PICK-A": [
-        "SN-PRINTER-2023-1001",
-        "SN-PRINTER-2023-1004",
-        "SN-PRINTER-2023-1005",
-        "SN-PRINTER-2023-1006"
-    ]
+  "MDL-202311-00002-PICK-A": [
+    { "serial_no": "SN-PRINTER-2023-1001", "receipt_date": "2023-11-20T00:00:00Z" },
+    { "serial_no": "SN-PRINTER-2023-1002", "receipt_date": "2023-11-20T00:00:00Z" },
+    { "serial_no": "SN-PRINTER-2023-1003", "receipt_date": "2023-11-20T00:00:00Z" },
+    { "serial_no": "SN-PRINTER-2023-1004", "receipt_date": "2023-11-20T00:00:00Z" },
+    { "serial_no": "SN-PRINTER-2023-1005", "receipt_date": "2023-11-20T00:00:00Z" }
+  ],
+  "MDL-202404-00011-A1-R1": [
+    { "serial_no": "SN-SCANNER-Z-001", "receipt_date": "2024-04-12T00:00:00Z" },
+    { "serial_no": "SN-SCANNER-Z-002", "receipt_date": "2024-04-12T00:00:00Z" },
+    { "serial_no": "SN-SCANNER-Z-003", "receipt_date": "2024-04-12T00:00:00Z" }
+  ],
+  "MDL-202404-00013-PICK-B": [
+    { "serial_no": "SN-THERMO-T2-001", "receipt_date": "2024-04-16T00:00:00Z" },
+    { "serial_no": "SN-THERMO-T2-002", "receipt_date": "2024-04-16T00:00:00Z" },
+    { "serial_no": "SN-THERMO-T2-003", "receipt_date": "2024-04-16T00:00:00Z" }
+  ]
 }

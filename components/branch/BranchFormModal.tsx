@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 import { Branch, Organization } from '../../types';
@@ -58,28 +59,28 @@ export const BranchFormModal: React.FC<BranchFormModalProps> = ({
   
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
-    if (!formData.branch_code.trim()) newErrors.branch_code = "Mã Chi nhánh là bắt buộc.";
-    if (formData.branch_code.length > 15) newErrors.branch_code = "Mã Chi nhánh không được quá 15 ký tự.";
+    if (!formData.branch_code.trim()) newErrors.branch_code = "Branch Code is required.";
+    if (formData.branch_code.length > 15) newErrors.branch_code = "Branch Code cannot exceed 15 characters.";
     let isDuplicateCode = existingBranches.some(
         (b) => b.branch_code.toLowerCase() === formData.branch_code.toLowerCase() && b.id !== branch?.id
     );
-    if (isDuplicateCode) newErrors.branch_code = "Mã Chi nhánh đã tồn tại.";
+    if (isDuplicateCode) newErrors.branch_code = "Branch Code already exists.";
 
-    if (!formData.branch_name.trim()) newErrors.branch_name = "Tên Chi nhánh là bắt buộc.";
-    if (formData.branch_name.length > 120) newErrors.branch_name = "Tên Chi nhánh không được quá 120 ký tự.";
+    if (!formData.branch_name.trim()) newErrors.branch_name = "Branch Name is required.";
+    if (formData.branch_name.length > 120) newErrors.branch_name = "Branch Name cannot exceed 120 characters.";
     let isDuplicateName = existingBranches.some(
         (b) => b.branch_name.toLowerCase() === formData.branch_name.toLowerCase() && b.id !== branch?.id
     );
-    if (isDuplicateName) newErrors.branch_name = "Tên Chi nhánh đã tồn tại.";
+    if (isDuplicateName) newErrors.branch_name = "Branch Name already exists.";
 
-    if (!formData.org_code) newErrors.org_code = "Phải chọn Tổ chức.";
+    if (!formData.org_code) newErrors.org_code = "Organization is required.";
 
     if (formData.phone && !/^[0-9()+\-\s]{6,20}$/.test(formData.phone)) {
-        newErrors.phone = "Số điện thoại không hợp lệ.";
+        newErrors.phone = "Invalid phone number format.";
     }
 
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^s@]+$/.test(formData.email)) {
-        newErrors.email = "Email không hợp lệ.";
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        newErrors.email = "Invalid email format.";
     }
 
     setErrors(newErrors);
@@ -91,7 +92,7 @@ export const BranchFormModal: React.FC<BranchFormModalProps> = ({
     
     // Inactivation confirmation
     if (branch && branch.status === 'Active' && formData.status === 'Inactive') {
-        const confirmed = window.confirm("Hành động này sẽ vô hiệu hóa Chi nhánh và TẤT CẢ các Kho trực thuộc. Bạn có chắc chắn muốn tiếp tục?");
+        const confirmed = window.confirm("This action will deactivate the Branch and ALL its associated Warehouses. Are you sure you want to continue?");
         if (!confirmed) {
             return; // Abort save
         }
@@ -140,24 +141,24 @@ export const BranchFormModal: React.FC<BranchFormModalProps> = ({
       }
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        <FormField label="Mã Chi nhánh" error={errors.branch_code} required>
+        <FormField label="Branch Code" error={errors.branch_code} required>
             <input type="text" name="branch_code" value={formData.branch_code} onChange={handleChange} className="w-full" maxLength={15} disabled={!isCreateMode} />
         </FormField>
-         <FormField label="Tổ chức" error={errors.org_code} required>
+         <FormField label="Organization" error={errors.org_code} required>
             <select name="org_code" value={formData.org_code} onChange={handleChange} className="w-full" disabled={!isCreateMode}>
-                <option value="">-- Chọn Tổ chức --</option>
+                <option value="">-- Select Organization --</option>
                 {organizations.map(org => (
                     <option key={org.id} value={org.org_code}>{org.org_name}</option>
                 ))}
             </select>
         </FormField>
         <div className="md:col-span-2">
-            <FormField label="Tên Chi nhánh" error={errors.branch_name} required>
+            <FormField label="Branch Name" error={errors.branch_name} required>
                 <input type="text" name="branch_name" value={formData.branch_name} onChange={handleChange} className="w-full" maxLength={120} disabled={isViewMode} />
             </FormField>
         </div>
 
-        <FormField label="Số điện thoại" error={errors.phone}>
+        <FormField label="Phone" error={errors.phone}>
             <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full" disabled={isViewMode} />
         </FormField>
         <FormField label="Email" error={errors.email}>
@@ -165,12 +166,12 @@ export const BranchFormModal: React.FC<BranchFormModalProps> = ({
         </FormField>
         
         <div className="md:col-span-2">
-            <FormField label="Địa chỉ" error={errors.address}>
+            <FormField label="Address" error={errors.address}>
                 <textarea name="address" value={formData.address} onChange={handleChange} className="w-full" rows={3} maxLength={500} disabled={isViewMode}></textarea>
             </FormField>
         </div>
 
-        <FormField label="Trạng thái" error={errors.status}>
+        <FormField label="Status" error={errors.status}>
             <select name="status" value={formData.status} onChange={handleChange} className="w-full" disabled={isViewMode}>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>

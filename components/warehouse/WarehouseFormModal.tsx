@@ -57,24 +57,24 @@ export const WarehouseFormModal: React.FC<WarehouseFormModalProps> = ({
   
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
-    if (!formData.wh_code.trim()) newErrors.wh_code = "Mã Kho là bắt buộc.";
-    if (formData.wh_code.length > 15) newErrors.wh_code = "Mã Kho không được quá 15 ký tự.";
+    if (!formData.wh_code.trim()) newErrors.wh_code = "Warehouse Code is required.";
+    if (formData.wh_code.length > 15) newErrors.wh_code = "Warehouse Code cannot exceed 15 characters.";
     let isDuplicateCode = existingWarehouses.some(
         (w) => w.wh_code.toLowerCase() === formData.wh_code.toLowerCase() && w.id !== warehouse?.id
     );
-    if (isDuplicateCode) newErrors.wh_code = "Mã Kho đã tồn tại.";
+    if (isDuplicateCode) newErrors.wh_code = "Warehouse Code already exists.";
 
-    if (!formData.wh_name.trim()) newErrors.wh_name = "Tên Kho là bắt buộc.";
-    if (formData.wh_name.length > 120) newErrors.wh_name = "Tên Kho không được quá 120 ký tự.";
+    if (!formData.wh_name.trim()) newErrors.wh_name = "Warehouse Name is required.";
+    if (formData.wh_name.length > 120) newErrors.wh_name = "Warehouse Name cannot exceed 120 characters.";
     let isDuplicateName = existingWarehouses.some(
         (w) => w.wh_name.toLowerCase() === formData.wh_name.toLowerCase() && w.id !== warehouse?.id
     );
-    if (isDuplicateName) newErrors.wh_name = "Tên Kho đã tồn tại.";
+    if (isDuplicateName) newErrors.wh_name = "Warehouse Name already exists.";
 
-    if (!formData.branch_code) newErrors.branch_code = "Phải chọn Chi nhánh.";
+    if (!formData.branch_code) newErrors.branch_code = "Branch is required.";
 
     if (formData.capacity && formData.capacity < 0) {
-        newErrors.capacity = "Sức chứa phải là số ≥ 0.";
+        newErrors.capacity = "Capacity must be a number >= 0.";
     }
 
     setErrors(newErrors);
@@ -85,7 +85,7 @@ export const WarehouseFormModal: React.FC<WarehouseFormModalProps> = ({
     if (!validate()) return;
     
     if (warehouse && warehouse.status === 'Active' && formData.status === 'Inactive') {
-        const confirmed = window.confirm("Hành động này sẽ vô hiệu hóa Kho và TẤT CẢ các Vị trí (Location) trực thuộc. Bạn có chắc chắn muốn tiếp tục?");
+        const confirmed = window.confirm("This action will deactivate the Warehouse and ALL its associated Locations. Are you sure you want to continue?");
         if (!confirmed) {
             return; 
         }
@@ -135,29 +135,29 @@ export const WarehouseFormModal: React.FC<WarehouseFormModalProps> = ({
       }
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        <FormField label="Mã Kho" error={errors.wh_code} required>
+        <FormField label="Warehouse Code" error={errors.wh_code} required>
             <input type="text" name="wh_code" value={formData.wh_code} onChange={handleChange} className="w-full" maxLength={15} disabled={!isCreateMode} />
         </FormField>
-         <FormField label="Chi nhánh" error={errors.branch_code} required>
+         <FormField label="Branch" error={errors.branch_code} required>
             <select name="branch_code" value={formData.branch_code} onChange={handleChange} className="w-full" disabled={!isCreateMode}>
-                <option value="">-- Chọn Chi nhánh --</option>
+                <option value="">-- Select Branch --</option>
                 {branches.map(b => (
                     <option key={b.id} value={b.branch_code}>{b.branch_name}</option>
                 ))}
             </select>
         </FormField>
         <div className="md:col-span-2">
-            <FormField label="Tên Kho" error={errors.wh_name} required>
+            <FormField label="Warehouse Name" error={errors.wh_name} required>
                 <input type="text" name="wh_name" value={formData.wh_name} onChange={handleChange} className="w-full" maxLength={120} disabled={isViewMode} />
             </FormField>
         </div>
 
-        <FormField label="Sức chứa" error={errors.capacity}>
+        <FormField label="Capacity" error={errors.capacity}>
             <input type="number" name="capacity" value={formData.capacity || ''} onChange={handleChange} className="w-full" disabled={isViewMode} min="0" />
         </FormField>
-        <FormField label="Loại kho" error={errors.warehouse_type}>
+        <FormField label="Warehouse Type" error={errors.warehouse_type}>
              <select name="warehouse_type" value={formData.warehouse_type || ''} onChange={handleChange} className="w-full" disabled={isViewMode}>
-                <option value="">-- Chọn loại kho --</option>
+                <option value="">-- Select type --</option>
                 <option value="Central">Central</option>
                 <option value="Sub">Sub</option>
                 <option value="Virtual">Virtual</option>
@@ -165,12 +165,12 @@ export const WarehouseFormModal: React.FC<WarehouseFormModalProps> = ({
         </FormField>
         
         <div className="md:col-span-2">
-            <FormField label="Địa chỉ" error={errors.address}>
+            <FormField label="Address" error={errors.address}>
                 <textarea name="address" value={formData.address} onChange={handleChange} className="w-full" rows={3} maxLength={500} disabled={isViewMode}></textarea>
             </FormField>
         </div>
 
-        <FormField label="Trạng thái" error={errors.status}>
+        <FormField label="Status" error={errors.status}>
             <select name="status" value={formData.status} onChange={handleChange} className="w-full" disabled={isViewMode}>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>

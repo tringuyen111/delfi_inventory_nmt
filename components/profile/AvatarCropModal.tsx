@@ -23,11 +23,11 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({ isOpen, onClos
 
     // Validation
     if (!['image/jpeg', 'image/png'].includes(file.type)) {
-      setError('Chỉ hỗ trợ ảnh JPG/PNG.');
+      setError('Only JPG/PNG images are supported.');
       return;
     }
     if (file.size > 2 * 1024 * 1024) { // 2MB
-      setError('Dung lượng vượt quá 2MB.');
+      setError('File size cannot exceed 2MB.');
       return;
     }
     
@@ -38,7 +38,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({ isOpen, onClos
       setStep('crop');
     };
     reader.onerror = () => {
-        setError('Không thể tải ảnh. Vui lòng thử lại.');
+        setError('Could not load image. Please try again.');
     };
     reader.readAsDataURL(file);
   };
@@ -103,11 +103,11 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({ isOpen, onClos
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Cập nhật ảnh đại diện"
+      title="Update Profile Picture"
       footer={
         <>
             <button onClick={handleClose} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">
-                Hủy
+                Cancel
             </button>
             {step === 'crop' && (
                  <button onClick={handleReset} className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">
@@ -115,7 +115,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({ isOpen, onClos
                 </button>
             )}
             <button onClick={handleSave} disabled={step !== 'crop'} className="px-4 py-2 text-sm font-medium rounded-md bg-brand-primary text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                Lưu
+                Save
             </button>
         </>
       }

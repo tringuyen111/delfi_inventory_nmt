@@ -1,0 +1,426 @@
+{
+  "common": {
+    "create": "Create",
+    "save": "Save",
+    "saveAndClose": "Save & Close",
+    "saveAsDraft": "Save as Draft",
+    "cancel": "Cancel",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "filter": "Filter",
+    "refresh": "Refresh",
+    "reset": "Reset",
+    "status": "Status",
+    "actions": "Actions",
+    "updatedAt": "Updated At",
+    "active": "Active",
+    "inactive": "Inactive",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "noDataFound": "No data found.",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "from": "From",
+    "to": "To",
+    "selectPlaceholder": "Select...",
+    "pageNotFound": "Page Not Found",
+    "pageNotFoundMessage": "The requested page '{page}' does not exist.",
+    "loadingPage": "Loading page...",
+    "filterDrawer": {
+      "title": "Filter Options",
+      "clearAll": "Clear All",
+      "apply": "Apply Filters"
+    }
+  },
+  "header": {
+    "myProfile": "My Profile",
+    "logout": "Log Out"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "operations": "Operations",
+    "warehouseOps": "Warehouse",
+    "goodsReceipt": "Goods Receipt",
+    "goodsIssue": "Goods Issue",
+    "inventoryCount": "Inventory Count",
+    "onhandInventory": "Onhand Inventory",
+    "configuration": "Configuration",
+    "catalog": "Catalog",
+    "modelGoods": "Model Goods",
+    "goodsType": "Goods Type",
+    "masterData": "Master Data",
+    "organization": "Organization",
+    "branch": "Branch",
+    "warehouse": "Warehouse",
+    "location": "Location",
+    "partner": "Partner",
+    "uom": "UoM",
+    "system": "System",
+    "reports": "Reports",
+    "pdaUiMatrix": "PDA UI Matrix"
+  },
+  "statuses": {
+    "Draft": "Draft",
+    "New": "New",
+    "Receiving": "Receiving",
+    "Submitted": "Submitted",
+    "Completed": "Completed",
+    "Rejected": "Rejected",
+    "Cancelled": "Cancelled",
+    "Picking": "Picking",
+    "AdjustmentRequested": "Adjustment Requested",
+    "Counting": "Counting",
+    "Review": "Review",
+    "None": "None",
+    "Serial": "Serial",
+    "Lot": "Lot",
+    "Available": "Available",
+    "Reserved": "Reserved",
+    "Allocated": "Allocated",
+    "InQC": "In QC"
+  },
+  "pages": {
+    "onhand": {
+      "detailModal": {
+        "title": "Onhand Details",
+        "header": {
+          "onhand": "Onhand Qty",
+          "allocated": "Allocated Qty",
+          "available": "Available Qty",
+          "lastMovement": "Last Movement",
+          "openHistory": "Open History",
+          "copyCode": "Copy Code"
+        },
+        "tabs": {
+          "serials": "By Serial",
+          "lots": "By Lot",
+          "history": "History"
+        },
+        "serialsTable": {
+          "searchPlaceholder": "Search Serial No...",
+          "serialNo": "SERIAL NO",
+          "status": "STATUS",
+          "receivedDate": "RECEIVED DATE",
+          "lastMovement": "LAST MOVEMENT",
+          "notes": "NOTES"
+        },
+        "lotsTable": {
+          "lotCode": "LOT CODE",
+          "onhand": "ONHAND",
+          "allocated": "ALLOCATED",
+          "expiry": "EXPIRY",
+          "receivedDate": "RECEIVED DATE"
+        },
+        "historyTable": {
+          "date": "Date",
+          "docType": "Doc Type",
+          "docNo": "Doc No",
+          "qtyChange": "Qty Change",
+          "actor": "Actor"
+        },
+        "loading": "Loading details...",
+        "noDetails": "No {tab} details found."
+      }
+    },
+    "goodsReceipt": {
+      "pageTitle": "Goods Receipt",
+      "searchPlaceholder": "Search GR No, Ref No, Partner...",
+      "toast": {
+        "savedDraft": "Goods Receipt saved as Draft",
+        "savedNew": "Goods Receipt saved as New",
+        "approved": "GR {grNo} has been Completed.",
+        "rejected": "GR {grNo} has been Rejected.",
+        "cancelled": "GR {grNo} has been Cancelled.",
+        "cantEdit": "This document cannot be edited in its current state."
+      },
+      "table": {
+        "grNo": "GR No",
+        "receiptType": "Receipt Type",
+        "status": "Status",
+        "partnerSource": "Partner / Source",
+        "destWarehouse": "Dest. Warehouse",
+        "docDate": "Doc Date",
+        "handler": "Handler"
+      },
+      "empty": {
+        "title": "No Goods Receipts Found",
+        "message": "Click 'Create' to start a new goods receipt."
+      },
+      "filter": {
+        "status": "Status",
+        "receiptType": "Receipt Type",
+        "destWarehouse": "Destination Warehouse"
+      },
+      "modal": {
+        "createTitle": "Create Goods Receipt",
+        "viewTitle": "View Goods Receipt: {grNo}",
+        "editTitle": "Edit Goods Receipt: {grNo}",
+        "rejectReasonPrompt": "Please provide a reason for rejection:",
+        "cancelConfirm": "Are you sure you want to cancel this document? This action cannot be undone.",
+        "statusHistory": "Status History",
+        "statusLabels": {
+            "status": "Status",
+            "createdBy": "Created by",
+            "createdAt": "Created at",
+            "handler": "Handler"
+        },
+        "formLabels": {
+          "receiptType": "Receipt Type",
+          "destWarehouse": "Dest. Warehouse",
+          "refNo": "Reference No",
+          "docDate": "Document Date",
+          "sourceWarehouse": "Source Warehouse",
+          "partner": "Partner",
+          "note": "Note"
+        },
+        "lines": {
+          "title": "Planned Items",
+          "addLine": "Add Line",
+          "table": {
+            "modelGoods": "Model Goods",
+            "uom": "UoM",
+            "qtyPlanned": "Qty Planned",
+            "qtyReceived": "Qty Received",
+            "diffQty": "Diff",
+            "action": "Action"
+          },
+          "viewDetails": "View Details"
+        },
+        "buttons": {
+            "edit": "Edit",
+            "approve": "Approve",
+            "reject": "Reject",
+            "cancelDoc": "Cancel Document"
+        },
+        "alerts": {
+            "lineRequired": "At least one line item is required."
+        }
+      },
+      "lineDetailModal": {
+          "title": "Received Details for: {modelCode}",
+          "summary": {
+              "qtyPlanned": "Qty Planned",
+              "qtyReceived": "Qty Received"
+          },
+          "table": {
+              "stt": "#",
+              "serialNo": "Serial Number",
+              "lotCode": "Lot Code",
+              "qtyReceived": "Qty Received",
+              "expiryDate": "Expiry Date"
+          },
+          "noDetails": "No details were recorded for this line."
+      }
+    },
+    "dashboard": {
+      "kpi": {
+        "onhandValue": "Total Onhand Value",
+        "pendingReceipts": "Pending Receipts",
+        "pendingIssues": "Pending Issues"
+      },
+      "charts": {
+        "transactions": "Transactions",
+        "inventoryByWh": "Inventory by Warehouse",
+        "inventoryByGt": "Inventory by Goods Type"
+      },
+      "lists": {
+        "topModels": "Top 5 Models by Quantity",
+        "pendingActions": "Pending Actions List"
+      },
+      "timeFilters": {
+        "week": "Week",
+        "month": "Month",
+        "year": "Year"
+      },
+      "pendingActionsTable": {
+        "type": "Type",
+        "docNo": "Document No.",
+        "status": "Status",
+        "createdBy": "Created By",
+        "createdAt": "Created At",
+        "noActions": "No pending actions."
+      }
+    },
+    "uom": {
+      "pageTitle": "Unit of Measure",
+      "searchPlaceholder": "Search by Code/Name/Type...",
+      "deleteConfirm": "Are you sure you want to delete {code}?",
+      "deleteInUseError": "This UoM cannot be deleted because it is in use.",
+      "toast": {
+        "deleted": "UoM deleted successfully",
+        "updated": "UoM updated successfully",
+        "created": "UoM created successfully"
+      },
+      "table": {
+        "code": "UoM Code",
+        "name": "UoM Name",
+        "measurementType": "Measurement Type",
+        "uomType": "UoM Type",
+        "baseUom": "Base UoM",
+        "factor": "Factor"
+      },
+      "modal": {
+        "createTitle": "Create New UoM",
+        "viewTitle": "View UoM Details: {code}",
+        "editTitle": "Edit UoM: {code}",
+        "labels": {
+          "code": "UoM Code",
+          "name": "UoM Name",
+          "measurementType": "Measurement Type",
+          "uomType": "UoM Type",
+          "baseUom": "Base UoM",
+          "convFactor": "Conversion Factor",
+          "description": "Description"
+        },
+        "errors": {
+          "codeRequired": "UoM Code is required.",
+          "codeMaxLength": "UoM Code cannot exceed 10 characters.",
+          "codeUnique": "UoM Code must be unique (case-insensitive).",
+          "nameRequired": "UoM Name is required.",
+          "baseUomRequired": "Base UoM is required for Alt type.",
+          "convFactorRequired": "Conversion factor must be greater than 0."
+        },
+        "measurementTypes": {
+          "piece": "Piece",
+          "weight": "Weight",
+          "volume": "Volume",
+          "length": "Length",
+          "area": "Area",
+          "time": "Time"
+        },
+        "uomTypes": {
+          "base": "Base",
+          "alt": "Alt"
+        },
+        "selectBaseUom": "-- Select Base UoM --",
+        "lockedMessage": "Some fields are locked because this UoM is being used."
+      },
+      "empty": {
+        "title": "No UoMs Found",
+        "message": "Click 'Create' to add the first UoM."
+      }
+    },
+    "organization": {
+      "pageTitle": "Organization",
+      "searchPlaceholder": "Search by code/name/email/phone...",
+      "toast": {
+        "updated": "Organization updated successfully",
+        "created": "Organization created successfully"
+      },
+      "table": {
+        "code": "Org Code",
+        "name": "Org Name",
+        "phone": "Phone",
+        "email": "Email"
+      },
+      "modal": {
+        "createTitle": "Create New Organization",
+        "viewTitle": "View Organization: {code}",
+        "editTitle": "Edit Organization: {code}",
+        "labels": {
+          "code": "Organization Code",
+          "name": "Organization Name",
+          "phone": "Phone",
+          "email": "Email",
+          "address": "Address"
+        },
+        "errors": {
+          "nameRequired": "Organization Name is required.",
+          "nameMaxLength": "Organization Name cannot exceed 120 characters.",
+          "nameUnique": "Organization Name already exists (case-insensitive).",
+          "phoneInvalid": "Invalid phone number format.",
+          "emailInvalid": "Invalid email format.",
+          "statusInactive": "Cannot deactivate this Organization because it has active documents."
+        }
+      },
+      "empty": {
+        "title": "No Organizations Found",
+        "message": "Click 'Create' to add the first record."
+      }
+    },
+    "branch": {
+        "pageTitle": "Branch",
+        "searchPlaceholder": "Search by code/name/org...",
+        "toast": {
+            "updated": "Branch updated successfully",
+            "created": "Branch created successfully"
+        },
+        "table": {
+            "code": "Branch Code",
+            "name": "Branch Name",
+            "organization": "Organization"
+        },
+        "modal": {
+            "createTitle": "Create New Branch",
+            "viewTitle": "View Branch: {code}",
+            "editTitle": "Edit Branch: {code}",
+            "labels": {
+                "code": "Branch Code",
+                "organization": "Organization",
+                "name": "Branch Name"
+            },
+            "errors": {
+                "codeRequired": "Branch Code is required.",
+                "codeMaxLength": "Branch Code cannot exceed 15 characters.",
+                "codeUnique": "Branch Code already exists.",
+                "nameRequired": "Branch Name is required.",
+                "nameMaxLength": "Branch Name cannot exceed 120 characters.",
+                "nameUnique": "Branch Name already exists.",
+                "orgRequired": "Organization is required."
+            },
+            "deactivateConfirm": "This action will deactivate the Branch and ALL its associated Warehouses. Are you sure you want to continue?",
+            "selectOrg": "-- Select Organization --"
+        },
+        "empty": {
+            "title": "No Branches Found",
+            "message": "Click 'Create' to add the first branch."
+        }
+    },
+    "profile": {
+        "title": "My Profile",
+        "picture": "Profile Picture",
+        "changePicture": "Change Picture",
+        "remove": "Remove",
+        "pictureHelp": "JPG/PNG supported, max 2MB.",
+        "personalInfo": "Personal Information",
+        "labels": {
+            "displayName": "Display Name",
+            "email": "Email",
+            "phone": "Phone",
+            "gender": "Gender",
+            "birthYear": "Birth Year",
+            "role": "Role"
+        },
+        "genderOptions": {
+            "unspecified": "-- Not specified --",
+            "male": "Male",
+            "female": "Female",
+            "other": "Other"
+        },
+        "errors": {
+            "displayNameRequired": "Display Name is required (<=120 chars).",
+            "birthYearInvalid": "Birth year must be valid (>=1900 and <= {year})."
+        },
+        "toast": {
+            "profileUpdated": "Profile updated successfully",
+            "avatarUpdated": "Avatar updated successfully",
+            "avatarRemoved": "Avatar removed"
+        },
+        "removeAvatarConfirm": "Are you sure you want to remove your avatar?",
+        "avatarModal": {
+            "title": "Update Profile Picture",
+            "chooseFile": "Choose File",
+            "maxSize": "Max size: 2MB",
+            "unsupportedFormat": "Only JPG/PNG images are supported.",
+            "fileTooLarge": "File size cannot exceed 2MB.",
+            "loadError": "Could not load image. Please try again.",
+            "cropHelp": "Adjust your image. The final avatar will be circular.",
+            "chooseAnother": "Choose Another"
+        }
+    }
+  }
+}

@@ -14,9 +14,9 @@ interface UIState {
   buttons: { primary: Button[]; secondary: Button[]; hidden: string[]; };
   notes: string[];
 }
-// FIX: Define a specific type for PDA screen data to resolve 'unknown' property access errors. This ensures type safety when accessing properties like 'visible_status'.
+// FIX: Define a specific type for PDA screen data and make `visible_status` optional to match the data source.
 interface PdaScreenData {
-  visible_status: string[];
+  visible_status?: string[];
   item_tap_behavior?: string;
   header_display?: string[];
 }
@@ -172,16 +172,26 @@ const GoodsReceiptUIPage: React.FC = () => {
 
             <SectionCard title="PDA Platform Rules" icon="Smartphone">
                  <div className="space-y-6">
-                    {Object.entries(matrix.pda.screens).map(([screenKey, screenData]) => (
-                        <div key={screenKey} className="p-4 border rounded-lg dark:border-gray-700">
-                             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 capitalize mb-3">{screenKey.replace('_', ' ')}</h3>
-                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <GuidelineItem label="Visible Statuses"><div className="flex flex-wrap gap-2">{screenData.visible_status.map((s: string) => <Tag key={s}>{s}</Tag>)}</div></GuidelineItem>
-                                {screenData.item_tap_behavior && <GuidelineItem label="Tap Behavior" value={screenData.item_tap_behavior}/>}
-                                {screenData.header_display && <GuidelineItem label="Header Display"><div className="flex flex-wrap gap-2">{screenData.header_display.map((s: string) => <Tag key={s} color="purple">{s}</Tag>)}</div></GuidelineItem>}
-                             </div>
-                        </div>
-                    ))}
+                    {/* FIX: Use Object.keys() to iterate over PDA screens. This provides better type inference for screenData than Object.entries(), resolving errors where properties were accessed on an 'unknown' type. */}
+                    {Object.keys(matrix.pda.screens).map((screenKey) => {
+                        const screenData = matrix.pda.screens[screenKey];
+                        return (
+                            <div key={screenKey} className="p-4 border rounded-lg dark:border-gray-700">
+                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 capitalize mb-3">{screenKey.replace('_', ' ')}</h3>
+                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {screenData.visible_status && (
+                                        <GuidelineItem label="Visible Statuses">
+                                            <div className="flex flex-wrap gap-2">
+                                                {screenData.visible_status.map((s: string) => <Tag key={s}>{s}</Tag>)}
+                                            </div>
+                                        </GuidelineItem>
+                                    )}
+                                    {screenData.item_tap_behavior && <GuidelineItem label="Tap Behavior" value={screenData.item_tap_behavior}/>}
+                                    {screenData.header_display && <GuidelineItem label="Header Display"><div className="flex flex-wrap gap-2">{screenData.header_display.map((s: string) => <Tag key={s} color="purple">{s}</Tag>)}</div></GuidelineItem>}
+                                 </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </SectionCard>
 

@@ -62,7 +62,7 @@ const PartnerPage: React.FC = () => {
         if (modalState.mode === 'edit' && modalState.partner) {
             savedPartner = { ...modalState.partner, ...partnerToSave, updated_at: new Date().toISOString() };
             setPartners(prev => prev.map(p => p.id === savedPartner.id ? savedPartner : p));
-            setToastInfo({ message: 'Cập nhật Đối tác thành công', type: 'success' });
+            setToastInfo({ message: 'Partner updated successfully', type: 'success' });
         } else {
             const newPartnerCode = partnerToSave.partner_code.toUpperCase();
             savedPartner = { 
@@ -73,7 +73,7 @@ const PartnerPage: React.FC = () => {
                 has_active_docs: false // New partners don't have active docs
             };
             setPartners(prev => [savedPartner, ...prev]);
-            setToastInfo({ message: 'Tạo Đối tác thành công', type: 'success' });
+            setToastInfo({ message: 'Partner created successfully', type: 'success' });
         }
         return savedPartner;
     };
@@ -111,11 +111,11 @@ const PartnerPage: React.FC = () => {
     }, [partners, debouncedSearchTerm, filters]);
 
     const columns: Column<Partner>[] = useMemo(() => [
-        { key: 'partner_code', header: 'Mã đối tác' },
-        { key: 'partner_name', header: 'Tên đối tác' },
+        { key: 'partner_code', header: 'Partner Code' },
+        { key: 'partner_name', header: 'Partner Name' },
         { 
             key: 'partner_type', 
-            header: 'Loại đối tác', 
+            header: 'Partner Type', 
             render: (p) => (
               <div className="flex flex-wrap gap-1">
                 {p.partner_type.map(type => (
@@ -126,9 +126,9 @@ const PartnerPage: React.FC = () => {
               </div>
             )
         },
-        { key: 'phone', header: 'Số điện thoại' },
+        { key: 'phone', header: 'Phone' },
         { key: 'email', header: 'Email' },
-        { key: 'status', header: 'Trạng thái', render: (p) => (
+        { key: 'status', header: 'Status', render: (p) => (
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                 p.status === 'Active' 
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
@@ -137,7 +137,7 @@ const PartnerPage: React.FC = () => {
                 {p.status}
             </span>
         )},
-        { key: 'updated_at', header: 'Cập nhật', render: (p) => new Date(p.updated_at).toLocaleDateString() },
+        { key: 'updated_at', header: 'Updated At', render: (p) => new Date(p.updated_at).toLocaleDateString() },
         { key: 'actions', header: '', render: (p) => (
             <div className="flex justify-end items-center gap-2">
                 <button onClick={() => handleView(p)} className="p-1 text-gray-500 hover:text-brand-primary dark:hover:text-blue-400">
@@ -161,7 +161,7 @@ const PartnerPage: React.FC = () => {
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
-                             placeholder="Tìm theo mã/tên/loại..." 
+                             placeholder="Search by code/name/type..." 
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
                              className="w-64 pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
@@ -191,8 +191,8 @@ const PartnerPage: React.FC = () => {
             
             {filteredPartners.length === 0 && !isLoading && (
                 <div className="text-center py-16">
-                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">Chưa có Đối tác</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Nhấn Create để thêm đối tác đầu tiên.</p>
+                    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">No Partners Found</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click 'Create' to add the first partner.</p>
                 </div>
             )}
 
@@ -222,8 +222,8 @@ const PartnerPage: React.FC = () => {
                 onApplyFilters={setFilters}
                 onClearFilters={() => setFilters({})}
                 filterOptions={[
-                    { key: 'partner_type', label: 'Loại đối tác', options: ["Supplier", "Customer", "3PL", "Internal"]},
-                    { key: 'status', label: 'Trạng thái', options: ["Active","Inactive"]}
+                    { key: 'partner_type', label: 'Partner Type', options: ["Supplier", "Customer", "3PL", "Internal"]},
+                    { key: 'status', label: 'Status', options: ["Active","Inactive"]}
                 ]}
             />
         </div>

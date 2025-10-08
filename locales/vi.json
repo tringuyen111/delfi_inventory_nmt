@@ -1,0 +1,426 @@
+{
+  "common": {
+    "create": "Tạo mới",
+    "save": "Lưu",
+    "saveAndClose": "Lưu & Đóng",
+    "saveAsDraft": "Lưu nháp",
+    "cancel": "Hủy",
+    "close": "Đóng",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "refresh": "Làm mới",
+    "reset": "Thiết lập lại",
+    "status": "Trạng thái",
+    "actions": "Hành động",
+    "updatedAt": "Cập nhật lúc",
+    "active": "Hoạt động",
+    "inactive": "Ngưng hoạt động",
+    "yes": "Có",
+    "no": "Không",
+    "loading": "Đang tải...",
+    "noDataFound": "Không tìm thấy dữ liệu.",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "confirm": "Xác nhận",
+    "from": "Từ",
+    "to": "Đến",
+    "selectPlaceholder": "Chọn...",
+    "pageNotFound": "Không tìm thấy trang",
+    "pageNotFoundMessage": "Trang '{page}' bạn yêu cầu không tồn tại.",
+    "loadingPage": "Đang tải trang...",
+    "filterDrawer": {
+      "title": "Tùy chọn lọc",
+      "clearAll": "Xóa tất cả",
+      "apply": "Áp dụng"
+    }
+  },
+  "header": {
+    "myProfile": "Hồ sơ của tôi",
+    "logout": "Đăng xuất"
+  },
+  "menu": {
+    "dashboard": "Bảng điều khiển",
+    "operations": "Vận hành",
+    "warehouseOps": "Vận hành Kho",
+    "goodsReceipt": "Nhập kho",
+    "goodsIssue": "Xuất kho",
+    "inventoryCount": "Kiểm kê",
+    "onhandInventory": "Tồn kho",
+    "configuration": "Cấu hình",
+    "catalog": "Danh mục",
+    "modelGoods": "Mặt hàng",
+    "goodsType": "Loại hàng",
+    "masterData": "Dữ liệu chủ",
+    "organization": "Tổ chức",
+    "branch": "Chi nhánh",
+    "warehouse": "Kho",
+    "location": "Vị trí",
+    "partner": "Đối tác",
+    "uom": "Đơn vị tính",
+    "system": "Hệ thống",
+    "reports": "Báo cáo",
+    "pdaUiMatrix": "Ma trận UI PDA"
+  },
+  "statuses": {
+    "Draft": "Nháp",
+    "New": "Mới",
+    "Receiving": "Đang nhận hàng",
+    "Submitted": "Đã gửi",
+    "Completed": "Hoàn thành",
+    "Rejected": "Từ chối",
+    "Cancelled": "Đã hủy",
+    "Picking": "Đang soạn hàng",
+    "AdjustmentRequested": "Yêu cầu điều chỉnh",
+    "Counting": "Đang kiểm",
+    "Review": "Xem lại",
+    "None": "Không",
+    "Serial": "Theo Serial",
+    "Lot": "Theo Lô",
+    "Available": "Có sẵn",
+    "Reserved": "Đã đặt",
+    "Allocated": "Đã phân bổ",
+    "InQC": "Đang kiểm tra"
+  },
+  "pages": {
+    "onhand": {
+      "detailModal": {
+        "title": "Chi tiết Tồn kho",
+        "header": {
+          "onhand": "Số lượng tồn",
+          "allocated": "Số lượng đã phân bổ",
+          "available": "Số lượng khả dụng",
+          "lastMovement": "Giao dịch cuối",
+          "openHistory": "Mở Lịch sử",
+          "copyCode": "Sao chép Mã"
+        },
+        "tabs": {
+          "serials": "Theo Serial",
+          "lots": "Theo Lô",
+          "history": "Lịch sử"
+        },
+        "serialsTable": {
+          "searchPlaceholder": "Tìm kiếm Số Serial...",
+          "serialNo": "SỐ SERIAL",
+          "status": "TRẠNG THÁI",
+          "receivedDate": "NGÀY NHẬN",
+          "lastMovement": "GIAO DỊCH CUỐI",
+          "notes": "GHI CHÚ"
+        },
+        "lotsTable": {
+          "lotCode": "MÃ LÔ",
+          "onhand": "TỒN KHO",
+          "allocated": "PHÂN BỔ",
+          "expiry": "HẠN DÙNG",
+          "receivedDate": "NGÀY NHẬN"
+        },
+        "historyTable": {
+          "date": "Ngày",
+          "docType": "Loại CT",
+          "docNo": "Số CT",
+          "qtyChange": "Thay đổi SL",
+          "actor": "Người thực hiện"
+        },
+        "loading": "Đang tải chi tiết...",
+        "noDetails": "Không tìm thấy chi tiết {tab}."
+      }
+    },
+    "goodsReceipt": {
+      "pageTitle": "Nhập kho",
+      "searchPlaceholder": "Tìm Sô PN, Số tham chiếu, Đối tác...",
+      "toast": {
+        "savedDraft": "Phiếu nhập kho đã được lưu nháp",
+        "savedNew": "Phiếu nhập kho đã được tạo mới",
+        "approved": "Phiếu PN {grNo} đã được Hoàn thành.",
+        "rejected": "Phiếu PN {grNo} đã bị Từ chối.",
+        "cancelled": "Phiếu PN {grNo} đã được Hủy.",
+        "cantEdit": "Không thể sửa chứng từ ở trạng thái này."
+      },
+      "table": {
+        "grNo": "Số PN",
+        "receiptType": "Loại nhập",
+        "status": "Trạng thái",
+        "partnerSource": "Đối tác / Nguồn",
+        "destWarehouse": "Kho đích",
+        "docDate": "Ngày chứng từ",
+        "handler": "Người xử lý"
+      },
+      "empty": {
+        "title": "Không tìm thấy phiếu nhập kho",
+        "message": "Nhấn 'Tạo mới' để bắt đầu phiếu nhập kho đầu tiên."
+      },
+      "filter": {
+        "status": "Trạng thái",
+        "receiptType": "Loại nhập",
+        "destWarehouse": "Kho đích"
+      },
+      "modal": {
+        "createTitle": "Tạo Phiếu nhập kho",
+        "viewTitle": "Xem Phiếu nhập kho: {grNo}",
+        "editTitle": "Sửa Phiếu nhập kho: {grNo}",
+        "rejectReasonPrompt": "Vui lòng cung cấp lý do từ chối:",
+        "cancelConfirm": "Bạn có chắc chắn muốn hủy chứng từ này không? Hành động này không thể hoàn tác.",
+        "statusHistory": "Lịch sử Trạng thái",
+        "statusLabels": {
+            "status": "Trạng thái",
+            "createdBy": "Người tạo",
+            "createdAt": "Ngày tạo",
+            "handler": "Người xử lý"
+        },
+        "formLabels": {
+          "receiptType": "Loại nhập",
+          "destWarehouse": "Kho đích",
+          "refNo": "Số tham chiếu",
+          "docDate": "Ngày chứng từ",
+          "sourceWarehouse": "Kho nguồn",
+          "partner": "Đối tác",
+          "note": "Ghi chú"
+        },
+        "lines": {
+          "title": "Hàng hóa kế hoạch",
+          "addLine": "Thêm dòng",
+          "table": {
+            "modelGoods": "Mặt hàng",
+            "uom": "ĐVT",
+            "qtyPlanned": "SL Kế hoạch",
+            "qtyReceived": "SL Thực nhận",
+            "diffQty": "Chênh lệch",
+            "action": "Hành động"
+          },
+          "viewDetails": "Xem chi tiết"
+        },
+        "buttons": {
+            "edit": "Sửa",
+            "approve": "Duyệt",
+            "reject": "Từ chối",
+            "cancelDoc": "Hủy Chứng từ"
+        },
+        "alerts": {
+            "lineRequired": "Cần có ít nhất một dòng hàng hóa."
+        }
+      },
+      "lineDetailModal": {
+          "title": "Chi tiết đã nhận cho: {modelCode}",
+          "summary": {
+              "qtyPlanned": "SL Kế hoạch",
+              "qtyReceived": "SL Thực nhận"
+          },
+          "table": {
+              "stt": "#",
+              "serialNo": "Số Serial",
+              "lotCode": "Mã Lô",
+              "qtyReceived": "SL Thực nhận",
+              "expiryDate": "Ngày hết hạn"
+          },
+          "noDetails": "Không có chi tiết nào được ghi nhận cho dòng này."
+      }
+    },
+    "dashboard": {
+      "kpi": {
+        "onhandValue": "Tổng giá trị tồn kho",
+        "pendingReceipts": "Phiếu nhập chờ xử lý",
+        "pendingIssues": "Phiếu xuất chờ xử lý"
+      },
+      "charts": {
+        "transactions": "Giao dịch",
+        "inventoryByWh": "Tồn kho theo Kho",
+        "inventoryByGt": "Tồn kho theo Loại hàng"
+      },
+      "lists": {
+        "topModels": "Top 5 mặt hàng theo số lượng",
+        "pendingActions": "Danh sách chờ xử lý"
+      },
+      "timeFilters": {
+        "week": "Tuần",
+        "month": "Tháng",
+        "year": "Năm"
+      },
+      "pendingActionsTable": {
+        "type": "Loại",
+        "docNo": "Số chứng từ",
+        "status": "Trạng thái",
+        "createdBy": "Người tạo",
+        "createdAt": "Ngày tạo",
+        "noActions": "Không có tác vụ nào đang chờ xử lý."
+      }
+    },
+    "uom": {
+      "pageTitle": "Đơn vị tính",
+      "searchPlaceholder": "Tìm theo Mã/Tên/Loại...",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa {code} không?",
+      "deleteInUseError": "Không thể xóa ĐVT này vì đang được sử dụng.",
+      "toast": {
+        "deleted": "Đã xóa ĐVT thành công",
+        "updated": "Đã cập nhật ĐVT thành công",
+        "created": "Đã tạo ĐVT thành công"
+      },
+      "table": {
+        "code": "Mã ĐVT",
+        "name": "Tên ĐVT",
+        "measurementType": "Loại đo lường",
+        "uomType": "Loại ĐVT",
+        "baseUom": "ĐVT cơ bản",
+        "factor": "Hệ số"
+      },
+      "modal": {
+        "createTitle": "Tạo ĐVT mới",
+        "viewTitle": "Xem chi tiết ĐVT: {code}",
+        "editTitle": "Sửa ĐVT: {code}",
+        "labels": {
+          "code": "Mã ĐVT",
+          "name": "Tên ĐVT",
+          "measurementType": "Loại đo lường",
+          "uomType": "Loại ĐVT",
+          "baseUom": "ĐVT cơ bản",
+          "convFactor": "Hệ số chuyển đổi",
+          "description": "Mô tả"
+        },
+        "errors": {
+          "codeRequired": "Mã ĐVT là bắt buộc.",
+          "codeMaxLength": "Mã ĐVT không được vượt quá 10 ký tự.",
+          "codeUnique": "Mã ĐVT phải là duy nhất (không phân biệt chữ hoa/thường).",
+          "nameRequired": "Tên ĐVT là bắt buộc.",
+          "baseUomRequired": "ĐVT cơ bản là bắt buộc cho loại ĐVT thay thế.",
+          "convFactorRequired": "Hệ số chuyển đổi phải lớn hơn 0."
+        },
+        "measurementTypes": {
+          "piece": "Cái/Miếng",
+          "weight": "Khối lượng",
+          "volume": "Thể tích",
+          "length": "Chiều dài",
+          "area": "Diện tích",
+          "time": "Thời gian"
+        },
+        "uomTypes": {
+          "base": "Cơ bản",
+          "alt": "Thay thế"
+        },
+        "selectBaseUom": "-- Chọn ĐVT cơ bản --",
+        "lockedMessage": "Một số trường bị khóa vì ĐVT này đang được sử dụng."
+      },
+      "empty": {
+        "title": "Không tìm thấy ĐVT nào",
+        "message": "Nhấn 'Tạo mới' để thêm ĐVT đầu tiên."
+      }
+    },
+    "organization": {
+      "pageTitle": "Tổ chức",
+      "searchPlaceholder": "Tìm theo mã/tên/email/điện thoại...",
+      "toast": {
+        "updated": "Đã cập nhật tổ chức thành công",
+        "created": "Đã tạo tổ chức thành công"
+      },
+      "table": {
+        "code": "Mã Tổ chức",
+        "name": "Tên Tổ chức",
+        "phone": "Điện thoại",
+        "email": "Email"
+      },
+      "modal": {
+        "createTitle": "Tạo Tổ chức mới",
+        "viewTitle": "Xem Tổ chức: {code}",
+        "editTitle": "Sửa Tổ chức: {code}",
+        "labels": {
+          "code": "Mã Tổ chức",
+          "name": "Tên Tổ chức",
+          "phone": "Điện thoại",
+          "email": "Email",
+          "address": "Địa chỉ"
+        },
+        "errors": {
+          "nameRequired": "Tên Tổ chức là bắt buộc.",
+          "nameMaxLength": "Tên Tổ chức không được vượt quá 120 ký tự.",
+          "nameUnique": "Tên Tổ chức đã tồn tại (không phân biệt chữ hoa/thường).",
+          "phoneInvalid": "Định dạng số điện thoại không hợp lệ.",
+          "emailInvalid": "Định dạng email không hợp lệ.",
+          "statusInactive": "Không thể ngưng hoạt động Tổ chức này vì đang có chứng từ hoạt động."
+        }
+      },
+      "empty": {
+        "title": "Không tìm thấy Tổ chức nào",
+        "message": "Nhấn 'Tạo mới' để thêm bản ghi đầu tiên."
+      }
+    },
+     "branch": {
+        "pageTitle": "Chi nhánh",
+        "searchPlaceholder": "Tìm theo mã/tên/tổ chức...",
+        "toast": {
+            "updated": "Đã cập nhật chi nhánh thành công",
+            "created": "Đã tạo chi nhánh thành công"
+        },
+        "table": {
+            "code": "Mã Chi nhánh",
+            "name": "Tên Chi nhánh",
+            "organization": "Tổ chức"
+        },
+        "modal": {
+            "createTitle": "Tạo Chi nhánh mới",
+            "viewTitle": "Xem Chi nhánh: {code}",
+            "editTitle": "Sửa Chi nhánh: {code}",
+            "labels": {
+                "code": "Mã Chi nhánh",
+                "organization": "Tổ chức",
+                "name": "Tên Chi nhánh"
+            },
+            "errors": {
+                "codeRequired": "Mã Chi nhánh là bắt buộc.",
+                "codeMaxLength": "Mã Chi nhánh không được vượt quá 15 ký tự.",
+                "codeUnique": "Mã Chi nhánh đã tồn tại.",
+                "nameRequired": "Tên Chi nhánh là bắt buộc.",
+                "nameMaxLength": "Tên Chi nhánh không được vượt quá 120 ký tự.",
+                "nameUnique": "Tên Chi nhánh đã tồn tại.",
+                "orgRequired": "Tổ chức là bắt buộc."
+            },
+            "deactivateConfirm": "Hành động này sẽ ngưng hoạt động Chi nhánh và TẤT CẢ các Kho liên quan. Bạn có chắc chắn muốn tiếp tục không?",
+            "selectOrg": "-- Chọn Tổ chức --"
+        },
+        "empty": {
+            "title": "Không tìm thấy Chi nhánh nào",
+            "message": "Nhấn 'Tạo mới' để thêm chi nhánh đầu tiên."
+        }
+    },
+    "profile": {
+        "title": "Hồ sơ của tôi",
+        "picture": "Ảnh đại diện",
+        "changePicture": "Thay đổi ảnh",
+        "remove": "Xóa ảnh",
+        "pictureHelp": "Hỗ trợ JPG/PNG, tối đa 2MB.",
+        "personalInfo": "Thông tin cá nhân",
+        "labels": {
+            "displayName": "Tên hiển thị",
+            "email": "Email",
+            "phone": "Điện thoại",
+            "gender": "Giới tính",
+            "birthYear": "Năm sinh",
+            "role": "Vai trò"
+        },
+        "genderOptions": {
+            "unspecified": "-- Không xác định --",
+            "male": "Nam",
+            "female": "Nữ",
+            "other": "Khác"
+        },
+        "errors": {
+            "displayNameRequired": "Tên hiển thị là bắt buộc (<=120 ký tự).",
+            "birthYearInvalid": "Năm sinh phải hợp lệ (>=1900 và <= {year})."
+        },
+        "toast": {
+            "profileUpdated": "Đã cập nhật hồ sơ thành công",
+            "avatarUpdated": "Đã cập nhật ảnh đại diện thành công",
+            "avatarRemoved": "Đã xóa ảnh đại diện"
+        },
+        "removeAvatarConfirm": "Bạn có chắc muốn xóa ảnh đại diện không?",
+        "avatarModal": {
+            "title": "Cập nhật ảnh đại diện",
+            "chooseFile": "Chọn tệp",
+            "maxSize": "Kích thước tối đa: 2MB",
+            "unsupportedFormat": "Chỉ hỗ trợ ảnh JPG/PNG.",
+            "fileTooLarge": "Kích thước tệp không được vượt quá 2MB.",
+            "loadError": "Không thể tải ảnh. Vui lòng thử lại.",
+            "cropHelp": "Điều chỉnh ảnh của bạn. Ảnh đại diện cuối cùng sẽ có dạng tròn.",
+            "chooseAnother": "Chọn ảnh khác"
+        }
+    }
+  }
+}

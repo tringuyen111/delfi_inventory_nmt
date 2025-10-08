@@ -32,20 +32,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
     if (!formData.display_name || !formData.display_name.trim()) {
-      newErrors.display_name = "Tên hiển thị bắt buộc, ≤120 ký tự.";
+      newErrors.display_name = "Display Name is required (<=120 chars).";
     } else if (formData.display_name.length > 120) {
-      newErrors.display_name = "Tên hiển thị bắt buộc, ≤120 ký tự.";
+      newErrors.display_name = "Display Name is required (<=120 chars).";
     }
 
     if (formData.phone && !/^[0-9()+\-\s]{6,20}$/.test(formData.phone)) {
-        newErrors.phone = "Số điện thoại không hợp lệ.";
+        newErrors.phone = "Invalid phone number format.";
     }
 
     if (formData.birth_year) {
         const year = Number(formData.birth_year);
         const currentYear = new Date().getFullYear();
         if (isNaN(year) || year < 1900 || year > currentYear - 10) {
-            newErrors.birth_year = `Năm sinh phải hợp lệ (≥1900 và ≤ ${currentYear - 10}).`;
+            newErrors.birth_year = `Birth year must be valid (>=1900 and <= ${currentYear - 10}).`;
         }
     }
 
@@ -57,7 +57,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
     if (!validate()) return;
     const updatedProfile = { ...userProfile, ...formData };
     onUpdateProfile(updatedProfile);
-    setToastInfo({ message: 'Cập nhật hồ sơ thành công', type: 'success' });
+    setToastInfo({ message: 'Profile updated successfully', type: 'success' });
   };
 
   const handleCancel = () => {
@@ -73,7 +73,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
   const handleAvatarSave = (newAvatarUrl: string) => {
     const updatedProfile = { ...userProfile, avatar_url: newAvatarUrl, avatar_version: userProfile.avatar_version + 1 };
     onUpdateProfile(updatedProfile);
-    setToastInfo({ message: 'Cập nhật ảnh đại diện thành công', type: 'success' });
+    setToastInfo({ message: 'Avatar updated successfully', type: 'success' });
     setIsAvatarModalOpen(false);
   };
 
@@ -81,7 +81,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
     if (window.confirm('Are you sure you want to remove your avatar?')) {
         const updatedProfile = { ...userProfile, avatar_url: null, avatar_version: userProfile.avatar_version + 1 };
         onUpdateProfile(updatedProfile);
-        setToastInfo({ message: 'Đã gỡ ảnh đại diện', type: 'success' });
+        setToastInfo({ message: 'Avatar removed', type: 'success' });
     }
   };
 
@@ -89,25 +89,25 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Left Panel: Avatar Management */}
       <div className="lg:col-span-1">
-        <SectionCard title="Ảnh đại diện" icon="User">
+        <SectionCard title="Profile Picture" icon="User">
           <div className="flex flex-col items-center gap-4">
             <Avatar user={userProfile} size="xl" />
             <button
               onClick={() => setIsAvatarModalOpen(true)}
               className="w-full px-4 py-2 text-sm font-medium rounded-md bg-brand-primary text-white hover:bg-blue-700"
             >
-              Thay đổi ảnh đại diện
+              Change Picture
             </button>
             {userProfile.avatar_url && (
               <button
                 onClick={handleRemoveAvatar}
                 className="w-full px-4 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
               >
-                Gỡ ảnh
+                Remove
               </button>
             )}
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
-              Hỗ trợ JPG/PNG, dung lượng tối đa 2MB.
+              JPG/PNG supported, max 2MB.
             </p>
           </div>
         </SectionCard>
@@ -115,9 +115,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
 
       {/* Right Panel: Profile Form */}
       <div className="lg:col-span-2">
-        <SectionCard title="Thông tin cá nhân" icon="ClipboardList">
+        <SectionCard title="Personal Information" icon="ClipboardList">
           <div className="space-y-4">
-            <FormField label="Tên hiển thị" error={errors.display_name} required>
+            <FormField label="Display Name" error={errors.display_name} required>
               <input type="text" name="display_name" value={formData.display_name || ''} onChange={handleChange} className="w-full" />
             </FormField>
             
@@ -125,11 +125,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
                 <input type="email" name="email" value={userProfile.email} className="w-full" disabled />
             </FormField>
 
-            <FormField label="Số điện thoại" error={errors.phone}>
+            <FormField label="Phone" error={errors.phone}>
               <input type="tel" name="phone" value={formData.phone || ''} onChange={handleChange} className="w-full" />
             </FormField>
 
-            <FormField label="Giới tính" error={errors.gender}>
+            <FormField label="Gender" error={errors.gender}>
               <select name="gender" value={formData.gender || ''} onChange={handleChange} className="w-full">
                 <option value="">-- Not specified --</option>
                 <option value="Male">Male</option>
@@ -138,11 +138,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
               </select>
             </FormField>
             
-            <FormField label="Năm sinh" error={errors.birth_year}>
+            <FormField label="Birth Year" error={errors.birth_year}>
               <input type="number" name="birth_year" value={formData.birth_year || ''} onChange={handleChange} className="w-full" />
             </FormField>
             
-            <FormField label="Vai trò">
+            <FormField label="Role">
                 <input type="text" name="role" value={userProfile.role} className="w-full" disabled />
             </FormField>
           </div>

@@ -77,5 +77,44 @@
     "status": "Inactive",
     "updated_at": "2022-01-20T12:00:00Z",
     "is_used_in_model_goods": false
+  },
+  {
+    "id": "uom-7",
+    "uom_code": "CS",
+    "uom_name": "Case",
+    "measurement_type": "Piece",
+    "uom_type": "Alt",
+    "base_uom": "PCS",
+    "conv_factor": 24,
+    "description": "Case of 24 pieces",
+    "status": "Active",
+    "updated_at": "2024-01-15T11:00:00Z",
+    "is_used_in_model_goods": true
+  },
+  {
+    "id": "uom-8",
+    "uom_code": "L",
+    "uom_name": "Liter",
+    "measurement_type": "Volume",
+    "uom_type": "Base",
+    "base_uom": null,
+    "conv_factor": null,
+    "description": "Base unit for volume",
+    "status": "Active",
+    "updated_at": "2024-02-01T09:00:00Z",
+    "is_used_in_model_goods": true
+  },
+  {
+    "id": "uom-9",
+    "uom_code": "DOZEN",
+    "uom_name": "Dozen",
+    "measurement_type": "Piece",
+    "uom_type": "Alt",
+    "base_uom": "PCS",
+    "conv_factor": 12,
+    "description": "A dozen equals 12 pieces",
+    "status": "Inactive",
+    "updated_at": "2024-03-10T14:00:00Z",
+    "is_used_in_model_goods": false
   }
 ]

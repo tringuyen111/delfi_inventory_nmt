@@ -65,5 +65,16 @@
     "email": "austin@quantum.dev",
     "status": "Active",
     "updated_at": "2023-11-19T11:00:00Z"
+  },
+  {
+    "id": "GTC-TKY",
+    "branch_code": "GTC-TKY",
+    "branch_name": "Global Trade Tokyo",
+    "org_code": "ORG-202311-0001",
+    "address": "1-1-2 Otemachi, Chiyoda-ku, Tokyo, Japan",
+    "phone": "+81 3-1234-5678",
+    "email": "tokyo@globaltrade.com",
+    "status": "Active",
+    "updated_at": "2024-03-01T10:00:00Z"
   }
 ]

@@ -1,98 +1,34 @@
+
 {
   "GI-202312-001": [
-    {
-      "id": "hist-gi-1-1",
-      "doc_id": "GI-202312-001",
-      "status": "New",
-      "user": "Alex Nguyen",
-      "timestamp": "2023-12-01T10:00:00Z",
-      "note": "Document created and inventory reserved."
-    },
-    {
-      "id": "hist-gi-1-2",
-      "doc_id": "GI-202312-001",
-      "status": "Picking",
-      "user": "System",
-      "timestamp": "2023-12-01T11:30:00Z",
-      "note": "Picking started by PDA user."
-    },
-    {
-      "id": "hist-gi-1-3",
-      "doc_id": "GI-202312-001",
-      "status": "Submitted",
-      "user": "John Smith",
-      "timestamp": "2023-12-01T14:00:00Z",
-      "note": "Picking complete, submitted for approval."
-    },
-    {
-      "id": "hist-gi-1-4",
-      "doc_id": "GI-202312-001",
-      "status": "Completed",
-      "user": "Alex Nguyen",
-      "timestamp": "2023-12-02T16:00:00Z",
-      "note": "Document approved. Inventory deducted."
-    }
+    { "id": "hist-gi-1-1", "doc_id": "GI-202312-001", "status": "Draft", "user": "Alex Nguyen", "timestamp": "2023-12-01T10:00:00Z", "note": "Document created." },
+    { "id": "hist-gi-1-2", "doc_id": "GI-202312-001", "status": "New", "user": "Alex Nguyen", "timestamp": "2023-12-01T10:05:00Z", "note": "Sent to warehouse." },
+    { "id": "hist-gi-1-3", "doc_id": "GI-202312-001", "status": "Picking", "user": "PDA System", "timestamp": "2023-12-01T11:00:00Z", "note": "Picking started by handler." },
+    { "id": "hist-gi-1-4", "doc_id": "GI-202312-001", "status": "Submitted", "user": "John Smith", "timestamp": "2023-12-01T14:30:00Z", "note": "Picking complete, submitted for approval." },
+    { "id": "hist-gi-1-5", "doc_id": "GI-202312-001", "status": "Completed", "user": "Alex Nguyen", "timestamp": "2023-12-02T16:00:00Z", "note": "Approved and stock deducted." }
   ],
   "GI-202312-002": [
-    {
-      "id": "hist-gi-2-1",
-      "doc_id": "GI-202312-002",
-      "status": "Draft",
-      "user": "Alex Nguyen",
-      "timestamp": "2023-12-03T09:25:00Z",
-      "note": "Document created."
-    },
-    {
-      "id": "hist-gi-2-2",
-      "doc_id": "GI-202312-002",
-      "status": "New",
-      "user": "Alex Nguyen",
-      "timestamp": "2023-12-03T09:30:00Z",
-      "note": "Inventory reserved and sent to staff."
-    }
+    { "id": "hist-gi-2-1", "doc_id": "GI-202312-002", "status": "Draft", "user": "Alex Nguyen", "timestamp": "2023-12-03T09:25:00Z", "note": "Document created." },
+    { "id": "hist-gi-2-2", "doc_id": "GI-202312-002", "status": "New", "user": "Alex Nguyen", "timestamp": "2023-12-03T09:30:00Z", "note": "Sent to warehouse." }
+  ],
+  "GI-202312-003": [
+    { "id": "hist-gi-3-1", "doc_id": "GI-202312-003", "status": "New", "user": "Alex Nguyen", "timestamp": "2023-12-04T11:00:00Z", "note": "Sent to warehouse." },
+    { "id": "hist-gi-3-2", "doc_id": "GI-202312-003", "status": "Submitted", "user": "PDA User 1", "timestamp": "2023-12-04T15:00:00Z", "note": "Picking complete." }
+  ],
+  "GI-202312-004": [
+    { "id": "hist-gi-4-1", "doc_id": "GI-202312-004", "status": "New", "user": "Alex Nguyen", "timestamp": "2023-12-05T09:00:00Z", "note": "Sent to warehouse." },
+    { "id": "hist-gi-4-2", "doc_id": "GI-202312-004", "status": "Picking", "user": "PDA User 2", "timestamp": "2023-12-05T10:30:00Z", "note": "Picking started." }
+  ],
+  "GI-202312-005": [
+    { "id": "hist-gi-5-1", "doc_id": "GI-202312-005", "status": "Draft", "user": "Alex Nguyen", "timestamp": "2023-12-06T14:00:00Z", "note": "Document created." }
   ],
   "GI-202311-150": [
-    {
-      "id": "hist-gi-150-1",
-      "doc_id": "GI-202311-150",
-      "status": "New",
-      "user": "Alex Nguyen",
-      "timestamp": "2023-11-25T13:00:00Z",
-      "note": "Document created and inventory reserved."
-    },
-    {
-      "id": "hist-gi-150-2",
-      "doc_id": "GI-202311-150",
-      "status": "Cancelled",
-      "user": "Alex Nguyen",
-      "timestamp": "2023-11-26T10:00:00Z",
-      "note": "Cancelled, destination warehouse cannot receive. Inventory reservation released."
-    }
+    { "id": "hist-gi-150-1", "doc_id": "GI-202311-150", "status": "New", "user": "Alex Nguyen", "timestamp": "2023-11-25T13:00:00Z", "note": "Sent to warehouse." },
+    { "id": "hist-gi-150-2", "doc_id": "GI-202311-150", "status": "Cancelled", "user": "Alex Nguyen", "timestamp": "2023-11-26T10:00:00Z", "note": "Cancelled by manager." }
   ],
-   "GI-202312-003": [
-    {
-      "id": "hist-gi-3-1",
-      "doc_id": "GI-202312-003",
-      "status": "New",
-      "user": "Alex Nguyen",
-      "timestamp": "2023-12-04T11:00:00Z",
-      "note": "Document created and inventory reserved."
-    },
-    {
-      "id": "hist-gi-3-2",
-      "doc_id": "GI-202312-003",
-      "status": "Picking",
-      "user": "System",
-      "timestamp": "2023-12-04T11:30:00Z",
-      "note": "Picking started by PDA user."
-    },
-    {
-      "id": "hist-gi-3-3",
-      "doc_id": "GI-202312-003",
-      "status": "Submitted",
-      "user": "PDA User 1",
-      "timestamp": "2023-12-04T15:00:00Z",
-      "note": "Short-picked due to damage. Submitted for manager review."
-    }
+  "GI-202312-006": [
+    { "id": "hist-gi-6-1", "doc_id": "GI-202312-006", "status": "New", "user": "Alex Nguyen", "timestamp": "2023-12-07T09:00:00Z", "note": "Sent to warehouse." },
+    { "id": "hist-gi-6-2", "doc_id": "GI-202312-006", "status": "Picking", "user": "PDA User 1", "timestamp": "2023-12-07T09:30:00Z", "note": "Picking started." },
+    { "id": "hist-gi-6-3", "doc_id": "GI-202312-006", "status": "AdjustmentRequested", "user": "PDA User 1", "timestamp": "2023-12-07T10:00:00Z", "note": "Picker requested adjustment." }
   ]
 }

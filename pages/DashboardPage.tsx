@@ -1,12 +1,13 @@
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Icon, IconName } from '../components/Icons';
 import { SectionCard } from '../components/SectionCard';
 import { useTheme } from '../hooks/useTheme';
 import { ModelGoods, GoodsReceipt, GoodsIssue, OnhandByLocation, Warehouse, GoodsType, PendingAction } from '../types';
 import { StatusBadge } from '../components/ui/StatusBadge';
+import { useLanguage } from '../hooks/useLanguage';
 
 // --- CHART.JS SETUP ---
-// Access Chart.js from the global scope and register necessary components.
 const Chart = (window as any).Chart;
 if (Chart) {
     Chart.register(
@@ -37,6 +38,7 @@ const KpiCard: React.FC<{ title: string; value: string | number; icon: IconName;
 const ChartWrapper: React.FC<{ chartData: any; options: any; type: ChartType; title: string; timeFilter?: TimeFilter; setTimeFilter?: (filter: TimeFilter) => void; }> = ({ chartData, options, type, title, timeFilter, setTimeFilter }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const chartRef = useRef<any>(null);
+    const { t } = useLanguage();
 
     useEffect(() => {
         if (!canvasRef.current || !Chart) return;
@@ -63,13 +65,13 @@ const ChartWrapper: React.FC<{ chartData: any; options: any; type: ChartType; ti
     }, [chartData, options]);
 
     return (
-        <SectionCard title={title} icon="BarChart">
+        <SectionCard title={title} icon="Reports">
             {setTimeFilter && (
                 <div className="flex justify-end mb-4">
                     <div className="flex items-center border border-gray-200 dark:border-gray-600 rounded-md p-0.5">
                         {(['week', 'month', 'year'] as TimeFilter[]).map(filter => (
                             <button key={filter} onClick={() => setTimeFilter(filter)} className={`px-3 py-1 text-xs font-medium rounded ${timeFilter === filter ? 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
-                                {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                                {t(`pages.dashboard.timeFilters.${filter}`)}
                             </button>
                         ))}
                     </div>
@@ -82,8 +84,8 @@ const ChartWrapper: React.FC<{ chartData: any; options: any; type: ChartType; ti
     );
 };
 
-const TopModelsList: React.FC<{ data: ModelGoods[] }> = ({ data }) => (
-    <SectionCard title="Top 5 Models by Quantity" icon="List">
+const TopModelsList: React.FC<{ data: ModelGoods[]; title: string; }> = ({ data, title }) => (
+    <SectionCard title={title} icon="List">
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
             {data.map(model => (
                 <li key={model.id} className="py-3 flex justify-between items-center">
@@ -98,42 +100,50 @@ const TopModelsList: React.FC<{ data: ModelGoods[] }> = ({ data }) => (
     </SectionCard>
 );
 
-const PendingActionsList: React.FC<{ data: PendingAction[]; onNavigate: (pageId: string, pageLabel: string) => void }> = ({ data, onNavigate }) => (
-    <SectionCard title="Pending Actions List" icon="ClipboardList">
-        <div className="overflow-x-auto max-h-96">
-            <table className="w-full text-sm text-left">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
-                    <tr>
-                        <th className="px-4 py-2">Type</th>
-                        <th className="px-4 py-2">Document No.</th>
-                        <th className="px-4 py-2">Status</th>
-                        <th className="px-4 py-2">Created By</th>
-                        <th className="px-4 py-2">Created At</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {data.length > 0 ? data.map(action => (
-                        <tr key={action.doc_no} onClick={() => onNavigate(action.page_id, action.page_label)} className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
-                            <td className="px-4 py-2">{action.type}</td>
-                            <td className="px-4 py-2 font-mono text-gray-800 dark:text-gray-200">{action.doc_no}</td>
-                            <td className="px-4 py-2"><StatusBadge status={action.status} /></td>
-                            <td className="px-4 py-2">{action.created_by}</td>
-                            <td className="px-4 py-2 text-gray-500">{new Date(action.created_at).toLocaleDateString()}</td>
-                        </tr>
-                    )) : (
+const PendingActionsList: React.FC<{ data: PendingAction[]; onNavigate: (pageId: string, pageLabel: string) => void; title: string; }> = ({ data, onNavigate, title }) => {
+    const { t } = useLanguage();
+    return (
+        <SectionCard title={title} icon="ClipboardList">
+            <div className="overflow-x-auto max-h-96">
+                <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
                         <tr>
-                            <td colSpan={5} className="text-center py-8 text-gray-500">No pending actions.</td>
+                            <th className="px-4 py-2">{t('pages.dashboard.pendingActionsTable.type')}</th>
+                            <th className="px-4 py-2">{t('pages.dashboard.pendingActionsTable.docNo')}</th>
+                            <th className="px-4 py-2">{t('pages.dashboard.pendingActionsTable.status')}</th>
+                            <th className="px-4 py-2">{t('pages.dashboard.pendingActionsTable.createdBy')}</th>
+                            <th className="px-4 py-2">{t('pages.dashboard.pendingActionsTable.createdAt')}</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
-    </SectionCard>
-);
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {data.length > 0 ? data.map(action => (
+                            <tr key={action.doc_no} onClick={() => onNavigate(action.page_id, action.page_label)} className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
+                                <td className="px-4 py-2">{t(action.type)}</td>
+                                <td className="px-4 py-2 font-mono text-gray-800 dark:text-gray-200">{action.doc_no}</td>
+                                <td className="px-4 py-2"><StatusBadge status={action.status} /></td>
+                                <td className="px-4 py-2">{action.created_by}</td>
+                                <td className="px-4 py-2 text-gray-500">{new Date(action.created_at).toLocaleDateString()}</td>
+                            </tr>
+                        )) : (
+                            <tr>
+                                <td colSpan={5} className="text-center py-8 text-gray-500">{t('pages.dashboard.pendingActionsTable.noActions')}</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </SectionCard>
+    );
+};
 
-// --- MAIN DASHBOARD PAGE ---
-const DashboardPage: React.FC<{ onNavigate: (pageId: string, pageLabel: string) => void }> = ({ onNavigate }) => {
+
+interface DashboardPageProps {
+    onNavigate: (pageId: string, pageLabel: string) => void;
+}
+
+const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
     const { theme } = useTheme();
+    const { t } = useLanguage();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -152,20 +162,19 @@ const DashboardPage: React.FC<{ onNavigate: (pageId: string, pageLabel: string) 
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                // FIX: Correctly destructure the Promise.all results and rename `issues` to `giIssues` to match usage.
                 const [models, receipts, giIssues, onhand, warehouses, goodsTypes] = await Promise.all([
-                    fetch('./data/model_goods.json').then(res => res.json()),
-                    fetch('./data/goods_receipts.json').then(res => res.json()),
-                    fetch('./data/goods_issues.json').then(res => res.json()),
-                    fetch('./data/onhand_by_location.json').then(res => res.json()),
-                    fetch('./data/warehouses.json').then(res => res.json()),
-                    fetch('./data/goods_types.json').then(res => res.json()),
+                    fetch('./data/model_goods.json').then(res => res.json() as Promise<ModelGoods[]>),
+                    fetch('./data/goods_receipts.json').then(res => res.json() as Promise<GoodsReceipt[]>),
+                    fetch('./data/goods_issues.json').then(res => res.json() as Promise<GoodsIssue[]>),
+                    fetch('./data/onhand_by_location.json').then(res => res.json() as Promise<OnhandByLocation[]>),
+                    fetch('./data/warehouses.json').then(res => res.json() as Promise<Warehouse[]>),
+                    fetch('./data/goods_types.json').then(res => res.json() as Promise<GoodsType[]>),
                 ]);
 
                 // 1. KPIs
                 const totalOnhand = models.reduce((sum: number, model: ModelGoods) => sum + model.total_onhand_qty, 0);
                 const pendingReceipts = receipts.filter((r: GoodsReceipt) => ['Draft', 'Submitted'].includes(r.status)).length;
-                const pendingIssues = giIssues.records.filter((i: GoodsIssue) => ['Draft', 'Submitted', 'AdjustmentRequested'].includes(i.status)).length;
+                const pendingIssues = giIssues.filter((i: GoodsIssue) => ['Draft', 'Submitted', 'AdjustmentRequested'].includes(i.status)).length;
                 setKpiData({ onhand: totalOnhand, pendingReceipts, pendingIssues });
 
                 // 2. Inventory by Warehouse (Bar)
@@ -194,8 +203,8 @@ const DashboardPage: React.FC<{ onNavigate: (pageId: string, pageLabel: string) 
                 setTopModels([...models].sort((a, b) => b.total_onhand_qty - a.total_onhand_qty).slice(0, 5));
 
                 // 5. Pending Actions
-                const pendingGR: PendingAction[] = receipts.filter((r: GoodsReceipt) => ['Draft', 'Submitted'].includes(r.status)).map((r: GoodsReceipt) => ({ type: 'Goods Receipt', doc_no: r.gr_no, status: r.status, created_at: r.created_at, created_by: r.created_by, page_id: 'goods_receipt', page_label: 'Goods Receipt' }));
-                const pendingGI: PendingAction[] = giIssues.records.filter((i: GoodsIssue) => ['Draft', 'Submitted', 'AdjustmentRequested'].includes(i.status)).map((i: GoodsIssue) => ({ type: 'Goods Issue', doc_no: i.gi_no, status: i.status, created_at: i.created_at, created_by: i.created_by, page_id: 'goods_issue', page_label: 'Goods Issue' }));
+                const pendingGR: PendingAction[] = receipts.filter((r: GoodsReceipt) => ['Draft', 'Submitted'].includes(r.status)).map((r: GoodsReceipt) => ({ type: 'menu.goodsReceipt', doc_no: r.gr_no, status: r.status, created_at: r.created_at, created_by: r.created_by, page_id: 'goods_receipt', page_label: 'menu.goodsReceipt' }));
+                const pendingGI: PendingAction[] = giIssues.filter((i: GoodsIssue) => ['Draft', 'Submitted', 'AdjustmentRequested'].includes(i.status)).map((i: GoodsIssue) => ({ type: 'menu.goodsIssue', doc_no: i.gi_no, status: i.status, created_at: i.created_at, created_by: i.created_by, page_id: 'goods_issue', page_label: 'menu.goodsIssue' }));
                 setPendingActions([...pendingGR, ...pendingGI].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
 
                 // 6. Transaction Data (Mock)
@@ -203,11 +212,10 @@ const DashboardPage: React.FC<{ onNavigate: (pageId: string, pageLabel: string) 
                 setTransactionData({
                     week: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], datasets: [{ label: 'Receipts', data: generateData(7) }, { label: 'Issues', data: generateData(7) }, { label: 'Transfers', data: generateData(7) }] },
                     month: { labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], datasets: [{ label: 'Receipts', data: generateData(4) }, { label: 'Issues', data: generateData(4) }, { label: 'Transfers', data: generateData(4) }] },
-                    year: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], datasets: [{ label: 'Receipts', data: generateData(12) }, { label: 'Issues', data: generateData(12) }, { label: 'Transfers', data: generateData(12) }] }
+                    year: { labels: ['Q1', 'Q2', 'Q3', 'Q4'], datasets: [{ label: 'Receipts', data: generateData(4) }, { label: 'Issues', data: generateData(4) }, { label: 'Transfers', data: generateData(4) }] }
                 });
-
             } catch (e) {
-                setError(e instanceof Error ? e.message : 'Failed to load dashboard data.');
+                setError(e instanceof Error ? e.message : 'Failed to load dashboard data');
             } finally {
                 setIsLoading(false);
             }
@@ -216,63 +224,71 @@ const DashboardPage: React.FC<{ onNavigate: (pageId: string, pageLabel: string) 
         fetchData();
     }, []);
 
-    const chartBaseOptions = useMemo(() => {
-        const gridColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        const textColor = theme === 'dark' ? '#cbd5e1' : '#64748b';
+    const chartOptions = useMemo(() => {
+        const isDark = theme === 'dark';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const textColor = isDark ? '#E5E7EB' : '#4B5563';
         return {
-            responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: textColor } } },
-            scales: { x: { grid: { color: gridColor }, ticks: { color: textColor } }, y: { grid: { color: gridColor }, ticks: { color: textColor } } }
+            responsive: true,
+            plugins: { legend: { display: true, position: 'bottom', labels: { color: textColor } }, tooltip: { mode: 'index', intersect: false } },
+            scales: { x: { ticks: { color: textColor }, grid: { color: gridColor } }, y: { ticks: { color: textColor }, grid: { color: gridColor } } }
         };
     }, [theme]);
+    
+    const doughnutOptions = useMemo(() => ({
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: { legend: { display: true, position: 'right', labels: { color: theme === 'dark' ? '#E5E7EB' : '#4B5563' } } },
+    }), [theme]);
 
-    const lineChartData = useMemo(() => {
-        if (!transactionData) return { labels: [], datasets: [] };
-        const data = transactionData[transactionTimeFilter];
-        const colors = { Receipts: '#1E88E5', Issues: '#E53935', Transfers: '#FB8C00' };
-        return {
-            labels: data.labels,
-            datasets: data.datasets.map((ds: any) => ({
-                ...ds,
-                borderColor: colors[ds.label as keyof typeof colors],
-                backgroundColor: `${colors[ds.label as keyof typeof colors]}33`,
-                tension: 0.3,
-                fill: true,
-            }))
-        };
-    }, [transactionData, transactionTimeFilter]);
-
-
-    if (isLoading) return <div>Loading Dashboard...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (isLoading) {
+        return <div className="text-center p-10">{t('common.loading')}</div>;
+    }
+    if (error) {
+        return <div className="text-center p-10 text-red-500">{t('common.error')}: {error}</div>;
+    }
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <KpiCard title="Total Onhand Quantity" value={kpiData.onhand} icon="Warehouse" />
-                <KpiCard title="Pending Receipts" value={kpiData.pendingReceipts} icon="Download" />
-                <KpiCard title="Pending Issues" value={kpiData.pendingIssues} icon="ExternalLink" />
+        <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <KpiCard title={t('pages.dashboard.kpi.onhandValue')} value={kpiData.onhand} icon="Warehouse" />
+                <KpiCard title={t('pages.dashboard.kpi.pendingReceipts')} value={kpiData.pendingReceipts} icon="Download" />
+                <KpiCard title={t('pages.dashboard.kpi.pendingIssues')} value={kpiData.pendingIssues} icon="ExternalLink" />
             </div>
             
-            <div className="lg:col-span-2">
-                <ChartWrapper type="line" chartData={lineChartData} options={chartBaseOptions} title="Transaction Volume" timeFilter={transactionTimeFilter} setTimeFilter={setTransactionTimeFilter} />
-            </div>
-
-            <div>
-                <ChartWrapper type="doughnut" chartData={inventoryByGtData} options={{ ...chartBaseOptions, scales: {} }} title="Inventory by Goods Type" />
-            </div>
-
-            <div className="lg:col-span-2">
-                <ChartWrapper type="bar" chartData={inventoryByWhData} options={{ ...chartBaseOptions, plugins: { legend: { display: false } } }} title="Inventory by Warehouse" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                 {transactionData && (
+                     <ChartWrapper
+                        title={t('pages.dashboard.charts.transactions')}
+                        type="line"
+                        chartData={transactionData[transactionTimeFilter]}
+                        options={chartOptions}
+                        timeFilter={transactionTimeFilter}
+                        setTimeFilter={setTransactionTimeFilter}
+                    />
+                 )}
+                 <ChartWrapper
+                    title={t('pages.dashboard.charts.inventoryByWh')}
+                    type="bar"
+                    chartData={inventoryByWhData}
+                    options={{...chartOptions, plugins: {...chartOptions.plugins, legend: {display: false}}}}
+                />
             </div>
             
-            <div>
-                <TopModelsList data={topModels} />
-            </div>
-
-            <div className="lg:col-span-3">
-                <PendingActionsList data={pendingActions} onNavigate={onNavigate} />
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                    <PendingActionsList data={pendingActions} onNavigate={onNavigate} title={t('pages.dashboard.lists.pendingActions')} />
+                </div>
+                <div className="space-y-6">
+                     <ChartWrapper
+                        title={t('pages.dashboard.charts.inventoryByGt')}
+                        type="doughnut"
+                        chartData={inventoryByGtData}
+                        options={doughnutOptions}
+                    />
+                    <TopModelsList data={topModels} title={t('pages.dashboard.lists.topModels')} />
+                </div>
             </div>
         </div>
     );

@@ -1,3 +1,4 @@
+
 [
   {
     "id": "SUP001",
@@ -62,6 +63,32 @@
     "email": "closed@oldpapermill.com",
     "status": "Inactive",
     "updated_at": "2022-05-15T12:00:00Z",
+    "has_active_docs": false
+  },
+  {
+    "id": "CUS002",
+    "partner_code": "CUS002",
+    "partner_name": "Retail Giant Inc.",
+    "partner_type": ["Customer"],
+    "tax_code": "RET555444",
+    "address": "100 Retail Row, Commerce City, 12345",
+    "phone": "+1 (888) 555-1234",
+    "email": "purchasing@retailgiant.com",
+    "status": "Active",
+    "updated_at": "2024-02-10T11:00:00Z",
+    "has_active_docs": true
+  },
+  {
+    "id": "SUP002",
+    "partner_code": "SUP002",
+    "partner_name": "Precision Components Ltd.",
+    "partner_type": ["Supplier"],
+    "tax_code": "PCL888999",
+    "address": "200 Industrial Dr, Precision Park, 54321",
+    "phone": "+1 (800) 555-6789",
+    "email": "sales@precision.com",
+    "status": "Active",
+    "updated_at": "2024-03-01T14:30:00Z",
     "has_active_docs": false
   }
 ]

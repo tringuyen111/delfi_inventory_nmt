@@ -1,61 +1,93 @@
 
 [
-  { "id": "menu", "type": "separator", "label": "MENU" },
   {
-    "id": "ui_blueprint",
-    "type": "item",
-    "label": "Guidelines",
-    "icon": "BookOpen",
-    "path": "/guidelines"
+    "id": "dashboard",
+    "label": "menu.dashboard",
+    "icon": "Dashboard",
+    "type": "link"
   },
-  { 
-    "id": "dashboards",
-    "type": "group", 
-    "label": "Dashboards", 
-    "icon": "Dashboard", 
-    "children": [
-      { "id": "dashboard", "type": "item", "label": "Dashboard", "path": "/dashboard" }
-    ]
+  {
+    "label": "menu.operations",
+    "type": "separator"
   },
-  { 
-    "id": "warehouse",
-    "type": "group", 
-    "label": "Warehouse", 
+  {
+    "id": "warehouse_ops",
+    "label": "menu.warehouseOps",
     "icon": "Warehouse",
+    "type": "group",
     "children": [
-        { "id": "onhand", "type": "item", "label": "Onhand", "path": "/onhand" },
-        { "id": "inventory", "type": "item", "label": "Inventory", "path": "/inventory" },
-        { "id": "goods_receipt", "type": "item", "label": "Goods Receipt", "path": "/goods-receipt" },
-        { "id": "goods_issue", "type": "item", "label": "Goods Issue", "path": "/goods-issue" },
-        { "id": "goods_transfer", "type": "item", "label": "Goods Transfer", "path": "/goods-transfer" },
-        { "id": "putaway", "type": "item", "label": "Putaway", "path": "/putaway" }
+      {
+        "id": "goods_receipt",
+        "label": "menu.goodsReceipt",
+        "type": "link"
+      },
+      {
+        "id": "goods_issue",
+        "label": "menu.goodsIssue",
+        "type": "link"
+      },
+      {
+        "id": "inventory_count",
+        "label": "menu.inventoryCount",
+        "type": "link"
+      },
+      {
+        "id": "onhand_inventory",
+        "label": "menu.onhandInventory",
+        "type": "link"
+      }
     ]
   },
-  { 
-    "id": "goods",
-    "type": "group", 
-    "label": "Goods", 
-    "icon": "Goods",
-    "children": [
-        { "id": "goods_type_management", "type": "item", "label": "Goods Type", "path": "/goods-type" },
-        { "id": "goods_model", "type": "item", "label": "Goods Model", "path": "/goods-model" }
-    ]
+  {
+    "label": "menu.configuration",
+    "type": "separator"
   },
-  { "id": "reports", "type": "item", "label": "Reports", "icon": "Reports", "path": "/reports" },
-  { "id": "admin", "type": "separator", "label": "Admin" },
-  { "id": "authentication", "type": "item", "label": "Authentication", "icon": "Authentication", "path": "/authentication" },
   {
     "id": "catalog",
-    "type": "group",
-    "label": "Catalog",
+    "label": "menu.catalog",
     "icon": "Catalog",
+    "type": "group",
     "children": [
-        { "id": "uom_management", "type": "item", "label": "UoM", "path": "/uom" },
-        { "id": "partner_management", "type": "item", "label": "Partner", "path": "/partner" },
-        { "id": "organization_management", "type": "item", "label": "Organization", "path": "/organization" },
-        { "id": "branch_management", "type": "item", "label": "Branch", "path": "/branch" },
-        { "id": "warehouse_config", "type": "item", "label": "Warehouse", "path": "/warehouse-config" },
-        { "id": "location", "type": "item", "label": "Location", "path": "/location" }
+      {
+        "id": "model_goods",
+        "label": "menu.modelGoods",
+        "type": "link"
+      },
+      {
+        "id": "goods_type",
+        "label": "menu.goodsType",
+        "type": "link"
+      }
     ]
+  },
+  {
+    "id": "master_data",
+    "label": "menu.masterData",
+    "icon": "Layers",
+    "type": "group",
+    "children": [
+      { "id": "organization", "label": "menu.organization", "type": "link" },
+      { "id": "branch", "label": "menu.branch", "type": "link" },
+      { "id": "warehouse", "label": "menu.warehouse", "type": "link" },
+      { "id": "location", "label": "menu.location", "type": "link" },
+      { "id": "partner", "label": "menu.partner", "type": "link" },
+      { "id": "uom", "label": "menu.uom", "type": "link" }
+    ]
+  },
+  {
+    "label": "menu.system",
+    "type": "separator"
+  },
+  {
+    "id": "reports",
+    "label": "menu.reports",
+    "icon": "Reports",
+    "type": "link"
+  },
+  {
+    "id": "goods_receipt_ui",
+    "label": "menu.pdaUiMatrix",
+    "icon": "LayoutTemplate",
+    "type": "link"
   }
 ]
