@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
-import { Icon } from '../Icons';
+import { Icon, IconName } from '../Icons';
 
 interface ToastProps {
   message: string;
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'warning';
   onClose: () => void;
 }
 
@@ -21,8 +20,22 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
     return () => clearTimeout(timer);
   }, [message, onClose]);
 
-  const bgColor = type === 'success' ? 'bg-brand-success' : 'bg-brand-danger';
-  const iconName = type === 'success' ? 'CheckCircle' : 'XCircle';
+  const typeStyles = {
+    success: {
+      bgColor: 'bg-brand-success',
+      iconName: 'CheckCircle' as const,
+    },
+    error: {
+      bgColor: 'bg-brand-danger',
+      iconName: 'XCircle' as const,
+    },
+    warning: {
+      bgColor: 'bg-yellow-500',
+      iconName: 'AlertTriangle' as const,
+    },
+  };
+
+  const { bgColor, iconName } = typeStyles[type] || typeStyles.error;
 
   return (
     <div

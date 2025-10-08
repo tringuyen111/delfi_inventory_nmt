@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Modal } from '../ui/Modal';
 import { GoodsIssueLine, GoodsIssueLotDetail, GoodsIssueSerialDetail } from '../../types';
@@ -32,11 +33,11 @@ export const ViewCodeModal: React.FC<ViewCodeModalProps> = ({ isOpen, onClose, l
         <table className="w-full text-sm">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
             <tr>
-              <th className="px-4 py-2 w-16">STT</th>
+              <th className="px-4 py-2 w-16">#</th>
               {isSerial && <th className="px-4 py-2 text-left">Serial Number</th>}
               {isLot && <th className="px-4 py-2 text-left">Lot Code</th>}
               {(isLot || isNone) && <th className="px-4 py-2 text-right">Onhand at Location</th>}
-              {(isLot || isNone) && <th className="px-4 py-2 text-right">Số lượng thực xuất</th>}
+              {(isLot || isNone) && <th className="px-4 py-2 text-right">Actual Qty Picked</th>}
               <th className="px-4 py-2 text-left">Location</th>
             </tr>
           </thead>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { GoodsIssue, Partner, Warehouse, GoodsIssueLine, StatusHistoryEvent, ModelGoods, OnhandByLocation } from '../types';
 import { Icon } from '../components/Icons';
@@ -7,11 +8,13 @@ import { Toast } from '../components/ui/Toast';
 import { FilterDrawer } from '../components/ui/FilterDrawer';
 import { useDebounce } from '../hooks/useDebounce';
 import { StatusBadge } from '../components/ui/StatusBadge';
+import { useLanguage } from '../hooks/useLanguage';
 
 type ModalMode = 'create' | 'edit' | 'view';
 const CURRENT_USER = "Alex Nguyen"; // Mock current user for actions
 
 const GoodsIssuePage: React.FC = () => {
+    const { t } = useLanguage();
     const [issues, setIssues] = useState<GoodsIssue[]>([]);
     const [lines, setLines] = useState<Record<string, GoodsIssueLine[]>>({});
     const [history, setHistory] = useState<Record<string, StatusHistoryEvent[]>>({});
@@ -28,7 +31,7 @@ const GoodsIssuePage: React.FC = () => {
         mode: 'create',
         issue: null,
     });
-    const [toastInfo, setToastInfo] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+    const [toastInfo, setToastInfo] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState<Record<string, string[]>>({});
@@ -100,7 +103,7 @@ const GoodsIssuePage: React.FC = () => {
         if (modalState.issue && ['Draft'].includes(modalState.issue.status)) {
             setModalState(prev => ({ ...prev, mode: 'edit' }));
         } else {
-            setToastInfo({ message: "This document cannot be edited in its current state.", type: 'error' });
+            setToastInfo({ message: t('pages.goodsIssue.toast.cantEdit'), type: 'error' });
         }
     };
     
@@ -135,35 +138,14 @@ const GoodsIssuePage: React.FC = () => {
     };
 
     const handleSave = (
-        issueData: Omit<GoodsIssue, 'id' | 'gi_no' | 'created_at' | 'updated_at' | 'created_by' | 'handler' | 'lines' | 'history'>,
-        linesData: GoodsIssueLine[],
+        savedIssue: GoodsIssue,
         targetStatus: 'Draft' | 'New'
     ) => {
-        let savedIssue: GoodsIssue;
-        const now = new Date().toISOString();
-        
         const isEditing = modalState.mode === 'edit' && modalState.issue;
 
         if (isEditing) {
-            savedIssue = { ...modalState.issue!, ...issueData, status: targetStatus, updated_at: now, lines: linesData, history: modalState.issue!.history };
             setIssues(prev => prev.map(r => r.id === savedIssue.id ? savedIssue : r));
         } else {
-             const year = new Date().getFullYear();
-             const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
-             const seq = (issues.length + 1).toString().padStart(3, '0');
-             const newGiNo = `GI-${year}${month}-${seq}`;
-
-            savedIssue = {
-                ...issueData,
-                id: newGiNo,
-                gi_no: newGiNo,
-                status: targetStatus,
-                created_at: now,
-                updated_at: now,
-                created_by: CURRENT_USER,
-                lines: linesData,
-                history: []
-            };
             setIssues(prev => [savedIssue, ...prev]);
         }
         
@@ -172,33 +154,32 @@ const GoodsIssuePage: React.FC = () => {
             : `Document created with status ${targetStatus}.`;
 
         updateIssueState(savedIssue.gi_no, { status: savedIssue.status }, historyNote);
-        setLines(prev => ({...prev, [savedIssue.gi_no]: linesData}));
+        setLines(prev => ({...prev, [savedIssue.gi_no]: savedIssue.lines}));
 
-        setToastInfo({ message: `Goods Issue saved as ${targetStatus}`, type: 'success' });
+        setToastInfo({ message: t('pages.goodsIssue.toast.saved', {status: targetStatus}), type: 'success' });
         setModalState({isOpen: false, mode: 'create', issue: null});
     };
 
     const handleApprove = (giNo: string) => {
         updateIssueState(giNo, { status: 'Completed' }, 'Document approved. Inventory updated.');
-        setToastInfo({ message: `GI ${giNo} has been Completed.`, type: 'success'});
+        setToastInfo({ message: t('pages.goodsIssue.toast.approved', {giNo}), type: 'success'});
         setModalState({ isOpen: false, mode: 'view', issue: null });
     };
     
     const handleCancel = (giNo: string) => {
-        if (window.confirm("Are you sure you want to cancel this document? This action cannot be undone.")) {
-            updateIssueState(giNo, { status: 'Cancelled' }, 'Document cancelled by manager.');
-            setToastInfo({ message: `GI ${giNo} has been Cancelled.`, type: 'success'});
-            setModalState({ isOpen: false, mode: 'view', issue: null });
-        }
+        updateIssueState(giNo, { status: 'Cancelled' }, 'Document cancelled by manager.');
+        setToastInfo({ message: t('pages.goodsIssue.toast.cancelled', {giNo}), type: 'success'});
+        setModalState({ isOpen: false, mode: 'view', issue: null });
     };
 
     const filteredIssues = useMemo(() => {
         return issues
             .filter(r => {
                 const search = debouncedSearchTerm.toLowerCase();
+                const partnerName = (r.partner_code && partnerMap.get(r.partner_code)) || '';
                 return r.gi_no.toLowerCase().includes(search) ||
                        (r.ref_no && r.ref_no.toLowerCase().includes(search)) ||
-                       (r.partner_code && (partnerMap.get(r.partner_code) || '').toLowerCase().includes(search));
+                       partnerName.toLowerCase().includes(search);
             })
             .filter(r => {
                 return Object.entries(filters).every(([key, values]) => {
@@ -290,6 +271,7 @@ const GoodsIssuePage: React.FC = () => {
                     onhand={onhand}
                     onhandLots={onhandLots}
                     onhandSerials={onhandSerials}
+                    onShowToast={setToastInfo}
                 />
             )}
             {toastInfo && (

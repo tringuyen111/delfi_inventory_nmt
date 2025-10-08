@@ -1,8 +1,8 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../ui/Modal';
 import { GoodsIssueLine, GoodsIssueLotDetail, GoodsIssueSerialDetail, GoodsIssueNoneDetail, OnhandByLocation } from '../../types';
 import { FormField } from '../ui/FormField';
+import { useLanguage } from '../../hooks/useLanguage';
 
 interface AddCodeModalProps {
   isOpen: boolean;
@@ -15,19 +15,24 @@ interface AddCodeModalProps {
 }
 
 export const AddCodeModal: React.FC<AddCodeModalProps> = ({ isOpen, onClose, onSave, line, onhandForModelInWh, onhandLots, onhandSerials }) => {
+  const { t } = useLanguage();
   if (!line) return null;
 
   const [localDetails, setLocalDetails] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [lotErrors, setLotErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    setLocalDetails(line.details || []);
-    setSelectedLocation(line.location_code || '');
-  }, [line]);
+    if (isOpen) {
+        setLocalDetails(line.details || []);
+        setSelectedLocation(line.location_code || '');
+        setLotErrors({});
+    }
+  }, [line, isOpen]);
 
   const handleSave = () => {
     if (!selectedLocation) {
-        alert("Please select a location.");
+        alert(t('pages.goodsIssue.modal.addCodeModal.selectLocation'));
         return;
     }
     onSave(localDetails, selectedLocation);
@@ -36,6 +41,7 @@ export const AddCodeModal: React.FC<AddCodeModalProps> = ({ isOpen, onClose, onS
   const handleLocationChange = (locationCode: string) => {
     if (locationCode !== selectedLocation) {
         setLocalDetails([]);
+        setLotErrors({});
     }
     setSelectedLocation(locationCode);
   };
@@ -44,7 +50,7 @@ export const AddCodeModal: React.FC<AddCodeModalProps> = ({ isOpen, onClose, onS
 
   const renderContent = () => {
     if (!selectedLocation) {
-        return <p className="text-gray-500 dark:text-gray-400 text-center py-4">Please select a location to continue.</p>;
+        return <p className="text-gray-500 dark:text-gray-400 text-center py-4">{t('pages.goodsIssue.modal.addCodeModal.selectLocationFirst')}</p>;
     }
 
     const editorProps = {
@@ -55,12 +61,18 @@ export const AddCodeModal: React.FC<AddCodeModalProps> = ({ isOpen, onClose, onS
 
     switch(line.tracking_type) {
       case 'None':
-        return <NoneEditor {...editorProps} />;
+        return <NoneEditor {...editorProps} t={t} />;
       case 'Lot':
-        return <LotEditor {...editorProps} availableLots={onhandLots[`${line.model_code}-${selectedLocation}`] || []} />;
+        return <LotEditor 
+                    {...editorProps} 
+                    availableLots={onhandLots[`${line.model_code}-${selectedLocation}`] || []} 
+                    lotErrors={lotErrors}
+                    setLotErrors={setLotErrors}
+                    t={t}
+                />;
       case 'Serial': {
         const availableSerials = onhandSerials[`${line.model_code}-${selectedLocation}`] || [];
-        return <SerialEditor {...editorProps} availableSerials={availableSerials} />;
+        return <SerialEditor {...editorProps} availableSerials={availableSerials} t={t} />;
       }
       default:
         return <p>Invalid tracking type.</p>;
@@ -71,19 +83,19 @@ export const AddCodeModal: React.FC<AddCodeModalProps> = ({ isOpen, onClose, onS
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Set Quantity for ${line.model_code}`}
+      title={t('pages.goodsIssue.modal.addCodeModal.title', {modelCode: line.model_code})}
       size="xl"
       footer={
         <>
-          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">Cancel</button>
-          <button onClick={handleSave} className="px-4 py-2 text-sm font-medium rounded-md bg-brand-primary text-white hover:bg-blue-700">Save</button>
+          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">{t('common.cancel')}</button>
+          <button onClick={handleSave} className="px-4 py-2 text-sm font-medium rounded-md bg-brand-primary text-white hover:bg-blue-700">{t('common.save')}</button>
         </>
       }
     >
       <div className="space-y-4">
-        <FormField label="Location">
+        <FormField label={t('menu.location')}>
             <select value={selectedLocation} onChange={(e) => handleLocationChange(e.target.value)} className="w-full">
-                <option value="">-- Select Location --</option>
+                <option value="">{t('common.selectPlaceholder')}</option>
                 {onhandForModelInWh.filter(o => o.available_qty > 0).map(o => (
                     <option key={o.loc_code} value={o.loc_code}>
                         {o.loc_code} (Available: {o.available_qty})
@@ -102,7 +114,7 @@ export const AddCodeModal: React.FC<AddCodeModalProps> = ({ isOpen, onClose, onS
 
 // --- Editors for each tracking type ---
 
-const NoneEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueNoneDetail[]; setDetails: (d: GoodsIssueNoneDetail[]) => void}> = ({line, details, setDetails}) => {
+const NoneEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueNoneDetail[]; setDetails: (d: GoodsIssueNoneDetail[]) => void; t: Function}> = ({line, details, setDetails, t}) => {
     const qty = details[0]?.qty || 0;
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,17 +125,43 @@ const NoneEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueNoneDetail[
     };
     
     return (
-        <FormField label={`Quantity to pick (Onhand: ${line.onhand.toLocaleString()})`}>
+        <FormField label={t('pages.goodsIssue.modal.addCodeModal.noneEditor.label', {onhand: line.onhand.toLocaleString()})}>
             <input type="number" value={qty} onChange={handleChange} className="w-full" max={line.onhand} min={0} />
         </FormField>
     );
 };
 
-const LotEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueLotDetail[]; setDetails: (d: GoodsIssueLotDetail[]) => void; availableLots: {lot_code: string; onhand_qty: number; expiry_date?: string, receipt_date?: string}[]}> = ({line, details, setDetails, availableLots}) => {
-    const handleQtyChange = (lot_code: string, newQty: number) => {
+const LotEditor: React.FC<{
+    line: GoodsIssueLine; 
+    details: GoodsIssueLotDetail[]; 
+    setDetails: (d: GoodsIssueLotDetail[]) => void; 
+    availableLots: {lot_code: string; onhand_qty: number; expiry_date?: string, receipt_date?: string}[];
+    lotErrors: Record<string, string>;
+    setLotErrors: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    t: Function;
+}> = ({line, details, setDetails, availableLots, lotErrors, setLotErrors, t}) => {
+    const totalPlanned = useMemo(() => details.reduce((sum, d) => sum + d.qty, 0), [details]);
+
+    const handleQtyChange = (lot_code: string, value: string) => {
+        let newQty = parseInt(value) || 0;
         const lotOnhand = availableLots.find(l => l.lot_code === lot_code)?.onhand_qty || 0;
-        if (newQty < 0) newQty = 0;
         
+        const newErrors = {...lotErrors};
+        let capped = false;
+
+        if (newQty > lotOnhand) {
+            newQty = lotOnhand;
+            newErrors[lot_code] = t('pages.goodsIssue.modal.addCodeModal.lotEditor.maxOnhand', {qty: lotOnhand});
+            capped = true;
+        }
+
+        if (!capped) {
+            delete newErrors[lot_code];
+        }
+        setLotErrors(newErrors);
+
+        if (newQty < 0) newQty = 0;
+
         const existingDetail = details.find(d => d.lot_code === lot_code);
         if (existingDetail) {
             if (newQty > 0) {
@@ -137,30 +175,48 @@ const LotEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueLotDetail[];
     };
     
     return (
-      <div className="max-h-96 overflow-y-auto">
-        <table className="w-full text-sm">
-          <thead className="sticky top-0 bg-gray-50 dark:bg-gray-700"><tr><th className="p-2 text-left">Lot Code</th><th className="p-2 text-right">Onhand</th><th className="p-2 text-left">Receipt Date</th><th className="p-2 text-left">Expiry Date</th><th className="p-2 text-right">Qty to Pick</th></tr></thead>
-          <tbody>
-          {availableLots.map(lot => (
-            <tr key={lot.lot_code} className="border-b dark:border-gray-600">
-              <td className="p-2 font-mono">{lot.lot_code}</td>
-              <td className="p-2 text-right">{lot.onhand_qty}</td>
-              <td className="p-2">{lot.receipt_date ? new Date(lot.receipt_date).toLocaleDateString() : 'N/A'}</td>
-              <td className="p-2">{lot.expiry_date ? new Date(lot.expiry_date).toLocaleDateString() : 'N/A'}</td>
-              <td className="p-2 text-right"><input type="number" value={details.find(d => d.lot_code === lot.lot_code)?.qty || ''} onChange={e => handleQtyChange(lot.lot_code, parseInt(e.target.value) || 0)} className="w-24 p-1 text-right border rounded bg-white dark:bg-gray-700" min="0" /></td>
-            </tr>
-          ))}
-          </tbody>
-        </table>
+      <div>
+        <div className="text-right mb-2 text-sm font-semibold">
+            {t('pages.goodsIssue.modal.addCodeModal.lotEditor.totalPlanned')}: <span>{totalPlanned.toLocaleString()}</span>
+        </div>
+        <div className="max-h-96 overflow-y-auto">
+          <table className="w-full text-sm">
+            <thead className="sticky top-0 bg-gray-50 dark:bg-gray-700"><tr><th className="p-2 text-left">{t('pages.goodsIssue.modal.addCodeModal.lotEditor.lotCode')}</th><th className="p-2 text-right">{t('pages.goodsIssue.modal.addCodeModal.lotEditor.onhand')}</th><th className="p-2 text-left">{t('pages.goodsIssue.modal.addCodeModal.lotEditor.receiptDate')}</th><th className="p-2 text-left">{t('pages.goodsIssue.modal.addCodeModal.lotEditor.expiryDate')}</th><th className="p-2 text-right">{t('pages.goodsIssue.modal.addCodeModal.lotEditor.qtyPlanned')}</th></tr></thead>
+            <tbody>
+            {availableLots.map(lot => (
+              <tr key={lot.lot_code} className="border-b dark:border-gray-600">
+                <td className="p-2 font-mono">{lot.lot_code}</td>
+                <td className="p-2 text-right">{lot.onhand_qty}</td>
+                <td className="p-2">{lot.receipt_date ? new Date(lot.receipt_date).toLocaleDateString() : 'N/A'}</td>
+                <td className="p-2">{lot.expiry_date ? new Date(lot.expiry_date).toLocaleDateString() : 'N/A'}</td>
+                <td className="p-2 text-right">
+                    <div className="inline-block">
+                        <input 
+                          type="number" 
+                          value={details.find(d => d.lot_code === lot.lot_code)?.qty || ''} 
+                          onChange={e => handleQtyChange(lot.lot_code, e.target.value)}
+                          className={`w-24 p-1 text-right border rounded bg-white dark:bg-gray-700 ${lotErrors[lot.lot_code] ? 'border-red-500' : 'dark:border-gray-600'}`}
+                          min="0"
+                        />
+                        {lotErrors[lot.lot_code] && <p className="text-xs text-red-500 mt-1">{lotErrors[lot.lot_code]}</p>}
+                    </div>
+                </td>
+              </tr>
+            ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
 };
 
-const SerialEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueSerialDetail[]; setDetails: (d: GoodsIssueSerialDetail[]) => void; availableSerials: {serial_no: string, receipt_date?: string, expiry_date?: string}[]}> = ({line, details, setDetails, availableSerials}) => {
-    const selectedSerials = new Set(details.map(d => d.serial_no));
+const SerialEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueSerialDetail[]; setDetails: (d: GoodsIssueSerialDetail[]) => void; availableSerials: {serial_no: string, receipt_date?: string, expiry_date?: string}[]; t: Function;}> = ({line, details, setDetails, availableSerials, t}) => {
+    const selectedSerials = useMemo(() => new Set(details.map(d => d.serial_no)), [details]);
+    const totalPlanned = selectedSerials.size;
     
     const handleToggle = (serial_no: string) => {
-        if (selectedSerials.has(serial_no)) {
+        const isSelected = selectedSerials.has(serial_no);
+        if (isSelected) {
             setDetails(details.filter(d => d.serial_no !== serial_no));
         } else {
             setDetails([...details, { serial_no }]);
@@ -168,29 +224,34 @@ const SerialEditor: React.FC<{line: GoodsIssueLine; details: GoodsIssueSerialDet
     };
     
     return (
-        <div className="max-h-96 overflow-y-auto">
-             <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-gray-50 dark:bg-gray-700">
-                    <tr>
-                        <th className="p-2 w-10"></th>
-                        <th className="p-2 text-left">Serial Number</th>
-                        <th className="p-2 text-left">Receipt Date</th>
-                        <th className="p-2 text-left">Expiry Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {availableSerials.map(serial => (
-                        <tr key={serial.serial_no} className="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <td className="p-2 text-center">
-                                <input type="checkbox" checked={selectedSerials.has(serial.serial_no)} onChange={() => handleToggle(serial.serial_no)} className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary" />
-                            </td>
-                            <td className="p-2 font-mono">{serial.serial_no}</td>
-                            <td className="p-2">{serial.receipt_date ? new Date(serial.receipt_date).toLocaleDateString() : 'N/A'}</td>
-                            <td className="p-2">{serial.expiry_date ? new Date(serial.expiry_date).toLocaleDateString() : 'N/A'}</td>
+        <div>
+            <div className="text-right mb-2 text-sm font-semibold">
+                {t('pages.goodsIssue.modal.addCodeModal.lotEditor.totalPlanned')}: <span>{totalPlanned.toLocaleString()}</span>
+            </div>
+            <div className="max-h-96 overflow-y-auto">
+                 <table className="w-full text-sm">
+                    <thead className="sticky top-0 bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th className="p-2 w-10"></th>
+                            <th className="p-2 text-left">{t('pages.goodsIssue.modal.addCodeModal.serialEditor.serialNumber')}</th>
+                            <th className="p-2 text-left">{t('pages.goodsIssue.modal.addCodeModal.lotEditor.receiptDate')}</th>
+                            <th className="p-2 text-left">{t('pages.goodsIssue.modal.addCodeModal.lotEditor.expiryDate')}</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {availableSerials.map(serial => (
+                            <tr key={serial.serial_no} className="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td className="p-2 text-center">
+                                    <input type="checkbox" checked={selectedSerials.has(serial.serial_no)} onChange={() => handleToggle(serial.serial_no)} className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary" />
+                                </td>
+                                <td className="p-2 font-mono">{serial.serial_no}</td>
+                                <td className="p-2">{serial.receipt_date ? new Date(serial.receipt_date).toLocaleDateString() : 'N/A'}</td>
+                                <td className="p-2">{serial.expiry_date ? new Date(serial.expiry_date).toLocaleDateString() : 'N/A'}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

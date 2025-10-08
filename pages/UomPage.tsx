@@ -60,17 +60,6 @@ const UomPage: React.FC = () => {
         setModalState(prev => ({ ...prev, mode: 'edit' }));
     };
 
-    const handleDelete = (uom: Uom) => {
-        if (uom.is_used_in_model_goods) {
-             alert(t('pages.uom.deleteInUseError'));
-             return;
-        }
-        if (window.confirm(t('pages.uom.deleteConfirm', { code: uom.uom_code }))) {
-            setUoms(prev => prev.filter(u => u.id !== uom.id));
-            setToastInfo({ message: t('pages.uom.toast.deleted'), type: 'success' });
-        }
-    };
-    
     const handleSave = (uomToSave: Uom): Uom => {
         let savedUom: Uom;
         if (modalState.mode === 'edit' && modalState.uom) {
@@ -132,13 +121,6 @@ const UomPage: React.FC = () => {
             <div className="flex justify-end items-center gap-2">
                 <button onClick={() => handleView(uom)} className="p-1 text-gray-500 hover:text-brand-primary dark:hover:text-blue-400">
                     <Icon name="Edit" className="w-4 h-4" />
-                </button>
-                <button 
-                    onClick={() => handleDelete(uom)} 
-                    disabled={uom.is_used_in_model_goods}
-                    className="p-1 text-gray-500 hover:text-brand-danger disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed"
-                >
-                    <Icon name="Trash2" className="w-4 h-4" />
                 </button>
             </div>
         )}

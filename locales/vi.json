@@ -84,6 +84,60 @@
     "InQC": "Đang kiểm tra"
   },
   "pages": {
+    "goodsIssue": {
+      "toast": {
+        "saved": "Phiếu xuất kho đã được lưu dưới dạng {status}",
+        "approved": "Phiếu PX {giNo} đã được Hoàn thành.",
+        "cancelled": "Phiếu PX {giNo} đã được Hủy.",
+        "cantEdit": "Không thể sửa chứng từ ở trạng thái này.",
+        "lineQtyWarning": "Số lượng kế hoạch không thể vượt quá tồn kho khả dụng ({maxQty}).",
+        "lineRequired": "Cần có ít nhất một dòng hàng hóa.",
+        "allFieldsRequired": "Tất cả các trường là bắt buộc và số lượng phải > 0 cho dòng: {lineIdentifier}",
+        "pickExactSerialQty": "Bạn phải soạn chính xác số lượng kế hoạch là {plannedQty} serials. Bạn đã soạn {totalPicked}.",
+        "pickMaxQty": "Bạn không thể soạn nhiều hơn số lượng kế hoạch là {plannedQty}. Bạn đã soạn {totalPicked}."
+      },
+      "modal": {
+        "changeModeConfirm": {
+            "title": "Thay đổi Chế độ Xuất kho?",
+            "message": "Việc thay đổi chế độ sẽ xóa tất cả các dòng hàng hiện tại. Bạn có chắc chắn muốn tiếp tục không?"
+        },
+        "cancelConfirm": {
+            "title": "Xác nhận Hủy",
+            "message": "Bạn có chắc chắn muốn hủy chứng từ này không? Hành động này không thể hoàn tác."
+        },
+        "addCodeModal": {
+            "title": "Thiết lập Số lượng cho {modelCode}",
+            "selectLocationFirst": "Vui lòng chọn một vị trí để tiếp tục.",
+            "lotEditor": {
+                "totalPlanned": "Tổng SL Kế hoạch",
+                "lotCode": "Mã Lô",
+                "onhand": "Tồn kho",
+                "receiptDate": "Ngày nhận",
+                "expiryDate": "Ngày hết hạn",
+                "qtyPlanned": "SL Kế hoạch",
+                "maxOnhand": "Tối đa: {qty}"
+            },
+            "serialEditor": {
+                "serialNumber": "Số Serial"
+            },
+            "noneEditor": {
+                "label": "Số lượng Kế hoạch (Tồn kho tại vị trí: {onhand})"
+            },
+            "selectLocation": "Vui lòng chọn một vị trí."
+        },
+        "viewCodeModal": {
+            "title": "Chi tiết đã soạn cho: {modelCode}",
+            "table": {
+                "stt": "#",
+                "serialNumber": "Số Serial",
+                "lotCode": "Mã Lô",
+                "onhandAtLocation": "Tồn kho tại Vị trí",
+                "actualQty": "SL thực xuất",
+                "location": "Vị trí"
+            }
+        }
+      }
+    },
     "onhand": {
       "detailModal": {
         "title": "Chi tiết Tồn kho",
@@ -248,10 +302,7 @@
     "uom": {
       "pageTitle": "Đơn vị tính",
       "searchPlaceholder": "Tìm theo Mã/Tên/Loại...",
-      "deleteConfirm": "Bạn có chắc chắn muốn xóa {code} không?",
-      "deleteInUseError": "Không thể xóa ĐVT này vì đang được sử dụng.",
       "toast": {
-        "deleted": "Đã xóa ĐVT thành công",
         "updated": "Đã cập nhật ĐVT thành công",
         "created": "Đã tạo ĐVT thành công"
       },

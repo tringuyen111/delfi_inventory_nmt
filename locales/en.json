@@ -84,6 +84,60 @@
     "InQC": "In QC"
   },
   "pages": {
+    "goodsIssue": {
+      "toast": {
+        "saved": "Goods Issue saved as {status}",
+        "approved": "GI {giNo} has been Completed.",
+        "cancelled": "GI {giNo} has been Cancelled.",
+        "cantEdit": "This document cannot be edited in its current state.",
+        "lineQtyWarning": "Planned quantity cannot exceed available stock ({maxQty}).",
+        "lineRequired": "At least one line item is required.",
+        "allFieldsRequired": "All fields are required and quantity must be > 0 for line: {lineIdentifier}",
+        "pickExactSerialQty": "You must pick exactly the planned quantity of {plannedQty} serials. You have picked {totalPicked}.",
+        "pickMaxQty": "You cannot pick more than the planned quantity of {plannedQty}. You have picked {totalPicked}."
+      },
+      "modal": {
+        "changeModeConfirm": {
+            "title": "Change Issue Mode?",
+            "message": "Changing the issue mode will clear all current line items. Are you sure you want to continue?"
+        },
+        "cancelConfirm": {
+            "title": "Confirm Cancellation",
+            "message": "Are you sure you want to cancel this document? This action cannot be undone."
+        },
+        "addCodeModal": {
+            "title": "Set Quantity for {modelCode}",
+            "selectLocationFirst": "Please select a location to continue.",
+            "lotEditor": {
+                "totalPlanned": "Total Planned",
+                "lotCode": "Lot Code",
+                "onhand": "Onhand",
+                "receiptDate": "Receipt Date",
+                "expiryDate": "Expiry Date",
+                "qtyPlanned": "Qty Planned",
+                "maxOnhand": "Max onhand: {qty}"
+            },
+            "serialEditor": {
+                "serialNumber": "Serial Number"
+            },
+            "noneEditor": {
+                "label": "Quantity Planned (Onhand at Location: {onhand})"
+            },
+            "selectLocation": "Please select a location."
+        },
+        "viewCodeModal": {
+            "title": "Picked Details for: {modelCode}",
+            "table": {
+                "stt": "#",
+                "serialNumber": "Serial Number",
+                "lotCode": "Lot Code",
+                "onhandAtLocation": "Onhand at Location",
+                "actualQty": "Actual Qty Picked",
+                "location": "Location"
+            }
+        }
+      }
+    },
     "onhand": {
       "detailModal": {
         "title": "Onhand Details",
@@ -248,10 +302,7 @@
     "uom": {
       "pageTitle": "Unit of Measure",
       "searchPlaceholder": "Search by Code/Name/Type...",
-      "deleteConfirm": "Are you sure you want to delete {code}?",
-      "deleteInUseError": "This UoM cannot be deleted because it is in use.",
       "toast": {
-        "deleted": "UoM deleted successfully",
         "updated": "UoM updated successfully",
         "created": "UoM created successfully"
       },
