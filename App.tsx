@@ -21,6 +21,7 @@ const ModelGoodsPage = React.lazy(() => import('./pages/ModelGoodsPage'));
 const OnhandPage = React.lazy(() => import('./pages/OnhandPage'));
 const GoodsReceiptPage = React.lazy(() => import('./pages/GoodsReceiptPage'));
 const GoodsIssuePage = React.lazy(() => import('./pages/GoodsIssuePage'));
+const GoodsTransferPage = React.lazy(() => import('./pages/GoodsTransferPage'));
 const InventoryCountPage = React.lazy(() => import('./pages/InventoryCountPage'));
 const GoodsReceiptUIPage = React.lazy(() => import('./pages/GoodsReceiptUIPage'));
 const ReportsPage = React.lazy(() => import('./pages/ReportsPage'));
@@ -67,6 +68,7 @@ function App() {
       case 'onhand_inventory': return <OnhandPage />;
       case 'goods_receipt': return <GoodsReceiptPage />;
       case 'goods_issue': return <GoodsIssuePage />;
+      case 'goods_transfer': return <GoodsTransferPage />;
       case 'inventory_count': return <InventoryCountPage />;
       case 'goods_receipt_ui': return <GoodsReceiptUIPage />;
       case 'reports': return <ReportsPage />;

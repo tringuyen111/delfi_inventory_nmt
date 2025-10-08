@@ -4,13 +4,17 @@ import { Icon } from '../components/Icons';
 import { Table, Column } from '../components/ui/Table';
 import { GoodsReceiptFormModal } from '../components/goods_receipt/GoodsReceiptFormModal';
 import { Toast } from '../components/ui/Toast';
-import { FilterDrawer } from '../components/ui/FilterDrawer';
 import { useDebounce } from '../hooks/useDebounce';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { useLanguage } from '../hooks/useLanguage';
+import { Pagination } from '../components/ui/Pagination';
+import { Dropdown } from '../components/ui/Dropdown';
+import { ColumnVisibilityDropdown } from '../components/ui/ColumnVisibilityDropdown';
 
 type ModalMode = 'create' | 'edit' | 'view';
 const CURRENT_USER = "Alex Nguyen"; // Mock current user for actions
+const ITEMS_PER_PAGE = 8;
+const COLUMN_VISIBILITY_KEY = 'goods_receipt_column_visibility';
 
 const GoodsReceiptPage: React.FC = () => {
     const { t } = useLanguage();
@@ -28,9 +32,9 @@ const GoodsReceiptPage: React.FC = () => {
         receipt: null,
     });
     const [toastInfo, setToastInfo] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filters, setFilters] = useState<Record<string, string[]>>({});
+    const [filters, setFilters] = useState({ status: 'all', receipt_type: 'all', dest_wh_code: 'all' });
+    const [currentPage, setCurrentPage] = useState(1);
 
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -75,6 +79,12 @@ const GoodsReceiptPage: React.FC = () => {
     useEffect(() => {
         fetchData();
     }, [fetchData]);
+
+     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({ ...prev, [name]: value }));
+        setCurrentPage(1);
+    };
 
     const handleCreate = () => {
         setModalState({ isOpen: true, mode: 'create', receipt: null });
@@ -205,14 +215,25 @@ const GoodsReceiptPage: React.FC = () => {
                        (r.partner_code && (partnerMap.get(r.partner_code) || '').toLowerCase().includes(search));
             })
             .filter(r => {
-                return Object.entries(filters).every(([key, values]) => {
-                    if (!Array.isArray(values) || values.length === 0) return true;
-                    return values.includes(r[key as keyof GoodsReceipt] as string);
-                });
+                if (filters.status !== 'all' && r.status !== filters.status) return false;
+                if (filters.receipt_type !== 'all' && r.receipt_type !== filters.receipt_type) return false;
+                if (filters.dest_wh_code !== 'all' && r.dest_wh_code !== filters.dest_wh_code) return false;
+                return true;
             });
     }, [receipts, debouncedSearchTerm, filters, partnerMap]);
 
-    const columns: Column<GoodsReceipt>[] = useMemo(() => [
+    const paginatedReceipts = useMemo(() => {
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+        return filteredReceipts.slice(start, end);
+    }, [filteredReceipts, currentPage]);
+
+    const totalPages = useMemo(() => {
+        return Math.ceil(filteredReceipts.length / ITEMS_PER_PAGE);
+    }, [filteredReceipts]);
+
+
+    const allColumns: Column<GoodsReceipt>[] = useMemo(() => [
         { key: 'gr_no', header: t('pages.goodsReceipt.table.grNo') },
         { key: 'receipt_type', header: t('pages.goodsReceipt.table.receiptType') },
         { key: 'status', header: t('pages.goodsReceipt.table.status'), render: (r) => <StatusBadge status={r.status} /> },
@@ -229,35 +250,94 @@ const GoodsReceiptPage: React.FC = () => {
         { key: 'updated_at', header: t('common.updatedAt'), render: (r) => new Date(r.updated_at).toLocaleString() },
     ], [t, partnerMap, warehouseMap]);
 
+    const [visibleColumnKeys, setVisibleColumnKeys] = useState<Set<string>>(() => {
+        const saved = localStorage.getItem(COLUMN_VISIBILITY_KEY);
+        if (saved) {
+            return new Set(JSON.parse(saved));
+        }
+        return new Set(allColumns.map(c => c.key as string));
+    });
+
+    useEffect(() => {
+        localStorage.setItem(COLUMN_VISIBILITY_KEY, JSON.stringify(Array.from(visibleColumnKeys)));
+    }, [visibleColumnKeys]);
+
+    const handleColumnToggle = (key: string) => {
+        setVisibleColumnKeys(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(key)) {
+                if (newSet.size > 1) newSet.delete(key);
+            } else {
+                newSet.add(key);
+            }
+            return newSet;
+        });
+    };
+    
+    const handleShowAll = () => setVisibleColumnKeys(new Set(allColumns.map(c => c.key as string)));
+    const handleHideAll = () => setVisibleColumnKeys(new Set(['gr_no'])); // Keep at least one column
+
+    const columns = useMemo(() => allColumns.filter(col => visibleColumnKeys.has(col.key as string)), [allColumns, visibleColumnKeys]);
+
     return (
-        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
-            <header className="p-4 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex justify-between items-center">
-                    <div className="flex gap-2">
+        <div className="space-y-4">
+             <div className="text-sm text-gray-500 dark:text-gray-400">
+                {t('menu.warehouseOps')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.goodsReceipt')}</span>
+            </div>
+            <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
+                <header className="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center gap-2">
+                            <Icon name="Filter" className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                            <h2 className="text-lg font-semibold">{t('common.filter')}</h2>
+                        </div>
                         <button onClick={handleCreate} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700">
                             <Icon name="Plus" className="w-4 h-4"/> {t('common.create')}
                         </button>
                     </div>
-                    <div className="flex gap-2 items-center">
-                        <div className="relative">
+                    <div className="flex items-center gap-2">
+                        <div className="relative flex-grow">
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
                              placeholder={t('pages.goodsReceipt.searchPlaceholder')}
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
-                             className="w-64 pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
+                             className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none"
                            />
                         </div>
-                        <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <Icon name="Filter" className="w-4 h-4"/> {t('common.filter')}
+                        <select name="status" value={filters.status} onChange={handleFilterChange} className="text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md py-2 px-3">
+                            <option value="all">All Statuses</option>
+                             {['Draft', 'New', 'Receiving', 'Submitted', 'Completed', 'Rejected', 'Cancelled'].map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                        <select name="receipt_type" value={filters.receipt_type} onChange={handleFilterChange} className="text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md py-2 px-3">
+                            <option value="all">All Receipt Types</option>
+                            {['PO', 'Return', 'Transfer', 'Other'].map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                        <select name="dest_wh_code" value={filters.dest_wh_code} onChange={handleFilterChange} className="text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md py-2 px-3">
+                            <option value="all">All Warehouses</option>
+                            {warehouses.map(w => <option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}
+                        </select>
+                        <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <Icon name="Download" className="w-4 h-4"/> {t('common.exportExcel')}
                         </button>
-                         <button onClick={fetchData} className="p-2 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600">
-                           <Icon name="RefreshCw" className="w-4 h-4"/>
-                        </button>
+                        <Dropdown 
+                          trigger={
+                            <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <Icon name="Columns" className="w-4 h-4"/> {t('common.columnVisibility')}
+                            </button>
+                          }
+                        >
+                            <ColumnVisibilityDropdown
+                                allColumns={allColumns}
+                                visibleColumnKeys={visibleColumnKeys}
+                                onColumnToggle={handleColumnToggle}
+                                onShowAll={handleShowAll}
+                                onHideAll={handleHideAll}
+                            />
+                        </Dropdown>
                     </div>
-                </div>
-            </header>
+                </header>
 
             {isLoading ? (
                 <div className="p-8 text-center">{t('common.loading')}</div>
@@ -266,16 +346,22 @@ const GoodsReceiptPage: React.FC = () => {
             ) : (
                 <Table<GoodsReceipt>
                     columns={columns}
-                    data={filteredReceipts}
+                    data={paginatedReceipts}
                     onRowDoubleClick={handleView}
                 />
             )}
             
-            {filteredReceipts.length === 0 && !isLoading && (
+            {paginatedReceipts.length === 0 && !isLoading && (
                 <div className="text-center py-16">
                     <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">{t('pages.goodsReceipt.empty.title')}</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('pages.goodsReceipt.empty.message')}</p>
                 </div>
+            )}
+
+            {totalPages > 1 && (
+                <footer className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                </footer>
             )}
 
             {modalState.isOpen && (
@@ -291,6 +377,7 @@ const GoodsReceiptPage: React.FC = () => {
                     receipt={modalState.receipt}
                     partners={partners}
                     warehouses={warehouses}
+                    warehouseMap={warehouseMap}
                     modelGoods={modelGoods}
                 />
             )}
@@ -301,18 +388,7 @@ const GoodsReceiptPage: React.FC = () => {
                     onClose={() => setToastInfo(null)}
                 />
             )}
-            <FilterDrawer
-                isOpen={isFilterOpen}
-                onClose={() => setIsFilterOpen(false)}
-                filters={filters}
-                onApplyFilters={setFilters}
-                onClearFilters={() => setFilters({})}
-                filterOptions={[
-                    { key: 'status', label: t('pages.goodsReceipt.filter.status'), options: ['Draft', 'New', 'Receiving', 'Submitted', 'Completed', 'Rejected', 'Cancelled']},
-                    { key: 'receipt_type', label: t('pages.goodsReceipt.filter.receiptType'), options: ['PO', 'Return', 'Transfer', 'Other']},
-                    { key: 'dest_wh_code', label: t('pages.goodsReceipt.filter.destWarehouse'), options: warehouses.map(w => w.wh_code), optionLabels: warehouseMap }
-                ]}
-            />
+        </div>
         </div>
     );
 };

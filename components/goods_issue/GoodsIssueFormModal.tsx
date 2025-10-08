@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../ui/Modal';
 import { GoodsIssue, Partner, Warehouse, GoodsIssueLine, StatusHistoryEvent, ModelGoods, OnhandByLocation, GoodsIssueSerialDetail, GoodsIssueLotDetail } from '../../types';
@@ -9,6 +10,8 @@ import { AddCodeModal } from './AddCodeModal';
 import { ViewCodeModal } from './ViewCodeModal';
 import { ConfirmationModal } from '../ui/ConfirmationModal';
 import { useLanguage } from '../../hooks/useLanguage';
+import { SectionCard } from '../SectionCard';
+import { StatusHistorySidebar } from '../ui/StatusHistorySidebar';
 
 type ModalMode = 'create' | 'edit' | 'view';
 
@@ -23,6 +26,7 @@ interface GoodsIssueFormModalProps {
     issue: GoodsIssue | null;
     partners: Partner[];
     warehouses: Warehouse[];
+    warehouseMap: Map<string, string>;
     modelGoods: ModelGoods[];
     onhand: OnhandByLocation[];
     onhandLots: Record<string, any[]>;
@@ -42,35 +46,8 @@ const getInitialHeaderState = (): Omit<GoodsIssue, 'id' | 'gi_no' | 'created_at'
     note: '',
 });
 
-const StatusHistorySidebar: React.FC<{ history: StatusHistoryEvent[] }> = ({ history }) => {
-    const {t} = useLanguage();
-    return (
-        <div className="w-full lg:w-1/3 lg:pl-6 lg:border-l lg:border-gray-200 dark:lg:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
-                <Icon name="History" className="w-5 h-5" />
-                {t('pages.goodsReceipt.modal.statusHistory')}
-            </h3>
-            <ol className="relative border-l border-gray-200 dark:border-gray-700">
-                {(history || []).slice().reverse().map(event => (
-                    <li key={event.id} className="mb-6 ml-6">
-                        <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-                            <Icon name="CheckCircle" className="w-3 h-3 text-blue-800 dark:text-blue-300"/>
-                        </span>
-                        <h4 className="flex items-center mb-1 text-base font-semibold text-gray-900 dark:text-white"><StatusBadge status={event.status} /></h4>
-                        <time className="block mb-2 text-xs font-normal leading-none text-gray-400 dark:text-gray-500">
-                            on {new Date(event.timestamp).toLocaleString()} by {event.user}
-                        </time>
-                        {event.note && <p className="text-sm font-normal text-gray-500 dark:text-gray-400">{event.note}</p>}
-                    </li>
-                ))}
-            </ol>
-        </div>
-    );
-};
-
-
 export const GoodsIssueFormModal: React.FC<GoodsIssueFormModalProps> = ({
-    isOpen, mode, onClose, onSave, onSwitchToEdit, onApprove, onCancel, issue, partners, warehouses, modelGoods, onhand, onhandLots, onhandSerials, onShowToast
+    isOpen, mode, onClose, onSave, onSwitchToEdit, onApprove, onCancel, issue, partners, warehouses, warehouseMap, modelGoods, onhand, onhandLots, onhandSerials, onShowToast
 }) => {
     const { t } = useLanguage();
     const [formData, setFormData] = useState(getInitialHeaderState());
@@ -82,7 +59,7 @@ export const GoodsIssueFormModal: React.FC<GoodsIssueFormModalProps> = ({
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
     
     const isEditable = mode === 'create' || (mode === 'edit' && issue?.status === 'Draft');
-    const isViewMode = mode === 'view';
+    const isViewMode = mode === 'view' || (mode === 'edit' && issue?.status !== 'Draft');
 
     useEffect(() => {
         if (isOpen) {
@@ -262,12 +239,12 @@ export const GoodsIssueFormModal: React.FC<GoodsIssueFormModalProps> = ({
                  </select>
              ) : `${line.model_name} (${line.model_code})` },
              { key: 'tracking_type', header: 'Tracking', render: l => <StatusBadge status={l.tracking_type} /> },
-             { key: 'onhand', header: 'Onhand', align: 'right', render: l => l.onhand.toLocaleString() },
          ];
         
-         if (formData.issue_mode === 'Summary') {
+         if (formData.issue_mode === 'Summary' && !isViewMode) {
              return [
                  ...baseColumns,
+                 { key: 'onhand', header: 'Onhand', align: 'right', render: l => l.onhand.toLocaleString() },
                  { key: 'location_code', header: 'Location', render: (line, index) => {
                      const locationsForModel = onhandForWarehouse.filter(o => o.model_code === line.model_code);
                      return isEditable ? (
@@ -291,9 +268,10 @@ export const GoodsIssueFormModal: React.FC<GoodsIssueFormModalProps> = ({
              ];
          }
         
-         // Detail mode
+         // Detail mode or View Mode for Summary
          return [
              ...baseColumns,
+             { key: 'location_code', header: 'Location', render: l => l.location_code || 'Multiple' },
              { key: 'qty_planned', header: 'Qty Planned', align: 'right', render: l => l.qty_planned.toLocaleString() },
              { key: 'qty_picked', header: 'Qty Picked', align: 'right', render: l => (l.qty_picked || 0).toLocaleString() },
              { key: 'actions', header: 'Action', align: 'center', render: (line, index) => (
@@ -305,7 +283,7 @@ export const GoodsIssueFormModal: React.FC<GoodsIssueFormModalProps> = ({
                </div>
              )}
          ];
-    }, [isEditable, formData.issue_mode, localLines, onhandForWarehouse, lineErrors, handleLineChange, handleRemoveLine, modelGoods]);
+    }, [isEditable, isViewMode, formData.issue_mode, localLines, onhandForWarehouse, lineErrors, handleLineChange, handleRemoveLine, modelGoods]);
 
     const title = mode === 'create' ? 'Create Goods Issue' : `Goods Issue: ${issue?.gi_no}`;
     const activePartners = partners.filter(p => p.status === 'Active');
@@ -337,30 +315,32 @@ export const GoodsIssueFormModal: React.FC<GoodsIssueFormModalProps> = ({
                 }
             >
                 <div className="flex flex-col lg:flex-row gap-6 h-full">
-                    <div className="flex-grow lg:w-2/3">
-                        {issue && (
-                            <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
-                                <div><span className="font-medium text-gray-500">Status: </span><StatusBadge status={issue.status} /></div>
-                                <div><span className="text-gray-500">Created by: </span><span className="font-semibold">{issue.created_by}</span></div>
-                                <div><span className="text-gray-500">Created at: </span><span className="font-semibold">{new Date(issue.created_at).toLocaleDateString()}</span></div>
-                                <div><span className="text-gray-500">Handler: </span><span className="font-semibold">{issue.handler || '—'}</span></div>
-                            </div>
-                        )}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <FormField label="Issue Type" required><select name="issue_type" value={formData.issue_type} onChange={handleChange} className="w-full" disabled={!isEditable}>{['Sales Order', 'Transfer', 'Return to Supplier', 'Manual'].map(t => <option key={t} value={t}>{t}</option>)}</select></FormField>
-                            <FormField label="Source Warehouse" required error={errors.source_wh_code}><select name="source_wh_code" value={formData.source_wh_code} onChange={e => handleSourceWarehouseChange(e.target.value)} className="w-full" disabled={!isEditable}><option value="">Select...</option>{activeWarehouses.map(w => <option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}</select></FormField>
-                            <FormField label="Ref No"><input type="text" name="ref_no" value={formData.ref_no || ''} onChange={handleChange} className="w-full" disabled={!isEditable} /></FormField>
-                            
-                            {formData.issue_type === 'Transfer' && <FormField label="Dest Warehouse" required error={errors.dest_wh_code}><select name="dest_wh_code" value={formData.dest_wh_code} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="">Select...</option>{activeWarehouses.filter(w => w.wh_code !== formData.source_wh_code).map(w => <option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}</select></FormField>}
-                            {(formData.issue_type === 'Sales Order' || formData.issue_type === 'Return to Supplier') && <FormField label="Partner" required error={errors.partner_code}><select name="partner_code" value={formData.partner_code} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="">Select...</option>{activePartners.map(p => <option key={p.id} value={p.partner_code}>{p.partner_name}</option>)}</select></FormField>}
+                    <div className="flex-grow lg:w-2/3 space-y-6">
+                        <SectionCard title={t('form.section.information')} icon="ClipboardList">
+                            {issue && (
+                                <div className="p-3 mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                    <div><span className="font-medium text-gray-500">Status: </span><StatusBadge status={issue.status} /></div>
+                                    <div><span className="text-gray-500">Created by: </span><span className="font-semibold">{issue.created_by}</span></div>
+                                    <div><span className="text-gray-500">Created at: </span><span className="font-semibold">{new Date(issue.created_at).toLocaleDateString()}</span></div>
+                                    <div><span className="text-gray-500">Handler: </span><span className="font-semibold">{issue.handler || '—'}</span></div>
+                                </div>
+                            )}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <FormField label="Issue Type" required><select name="issue_type" value={formData.issue_type} onChange={handleChange} className="w-full" disabled={!isEditable}>{['Sales Order', 'Transfer', 'Return to Supplier', 'Manual'].map(t => <option key={t} value={t}>{t}</option>)}</select></FormField>
+                                <FormField label="Source Warehouse" required error={errors.source_wh_code}><select name="source_wh_code" value={formData.source_wh_code} onChange={e => handleSourceWarehouseChange(e.target.value)} className="w-full" disabled={!isEditable}><option value="">Select...</option>{activeWarehouses.map(w => <option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}</select></FormField>
+                                <FormField label="Ref No"><input type="text" name="ref_no" value={formData.ref_no || ''} onChange={handleChange} className="w-full" disabled={!isEditable} /></FormField>
+                                
+                                {formData.issue_type === 'Transfer' && <FormField label="Dest Warehouse" required error={errors.dest_wh_code}><select name="dest_wh_code" value={formData.dest_wh_code} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="">Select...</option>{activeWarehouses.filter(w => w.wh_code !== formData.source_wh_code).map(w => <option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}</select></FormField>}
+                                {(formData.issue_type === 'Sales Order' || formData.issue_type === 'Return to Supplier') && <FormField label="Partner" required error={errors.partner_code}><select name="partner_code" value={formData.partner_code} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="">Select...</option>{activePartners.map(p => <option key={p.id} value={p.partner_code}>{p.partner_name}</option>)}</select></FormField>}
 
-                            <div className="md:col-span-3"><FormField label="Note"><textarea name="note" value={formData.note || ''} onChange={handleChange} className="w-full" rows={2} disabled={!isEditable}></textarea></FormField></div>
-                        </div>
+                                <div className="md:col-span-3"><FormField label="Note"><textarea name="note" value={formData.note || ''} onChange={handleChange} className="w-full" rows={2} disabled={!isEditable}></textarea></FormField></div>
+                            </div>
+                        </SectionCard>
                         
-                        <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-600">
-                            <div className="flex justify-between items-center mb-2">
+                        <SectionCard 
+                            title={
                                 <div className="flex items-center gap-4">
-                                    <h3 className="text-lg font-semibold">Issue Plan</h3>
+                                    <span>{t('form.section.issuePlan')}</span>
                                     {isEditable && (
                                         <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-md p-0.5">
                                             <button onClick={() => handleModeChange('Summary')} className={`px-3 py-1 text-xs font-medium rounded ${formData.issue_mode === 'Summary' ? 'bg-gray-200 dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>Summary</button>
@@ -368,14 +348,34 @@ export const GoodsIssueFormModal: React.FC<GoodsIssueFormModalProps> = ({
                                         </div>
                                     )}
                                 </div>
-                                {isEditable && <button onClick={handleAddLine} disabled={!formData.source_wh_code} className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700 disabled:bg-gray-400"><Icon name="Plus" className="w-4 h-4"/> Add Line</button>}
-                            </div>
+                            }
+                            icon="List"
+                            actions={isEditable && <button onClick={handleAddLine} disabled={!formData.source_wh_code} className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700 disabled:bg-gray-400"><Icon name="Plus" className="w-4 h-4"/> Add Line</button>}
+                        >
                             <Table<GoodsIssueLine> columns={lineColumns} data={localLines} />
                             {localLines.length === 0 && <p className="text-center text-gray-500 py-8">Generate a plan or add items manually to begin.</p>}
-                        </div>
+                        </SectionCard>
                     </div>
 
-                    {isViewMode && issue?.history && <StatusHistorySidebar history={issue.history} />}
+                    {isViewMode && issue && (
+                        <div className="w-full lg:w-1/3 flex-shrink-0 space-y-6">
+                            <StatusHistorySidebar history={issue.history} />
+                            <SectionCard title={t('form.section.warehouseInfo')} icon="Warehouse">
+                                <div className="space-y-3 text-sm">
+                                    <div>
+                                        <p className="font-semibold text-gray-600 dark:text-gray-300">Source Warehouse</p>
+                                        <p>{warehouseMap.get(formData.source_wh_code) || formData.source_wh_code}</p>
+                                    </div>
+                                    {formData.dest_wh_code && (
+                                        <div>
+                                            <p className="font-semibold text-gray-600 dark:text-gray-300">Destination Warehouse</p>
+                                            <p>{warehouseMap.get(formData.dest_wh_code) || formData.dest_wh_code}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </SectionCard>
+                        </div>
+                    )}
                 </div>
             </Modal>
             

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../ui/Modal';
 import { GoodsReceipt, Partner, Warehouse, GoodsReceiptLine, StatusHistoryEvent, ModelGoods } from '../../types';
@@ -7,6 +8,8 @@ import { Icon } from '../Icons';
 import { Table, Column } from '../ui/Table';
 import { LineDetailModal } from './LineDetailModal';
 import { useLanguage } from '../../hooks/useLanguage';
+import { SectionCard } from '../SectionCard';
+import { StatusHistorySidebar } from '../ui/StatusHistorySidebar';
 
 type ModalMode = 'create' | 'edit' | 'view';
 
@@ -26,6 +29,7 @@ interface GoodsReceiptFormModalProps {
   receipt: GoodsReceipt | null;
   partners: Partner[];
   warehouses: Warehouse[];
+  warehouseMap: Map<string, string>;
   modelGoods: ModelGoods[];
 }
 
@@ -40,36 +44,8 @@ const getInitialState = (): Omit<GoodsReceipt, 'id' | 'gr_no' | 'created_at' | '
     note: '',
 });
 
-const StatusHistorySidebar: React.FC<{ history: StatusHistoryEvent[] }> = ({ history = [] }) => {
-    const { t } = useLanguage();
-    return (
-        <div className="w-full lg:w-1/3 lg:pl-6 lg:border-l lg:border-gray-200 dark:lg:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
-                <Icon name="History" className="w-5 h-5" />
-                {t('pages.goodsReceipt.modal.statusHistory')}
-            </h3>
-            <ol className="relative border-l border-gray-200 dark:border-gray-700">
-                {history.slice().reverse().map(event => (
-                     <li key={event.id} className="mb-6 ml-6">
-                        <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-                            <Icon name="CheckCircle" className="w-3 h-3 text-blue-800 dark:text-blue-300"/>
-                        </span>
-                        <h4 className="flex items-center mb-1 text-base font-semibold text-gray-900 dark:text-white">
-                           <StatusBadge status={event.status} />
-                        </h4>
-                        <time className="block mb-2 text-xs font-normal leading-none text-gray-400 dark:text-gray-500">
-                            on {new Date(event.timestamp).toLocaleString()} by {event.user}
-                        </time>
-                        {event.note && <p className="text-sm font-normal text-gray-500 dark:text-gray-400">{event.note}</p>}
-                    </li>
-                ))}
-            </ol>
-        </div>
-    );
-};
-
 export const GoodsReceiptFormModal: React.FC<GoodsReceiptFormModalProps> = ({
-  isOpen, mode, onClose, onSave, onSwitchToEdit, onApprove, onReject, onCancel, receipt, partners, warehouses, modelGoods
+  isOpen, mode, onClose, onSave, onSwitchToEdit, onApprove, onReject, onCancel, receipt, partners, warehouses, warehouseMap, modelGoods
 }) => {
   const { t } = useLanguage();
   const [formData, setFormData] = useState(getInitialState());
@@ -78,7 +54,7 @@ export const GoodsReceiptFormModal: React.FC<GoodsReceiptFormModalProps> = ({
   const [viewLineDetail, setViewLineDetail] = useState<GoodsReceiptLine | null>(null);
 
   const isEditable = mode === 'create' || (mode === 'edit' && receipt?.status === 'Draft');
-  const isViewMode = mode === 'view';
+  const isViewMode = mode === 'view' || (mode === 'edit' && receipt?.status !== 'Draft');
 
   useEffect(() => {
     if (receipt) {
@@ -167,63 +143,68 @@ export const GoodsReceiptFormModal: React.FC<GoodsReceiptFormModalProps> = ({
     onSave(formData, localLines, targetStatus);
   };
   
-  const lineColumns: Column<GoodsReceiptLine>[] = useMemo(() => [
-    { key: 'model_code', header: t('pages.goodsReceipt.modal.lines.table.modelGoods'), render: (line, index) => isEditable ? (
-        <select value={line.model_code} onChange={(e) => handleLineChange(index!, 'model_code', e.target.value)} className="w-full p-1 border rounded bg-white dark:bg-gray-700">
-            <option value="">{t('common.selectPlaceholder')}</option>
-            {modelGoods.map(m => <option key={m.id} value={m.model_code}>{m.model_name} ({m.model_code})</option>)}
-        </select>
-    ) : `${line.model_name} (${line.model_code})` },
-    { key: 'uom', header: t('pages.goodsReceipt.modal.lines.table.uom') },
-    { key: 'qty_planned', header: t('pages.goodsReceipt.modal.lines.table.qtyPlanned'), align: 'right', render: (line, index) => isEditable ? (
-        <input type="number" value={line.qty_planned} onChange={(e) => handleLineChange(index!, 'qty_planned', parseInt(e.target.value))} className="w-24 p-1 text-right border rounded bg-white dark:bg-gray-700" min="1" />
-    ) : line.qty_planned },
-    { key: 'qty_received', header: t('pages.goodsReceipt.modal.lines.table.qtyReceived'), align: 'right', render: (line) => line.qty_received || 0 },
-    { key: 'diff_qty', header: t('pages.goodsReceipt.modal.lines.table.diffQty'), align: 'right', render: (line) => (line.qty_received || 0) - line.qty_planned },
-    { key: 'actions', header: t('pages.goodsReceipt.modal.lines.table.action'), align: 'center', render: (line, index) => isEditable ? (
+  const lineColumns: Column<GoodsReceiptLine>[] = useMemo(() => {
+    const columns: Column<GoodsReceiptLine>[] = [
+      { key: 'model_code', header: t('pages.goodsReceipt.modal.lines.table.modelGoods'), render: (line, index) => isEditable ? (
+          <select value={line.model_code} onChange={(e) => handleLineChange(index!, 'model_code', e.target.value)} className="w-full p-1 border rounded bg-white dark:bg-gray-700">
+              <option value="">{t('common.selectPlaceholder')}</option>
+              {modelGoods.map(m => <option key={m.id} value={m.model_code}>{m.model_name} ({m.model_code})</option>)}
+          </select>
+      ) : `${line.model_name} (${line.model_code})` },
+      { key: 'uom', header: t('pages.goodsReceipt.modal.lines.table.uom') },
+      { key: 'qty_planned', header: t('pages.goodsReceipt.modal.lines.table.qtyPlanned'), align: 'right', render: (line, index) => isEditable ? (
+          <input type="number" value={line.qty_planned} onChange={(e) => handleLineChange(index!, 'qty_planned', parseInt(e.target.value))} className="w-24 p-1 text-right border rounded bg-white dark:bg-gray-700" min="1" />
+      ) : line.qty_planned },
+    ];
+    
+    if (receipt && ['Submitted', 'Completed', 'Rejected', 'Cancelled'].includes(receipt.status)) {
+        columns.push(
+            { key: 'qty_received', header: t('pages.goodsReceipt.modal.lines.table.qtyReceived'), align: 'right', render: (line) => line.qty_received || 0 },
+            { key: 'diff_qty', header: t('pages.goodsReceipt.modal.lines.table.diffQty'), align: 'right', render: (line) => (line.qty_received || 0) - line.qty_planned }
+        );
+    }
+    
+    columns.push({ key: 'actions', header: t('pages.goodsReceipt.modal.lines.table.action'), align: 'center', render: (line, index) => isEditable ? (
         <button onClick={() => handleRemoveLine(index!)} className="p-1 text-gray-500 hover:text-brand-danger"><Icon name="Trash2" className="w-4 h-4" /></button>
     ) : (
         <button onClick={() => setViewLineDetail(line)} disabled={line.tracking_type === 'None'} className="text-sm text-brand-primary hover:underline disabled:text-gray-400">{t('pages.goodsReceipt.modal.lines.viewDetails')}</button>
-    )}
-  ], [isEditable, modelGoods, localLines, t]);
+    )});
 
-  const title = mode === 'create' ? t('pages.goodsReceipt.modal.createTitle') : t('pages.goodsReceipt.modal.viewTitle', { grNo: receipt?.gr_no });
+    return columns;
+  }, [isEditable, modelGoods, localLines, t, receipt?.status]);
+
+  const title = mode === 'create' ? t('pages.goodsReceipt.modal.createTitle') : `Goods Receipt: ${receipt?.gr_no}`;
   const activePartners = partners.filter(p => p.status === 'Active');
   const activeWarehouses = warehouses.filter(w => w.status === 'Active');
 
+  const renderFooter = () => (
+    <>
+      {isViewMode && receipt && (
+          <>
+              {['Draft'].includes(receipt.status) && <button onClick={onSwitchToEdit} className="px-4 py-2 rounded-md bg-yellow-500 text-white">{t('pages.goodsReceipt.modal.buttons.edit')}</button>}
+              {['Submitted'].includes(receipt.status) && <button onClick={() => onApprove(receipt.gr_no)} className="px-4 py-2 rounded-md bg-green-600 text-white">{t('pages.goodsReceipt.modal.buttons.approve')}</button>}
+              {['Submitted'].includes(receipt.status) && <button onClick={() => onReject(receipt.gr_no)} className="px-4 py-2 rounded-md bg-red-600 text-white">{t('pages.goodsReceipt.modal.buttons.reject')}</button>}
+              {['Draft', 'New', 'Receiving', 'Submitted'].includes(receipt.status) && <button onClick={() => onCancel(receipt.gr_no)} className="px-4 py-2 rounded-md bg-gray-600 text-white">{t('pages.goodsReceipt.modal.buttons.cancelDoc')}</button>}
+          </>
+      )}
+      {isEditable && (
+          <>
+              <button onClick={() => handleSubmit('Draft')} className="px-4 py-2 rounded-md bg-gray-600 text-white">{t('common.saveAsDraft')}</button>
+              <button onClick={() => handleSubmit('New')} className="px-4 py-2 rounded-md bg-brand-primary text-white">{t('common.create')}</button>
+          </>
+      )}
+      <button onClick={onClose} className="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-600">{t('common.close')}</button>
+    </>
+  );
+
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        title={title}
-        size="fullscreen"
-        footer={
-          <>
-            {isViewMode && receipt && (
-                <>
-                    {['Draft'].includes(receipt.status) && <button onClick={onSwitchToEdit} className="px-4 py-2 rounded-md bg-yellow-500 text-white">{t('pages.goodsReceipt.modal.buttons.edit')}</button>}
-                    {['Submitted'].includes(receipt.status) && <button onClick={() => onApprove(receipt.gr_no)} className="px-4 py-2 rounded-md bg-green-600 text-white">{t('pages.goodsReceipt.modal.buttons.approve')}</button>}
-                    {['Submitted'].includes(receipt.status) && <button onClick={() => onReject(receipt.gr_no)} className="px-4 py-2 rounded-md bg-red-600 text-white">{t('pages.goodsReceipt.modal.buttons.reject')}</button>}
-                    {['Draft', 'New', 'Receiving', 'Submitted'].includes(receipt.status) && <button onClick={() => onCancel(receipt.gr_no)} className="px-4 py-2 rounded-md bg-gray-600 text-white">{t('pages.goodsReceipt.modal.buttons.cancelDoc')}</button>}
-                </>
-            )}
-            {isEditable && (
-                <>
-                    <button onClick={() => handleSubmit('Draft')} className="px-4 py-2 rounded-md bg-gray-600 text-white">{t('common.saveAsDraft')}</button>
-                    <button onClick={() => handleSubmit('New')} className="px-4 py-2 rounded-md bg-brand-primary text-white">{t('common.create')}</button>
-                </>
-            )}
-            <button onClick={onClose} className="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-600">{t('common.close')}</button>
-          </>
-        }
-      >
+      <Modal isOpen={isOpen} onClose={onClose} title={title} size="fullscreen" footer={renderFooter()}>
         <div className="flex flex-col lg:flex-row gap-6 h-full">
-            {/* Main Content */}
-            <div className="flex-grow lg:w-2/3">
-                <div className="space-y-4">
+            <div className="flex-grow lg:w-2/3 space-y-6">
+                <SectionCard title={t('form.section.information')} icon="ClipboardList">
                     {receipt && (
-                        <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div className="p-3 mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                            <div><span className="font-medium text-gray-500 dark:text-gray-400">{t('pages.goodsReceipt.modal.statusLabels.status')}: </span><StatusBadge status={receipt.status} /></div>
                            <div><span className="text-gray-500 dark:text-gray-400">{t('pages.goodsReceipt.modal.statusLabels.createdBy')}: </span><span className="font-semibold">{receipt.created_by}</span></div>
                            <div><span className="text-gray-500 dark:text-gray-400">{t('pages.goodsReceipt.modal.statusLabels.createdAt')}: </span><span className="font-semibold">{new Date(receipt.created_at).toLocaleDateString()}</span></div>
@@ -241,19 +222,36 @@ export const GoodsReceiptFormModal: React.FC<GoodsReceiptFormModalProps> = ({
 
                         <div className="md:col-span-4"><FormField label={t('pages.goodsReceipt.modal.formLabels.note')}><textarea name="note" value={formData.note} onChange={handleChange} className="w-full" rows={2} disabled={!isEditable}></textarea></FormField></div>
                     </div>
-                    
-                    <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-lg font-semibold">{t('pages.goodsReceipt.modal.lines.title')}</h3>
-                            {isEditable && <button onClick={handleAddLine} className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700"><Icon name="Plus" className="w-4 h-4"/> {t('pages.goodsReceipt.modal.lines.addLine')}</button>}
-                        </div>
-                        <Table<GoodsReceiptLine> columns={lineColumns} data={localLines} />
-                    </div>
-                </div>
+                </SectionCard>
+                
+                <SectionCard 
+                    title={t('pages.goodsReceipt.modal.lines.title')}
+                    icon="List"
+                    actions={isEditable && <button onClick={handleAddLine} className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700"><Icon name="Plus" className="w-4 h-4"/> {t('pages.goodsReceipt.modal.lines.addLine')}</button>}
+                >
+                    <Table<GoodsReceiptLine> columns={lineColumns} data={localLines} />
+                </SectionCard>
             </div>
-
-            {/* Side Panel */}
-            {!isEditable && receipt?.history && <StatusHistorySidebar history={receipt.history} />}
+            
+            {isViewMode && receipt && (
+              <div className="w-full lg:w-1/3 flex-shrink-0 space-y-6">
+                <StatusHistorySidebar history={receipt.history} />
+                <SectionCard title={t('form.section.warehouseInfo')} icon="Warehouse">
+                    <div className="space-y-3 text-sm">
+                        {formData.source_wh_code && (
+                            <div>
+                                <p className="font-semibold text-gray-600 dark:text-gray-300">Source Warehouse</p>
+                                <p>{warehouseMap.get(formData.source_wh_code) || formData.source_wh_code}</p>
+                            </div>
+                        )}
+                        <div>
+                            <p className="font-semibold text-gray-600 dark:text-gray-300">Destination Warehouse</p>
+                            <p>{warehouseMap.get(formData.dest_wh_code) || formData.dest_wh_code}</p>
+                        </div>
+                    </div>
+                </SectionCard>
+              </div>
+            )}
         </div>
       </Modal>
 

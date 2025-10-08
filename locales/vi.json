@@ -34,6 +34,21 @@
       "title": "Tùy chọn lọc",
       "clearAll": "Xóa tất cả",
       "apply": "Áp dụng"
+    },
+    "exportExcel": "Xuất Excel",
+    "columnVisibility": "Ẩn/Hiện cột",
+    "showAll": "Hiện tất cả",
+    "hideAll": "Ẩn tất cả"
+  },
+  "form": {
+    "section": {
+      "information": "Thông tin chung",
+      "receiptPlan": "Kế hoạch Nhận hàng",
+      "issuePlan": "Kế hoạch Xuất hàng",
+      "countPlan": "Kế hoạch Kiểm kê",
+      "transferPlan": "Kế hoạch Điều chuyển",
+      "statusHistory": "Lịch sử trạng thái",
+      "warehouseInfo": "Thông tin Kho"
     }
   },
   "header": {
@@ -46,6 +61,7 @@
     "warehouseOps": "Vận hành Kho",
     "goodsReceipt": "Nhập kho",
     "goodsIssue": "Xuất kho",
+    "goodsTransfer": "Điều chuyển",
     "inventoryCount": "Kiểm kê",
     "onhandInventory": "Tồn kho",
     "configuration": "Cấu hình",
@@ -81,9 +97,77 @@
     "Available": "Có sẵn",
     "Reserved": "Đã đặt",
     "Allocated": "Đã phân bổ",
-    "InQC": "Đang kiểm tra"
+    "InQC": "Đang kiểm tra",
+    "Created": "Đã tạo",
+    "Exporting": "Đang xuất"
   },
   "pages": {
+    "goodsTransfer": {
+      "pageTitle": "Điều chuyển Kho",
+      "searchPlaceholder": "Tìm theo Số ĐC, Số tham chiếu...",
+      "toast": {
+        "saved": "Phiếu điều chuyển đã được lưu dưới dạng {status}",
+        "cancelled": "Phiếu ĐC {gtNo} và các chứng từ liên quan đã được hủy.",
+        "cantCancel": "Không thể hủy điều chuyển này. Phiếu xuất kho liên quan đã được hoàn tất.",
+        "allFieldsRequired": "Vui lòng điền tất cả các trường bắt buộc trước khi tạo kế hoạch.",
+        "lineQtyWarning": "Số lượng điều chuyển không được vượt quá tồn kho khả dụng ({maxQty}).",
+        "lineRequired": "Cần có ít nhất một dòng hàng hóa."
+      },
+      "table": {
+        "gtNo": "Số ĐC",
+        "type": "Loại",
+        "status": "Trạng thái",
+        "source": "Kho nguồn",
+        "destination": "Kho đích",
+        "expectedDate": "Ngày dự kiến"
+      },
+      "empty": {
+        "title": "Không tìm thấy Phiếu điều chuyển",
+        "message": "Nhấn 'Tạo mới' để bắt đầu một phiếu điều chuyển mới."
+      },
+      "filter": {
+        "status": "Trạng thái",
+        "type": "Loại điều chuyển",
+        "source": "Kho nguồn",
+        "destination": "Kho đích"
+      },
+      "modal": {
+        "createTitle": "Tạo Phiếu điều chuyển",
+        "viewTitle": "Xem Phiếu điều chuyển: {gtNo}",
+        "form": {
+          "gtNo": "Số Phiếu điều chuyển",
+          "gtType": "Loại điều chuyển",
+          "source": "Kho nguồn",
+          "destination": "Kho đích",
+          "expectedDate": "Ngày điều chuyển dự kiến"
+        },
+        "lines": {
+          "title": "Kế hoạch Điều chuyển",
+          "generate": "Tạo Kế hoạch",
+          "addLine": "Thêm dòng",
+          "table": {
+            "modelGoods": "Mặt hàng",
+            "modelName": "Tên mặt hàng",
+            "tracking": "Loại theo dõi",
+            "unit": "Đơn vị",
+            "onhand": "Tồn kho nguồn",
+            "qty": "SL Điều chuyển",
+            "qtyExported": "SL đã xuất",
+            "qtyReceived": "SL đã nhận"
+          }
+        },
+        "links": {
+          "title": "Chứng từ Liên quan",
+          "gi": "Phiếu xuất kho",
+          "gr": "Phiếu nhập kho",
+          "notGenerated": "Chưa được tạo"
+        },
+        "cancelConfirm": {
+            "title": "Xác nhận Hủy",
+            "message": "Bạn có chắc chắn muốn hủy phiếu điều chuyển này không? Hành động này cũng sẽ hủy các phiếu xuất/nhập kho liên quan. Không thể hoàn tác."
+        }
+      }
+    },
     "goodsIssue": {
       "toast": {
         "saved": "Phiếu xuất kho đã được lưu dưới dạng {status}",
@@ -216,6 +300,7 @@
         "rejectReasonPrompt": "Vui lòng cung cấp lý do từ chối:",
         "cancelConfirm": "Bạn có chắc chắn muốn hủy chứng từ này không? Hành động này không thể hoàn tác.",
         "statusHistory": "Lịch sử Trạng thái",
+        "noHistory": "Chưa có lịch sử trạng thái.",
         "statusLabels": {
             "status": "Trạng thái",
             "createdBy": "Người tạo",

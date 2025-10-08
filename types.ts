@@ -2,7 +2,7 @@ import { IconName } from "./components/Icons";
 
 // --- GENERAL ---
 export type Status = 'Active' | 'Inactive';
-export type DocStatus = 'Draft' | 'New' | 'Receiving' | 'Picking' | 'Submitted' | 'Counting' | 'Review' | 'Completed' | 'Rejected' | 'Cancelled' | 'AdjustmentRequested';
+export type DocStatus = 'Draft' | 'New' | 'Receiving' | 'Picking' | 'Submitted' | 'Counting' | 'Review' | 'Completed' | 'Rejected' | 'Cancelled' | 'AdjustmentRequested' | 'Created' | 'Exporting';
 
 // --- USER & UI ---
 export interface UserProfile {
@@ -236,6 +236,7 @@ export interface GoodsReceipt {
     handler?: string;
     lines: GoodsReceiptLine[];
     history: StatusHistoryEvent[];
+    gt_no?: string; // Link to Goods Transfer
 }
 
 export interface GoodsReceiptSerialDetail {
@@ -265,7 +266,7 @@ export interface GoodsIssueLine {
 export interface GoodsIssue {
     id: string;
     gi_no: string;
-    issue_type: 'Sales Order' | 'Transfer' | 'Return to Supplier' | 'Manual';
+    issue_type: 'Sales Order' | 'Transfer' | 'Return to Supplier' | 'Manual' | 'Adjustment';
     issue_mode: 'Summary' | 'Detail';
     status: DocStatus;
     ref_no?: string;
@@ -280,6 +281,7 @@ export interface GoodsIssue {
     handler?: string;
     lines: GoodsIssueLine[];
     history: StatusHistoryEvent[];
+    gt_no?: string; // Link to Goods Transfer
 }
 
 export interface GoodsIssueSerialDetail { serial_no: string; }
@@ -314,6 +316,36 @@ export interface InventoryCount {
     lines: InventoryCountLine[];
     history: StatusHistoryEvent[];
 }
+
+export interface GoodsTransferLine {
+  id: string;
+  gt_id: string;
+  model_code: string;
+  model_name: string;
+  uom: string;
+  tracking_type: 'None' | 'Serial' | 'Lot';
+  qty_transfer: number;
+  qty_exported?: number;
+  qty_received?: number;
+}
+export interface GoodsTransfer {
+    id: string;
+    gt_no: string;
+    gt_type: 'Internal Transfer' | 'Return' | 'Other';
+    status: DocStatus;
+    source_wh_code: string;
+    dest_wh_code: string;
+    expected_date?: string;
+    note?: string;
+    created_at: string;
+    updated_at: string;
+    created_by: string;
+    lines: GoodsTransferLine[];
+    history: StatusHistoryEvent[];
+    linked_gi_no?: string | null;
+    linked_gr_no?: string | null;
+}
+
 
 // --- DASHBOARD & REPORTS ---
 export interface PendingAction {

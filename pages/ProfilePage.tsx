@@ -5,6 +5,7 @@ import { FormField } from '../components/ui/FormField';
 import { Avatar } from '../components/ui/Avatar';
 import { Toast } from '../components/ui/Toast';
 import { AvatarCropModal } from '../components/profile/AvatarCropModal';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface ProfilePageProps {
   userProfile: UserProfile;
@@ -14,6 +15,7 @@ interface ProfilePageProps {
 type FormData = Omit<UserProfile, 'id' | 'avatar_url' | 'email' | 'role' | 'avatar_version'>;
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile }) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState<FormData>({
     display_name: userProfile.display_name,
     phone: userProfile.phone,
@@ -86,92 +88,97 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      {/* Left Panel: Avatar Management */}
-      <div className="lg:col-span-1">
-        <SectionCard title="Profile Picture" icon="User">
-          <div className="flex flex-col items-center gap-4">
-            <Avatar user={userProfile} size="xl" />
-            <button
-              onClick={() => setIsAvatarModalOpen(true)}
-              className="w-full px-4 py-2 text-sm font-medium rounded-md bg-brand-primary text-white hover:bg-blue-700"
-            >
-              Change Picture
-            </button>
-            {userProfile.avatar_url && (
+    <div className="space-y-4">
+      <div className="text-sm text-gray-500 dark:text-gray-400">
+          <span className="font-semibold text-gray-800 dark:text-gray-200">{t('header.myProfile')}</span>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Panel: Avatar Management */}
+        <div className="lg:col-span-1">
+          <SectionCard title="Profile Picture" icon="User">
+            <div className="flex flex-col items-center gap-4">
+              <Avatar user={userProfile} size="xl" />
               <button
-                onClick={handleRemoveAvatar}
-                className="w-full px-4 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
+                onClick={() => setIsAvatarModalOpen(true)}
+                className="w-full px-4 py-2 text-sm font-medium rounded-md bg-brand-primary text-white hover:bg-blue-700"
               >
-                Remove
+                Change Picture
               </button>
-            )}
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
-              JPG/PNG supported, max 2MB.
-            </p>
-          </div>
-        </SectionCard>
+              {userProfile.avatar_url && (
+                <button
+                  onClick={handleRemoveAvatar}
+                  className="w-full px-4 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
+                >
+                  Remove
+                </button>
+              )}
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
+                JPG/PNG supported, max 2MB.
+              </p>
+            </div>
+          </SectionCard>
+        </div>
+
+        {/* Right Panel: Profile Form */}
+        <div className="lg:col-span-2">
+          <SectionCard title="Personal Information" icon="ClipboardList">
+            <div className="space-y-4">
+              <FormField label="Display Name" error={errors.display_name} required>
+                <input type="text" name="display_name" value={formData.display_name || ''} onChange={handleChange} className="w-full" />
+              </FormField>
+              
+              <FormField label="Email">
+                  <input type="email" name="email" value={userProfile.email} className="w-full" disabled />
+              </FormField>
+
+              <FormField label="Phone" error={errors.phone}>
+                <input type="tel" name="phone" value={formData.phone || ''} onChange={handleChange} className="w-full" />
+              </FormField>
+
+              <FormField label="Gender" error={errors.gender}>
+                <select name="gender" value={formData.gender || ''} onChange={handleChange} className="w-full">
+                  <option value="">-- Not specified --</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </FormField>
+              
+              <FormField label="Birth Year" error={errors.birth_year}>
+                <input type="number" name="birth_year" value={formData.birth_year || ''} onChange={handleChange} className="w-full" />
+              </FormField>
+              
+              <FormField label="Role">
+                  <input type="text" name="role" value={userProfile.role} className="w-full" disabled />
+              </FormField>
+            </div>
+            <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <button onClick={handleCancel} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">
+                Cancel
+              </button>
+              <button onClick={handleSave} className="px-4 py-2 text-sm font-medium rounded-md bg-brand-primary text-white hover:bg-blue-700">
+                Save
+              </button>
+            </div>
+          </SectionCard>
+        </div>
+        
+        {isAvatarModalOpen && (
+          <AvatarCropModal
+              isOpen={isAvatarModalOpen}
+              onClose={() => setIsAvatarModalOpen(false)}
+              onSave={handleAvatarSave}
+          />
+        )}
+
+        {toastInfo && (
+          <Toast
+            message={toastInfo.message}
+            type={toastInfo.type}
+            onClose={() => setToastInfo(null)}
+          />
+        )}
       </div>
-
-      {/* Right Panel: Profile Form */}
-      <div className="lg:col-span-2">
-        <SectionCard title="Personal Information" icon="ClipboardList">
-          <div className="space-y-4">
-            <FormField label="Display Name" error={errors.display_name} required>
-              <input type="text" name="display_name" value={formData.display_name || ''} onChange={handleChange} className="w-full" />
-            </FormField>
-            
-            <FormField label="Email">
-                <input type="email" name="email" value={userProfile.email} className="w-full" disabled />
-            </FormField>
-
-            <FormField label="Phone" error={errors.phone}>
-              <input type="tel" name="phone" value={formData.phone || ''} onChange={handleChange} className="w-full" />
-            </FormField>
-
-            <FormField label="Gender" error={errors.gender}>
-              <select name="gender" value={formData.gender || ''} onChange={handleChange} className="w-full">
-                <option value="">-- Not specified --</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </FormField>
-            
-            <FormField label="Birth Year" error={errors.birth_year}>
-              <input type="number" name="birth_year" value={formData.birth_year || ''} onChange={handleChange} className="w-full" />
-            </FormField>
-            
-            <FormField label="Role">
-                <input type="text" name="role" value={userProfile.role} className="w-full" disabled />
-            </FormField>
-          </div>
-          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <button onClick={handleCancel} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">
-              Cancel
-            </button>
-            <button onClick={handleSave} className="px-4 py-2 text-sm font-medium rounded-md bg-brand-primary text-white hover:bg-blue-700">
-              Save
-            </button>
-          </div>
-        </SectionCard>
-      </div>
-      
-      {isAvatarModalOpen && (
-        <AvatarCropModal
-            isOpen={isAvatarModalOpen}
-            onClose={() => setIsAvatarModalOpen(false)}
-            onSave={handleAvatarSave}
-        />
-      )}
-
-      {toastInfo && (
-        <Toast
-          message={toastInfo.message}
-          type={toastInfo.type}
-          onClose={() => setToastInfo(null)}
-        />
-      )}
     </div>
   );
 };

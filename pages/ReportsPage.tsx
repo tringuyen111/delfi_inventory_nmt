@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Warehouse, ExportHistoryItem } from '../types';
 import { Icon } from '../components/Icons';
@@ -7,10 +5,12 @@ import { SectionCard } from '../components/SectionCard';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { FormField } from '../components/ui/FormField';
 import { DateRangePicker } from '../components/ui/DateRangePicker';
+import { useLanguage } from '../hooks/useLanguage';
 
 const CURRENT_USER = "Alex Nguyen"; // Mock current user
 
 const ReportsPage: React.FC = () => {
+    const { t } = useLanguage();
     // Form state
     const [reportType, setReportType] = useState('transaction_history');
     const [selectedWarehouse, setSelectedWarehouse] = useState<string>('');
@@ -133,77 +133,82 @@ const ReportsPage: React.FC = () => {
     }
 
     return (
-        <div className="space-y-6">
-            <SectionCard title="Export Report" icon="Download">
-                <div className="flex flex-wrap items-end gap-4">
-                    <div className="flex-1 min-w-[200px]">
-                        <FormField label="Report Type" required>
-                            <select value={reportType} onChange={e => setReportType(e.target.value)} className="w-full">
-                                <option value="transaction_history">Transaction History</option>
-                                <option value="inventory_discrepancy">Inventory Discrepancy</option>
-                                <option value="detailed_inventory">Detailed Inventory</option>
-                            </select>
-                        </FormField>
-                    </div>
-                    
-                    <div className="flex-1 min-w-[200px]">
-                        <FormField label="Warehouse">
-                             <select value={selectedWarehouse} onChange={e => setSelectedWarehouse(e.target.value)} className="w-full">
-                                <option value="">All Warehouses</option>
-                                {allWarehouses.map(w => <option key={w.wh_code} value={w.wh_code}>{w.wh_name}</option>)}
-                            </select>
-                        </FormField>
-                    </div>
+        <div className="space-y-4">
+             <div className="text-sm text-gray-500 dark:text-gray-400">
+                {t('menu.system')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.reports')}</span>
+            </div>
+            <div className="space-y-6">
+                <SectionCard title="Export Report" icon="Download">
+                    <div className="flex flex-wrap items-end gap-4">
+                        <div className="flex-1 min-w-[200px]">
+                            <FormField label="Report Type" required>
+                                <select value={reportType} onChange={e => setReportType(e.target.value)} className="w-full">
+                                    <option value="transaction_history">Transaction History</option>
+                                    <option value="inventory_discrepancy">Inventory Discrepancy</option>
+                                    <option value="detailed_inventory">Detailed Inventory</option>
+                                </select>
+                            </FormField>
+                        </div>
+                        
+                        <div className="flex-1 min-w-[200px]">
+                            <FormField label="Warehouse">
+                                 <select value={selectedWarehouse} onChange={e => setSelectedWarehouse(e.target.value)} className="w-full">
+                                    <option value="">All Warehouses</option>
+                                    {allWarehouses.map(w => <option key={w.wh_code} value={w.wh_code}>{w.wh_name}</option>)}
+                                </select>
+                            </FormField>
+                        </div>
 
-                    <div className="flex-1 min-w-[300px]" style={{ visibility: showDateRange ? 'visible' : 'hidden' }}>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date Range</label>
-                        <DateRangePicker 
-                            value={dateRange}
-                            onChange={setDateRange}
-                        />
+                        <div className="flex-1 min-w-[300px]" style={{ visibility: showDateRange ? 'visible' : 'hidden' }}>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date Range</label>
+                            <DateRangePicker 
+                                value={dateRange}
+                                onChange={setDateRange}
+                            />
+                        </div>
+                        
+                        <div className="flex items-end gap-2 ml-auto">
+                             <button onClick={handleReset} className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">
+                                Reset
+                            </button>
+                             <button onClick={handleExport} className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700">
+                                <Icon name="Download" className="w-4 h-4"/> Export
+                            </button>
+                        </div>
                     </div>
-                    
-                    <div className="flex items-end gap-2 ml-auto">
-                         <button onClick={handleReset} className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">
-                            Reset
-                        </button>
-                         <button onClick={handleExport} className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700">
-                            <Icon name="Download" className="w-4 h-4"/> Export
-                        </button>
-                    </div>
-                </div>
-            </SectionCard>
+                </SectionCard>
 
-            <SectionCard title="Export History" icon="History">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead className="text-xs text-left text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th className="px-4 py-3">Report Type</th>
-                                <th className="px-4 py-3">Export Date</th>
-                                <th className="px-4 py-3">Exporter</th>
-                                <th className="px-4 py-3">Parameters</th>
-                                <th className="px-4 py-3">Status</th>
-                                <th className="px-4 py-3">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                            {exportHistory.length > 0 ? exportHistory.map(item => (
-                                <tr key={item.id}>
-                                    <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200">{item.reportType}</td>
-                                    <td className="px-4 py-3">{new Date(item.exportDate).toLocaleString()}</td>
-                                    <td className="px-4 py-3">{item.exporter}</td>
-                                    <td className="px-4 py-3 text-gray-500 max-w-xs truncate" title={item.parameters}>{item.parameters}</td>
-                                    <td className="px-4 py-3 w-52">{renderStatus(item)}</td>
-                                    <td className="px-4 py-3">{renderAction(item)}</td>
+                <SectionCard title="Export History" icon="History">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead className="text-xs text-left text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th className="px-4 py-3">Report Type</th>
+                                    <th className="px-4 py-3">Export Date</th>
+                                    <th className="px-4 py-3">Exporter</th>
+                                    <th className="px-4 py-3">Parameters</th>
+                                    <th className="px-4 py-3">Status</th>
+                                    <th className="px-4 py-3">Action</th>
                                 </tr>
-                            )) : (
-                                <tr><td colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">No report export history found.</td></tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </SectionCard>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                                {exportHistory.length > 0 ? exportHistory.map(item => (
+                                    <tr key={item.id}>
+                                        <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200">{item.reportType}</td>
+                                        <td className="px-4 py-3">{new Date(item.exportDate).toLocaleString()}</td>
+                                        <td className="px-4 py-3">{item.exporter}</td>
+                                        <td className="px-4 py-3 text-gray-500 max-w-xs truncate" title={item.parameters}>{item.parameters}</td>
+                                        <td className="px-4 py-3 w-52">{renderStatus(item)}</td>
+                                        <td className="px-4 py-3">{renderAction(item)}</td>
+                                    </tr>
+                                )) : (
+                                    <tr><td colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">No report export history found.</td></tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </SectionCard>
+            </div>
         </div>
     );
 };

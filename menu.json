@@ -1,4 +1,3 @@
-
 [
   {
     "id": "dashboard",
@@ -24,6 +23,11 @@
       {
         "id": "goods_issue",
         "label": "menu.goodsIssue",
+        "type": "link"
+      },
+      {
+        "id": "goods_transfer",
+        "label": "menu.goodsTransfer",
         "type": "link"
       },
       {

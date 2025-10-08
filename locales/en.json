@@ -34,6 +34,21 @@
       "title": "Filter Options",
       "clearAll": "Clear All",
       "apply": "Apply Filters"
+    },
+    "exportExcel": "Export Excel",
+    "columnVisibility": "Column Visibility",
+    "showAll": "Show All",
+    "hideAll": "Hide All"
+  },
+  "form": {
+    "section": {
+      "information": "Information",
+      "receiptPlan": "Receipt Plan",
+      "issuePlan": "Issue Plan",
+      "countPlan": "Count Plan",
+      "transferPlan": "Transfer Plan",
+      "statusHistory": "Status History",
+      "warehouseInfo": "Warehouse Information"
     }
   },
   "header": {
@@ -46,6 +61,7 @@
     "warehouseOps": "Warehouse",
     "goodsReceipt": "Goods Receipt",
     "goodsIssue": "Goods Issue",
+    "goodsTransfer": "Goods Transfer",
     "inventoryCount": "Inventory Count",
     "onhandInventory": "Onhand Inventory",
     "configuration": "Configuration",
@@ -81,9 +97,77 @@
     "Available": "Available",
     "Reserved": "Reserved",
     "Allocated": "Allocated",
-    "InQC": "In QC"
+    "InQC": "In QC",
+    "Created": "Created",
+    "Exporting": "Exporting"
   },
   "pages": {
+    "goodsTransfer": {
+      "pageTitle": "Goods Transfer",
+      "searchPlaceholder": "Search by GT No, Ref No...",
+      "toast": {
+        "saved": "Goods Transfer saved as {status}",
+        "cancelled": "Goods Transfer {gtNo} and linked documents have been cancelled.",
+        "cantCancel": "Cannot cancel this transfer. The related Goods Issue has already been completed.",
+        "allFieldsRequired": "Please fill all required fields before generating the plan.",
+        "lineQtyWarning": "Transfer quantity cannot exceed available onhand stock ({maxQty}).",
+        "lineRequired": "At least one line item is required."
+      },
+      "table": {
+        "gtNo": "GT No",
+        "type": "Type",
+        "status": "Status",
+        "source": "Source WH",
+        "destination": "Dest. WH",
+        "expectedDate": "Expected Date"
+      },
+      "empty": {
+        "title": "No Goods Transfers Found",
+        "message": "Click 'Create' to start a new goods transfer."
+      },
+      "filter": {
+        "status": "Status",
+        "type": "Transfer Type",
+        "source": "Source Warehouse",
+        "destination": "Destination Warehouse"
+      },
+      "modal": {
+        "createTitle": "Create Goods Transfer",
+        "viewTitle": "View Goods Transfer: {gtNo}",
+        "form": {
+          "gtNo": "Goods Transfer No",
+          "gtType": "Goods Transfer Type",
+          "source": "Source Warehouse",
+          "destination": "Destination Warehouse",
+          "expectedDate": "Expected Transfer Date"
+        },
+        "lines": {
+          "title": "Transfer Plan",
+          "generate": "Generate Plan",
+          "addLine": "Add Line",
+          "table": {
+            "modelGoods": "Model Goods",
+            "modelName": "Model Name",
+            "tracking": "Tracking Type",
+            "unit": "Unit",
+            "onhand": "Source WH Onhand",
+            "qty": "Qty Transfer",
+            "qtyExported": "Qty Exported",
+            "qtyReceived": "Qty Received"
+          }
+        },
+        "links": {
+          "title": "Linked Documents",
+          "gi": "Goods Issue",
+          "gr": "Goods Receipt",
+          "notGenerated": "Not yet generated"
+        },
+        "cancelConfirm": {
+            "title": "Confirm Cancellation",
+            "message": "Are you sure you want to cancel this transfer? This will also cancel any linked issue or receipt documents. This action cannot be undone."
+        }
+      }
+    },
     "goodsIssue": {
       "toast": {
         "saved": "Goods Issue saved as {status}",
@@ -216,6 +300,7 @@
         "rejectReasonPrompt": "Please provide a reason for rejection:",
         "cancelConfirm": "Are you sure you want to cancel this document? This action cannot be undone.",
         "statusHistory": "Status History",
+        "noHistory": "No history events yet.",
         "statusLabels": {
             "status": "Status",
             "createdBy": "Created by",
@@ -393,7 +478,7 @@
         "message": "Click 'Create' to add the first record."
       }
     },
-    "branch": {
+     "branch": {
         "pageTitle": "Branch",
         "searchPlaceholder": "Search by code/name/org...",
         "toast": {

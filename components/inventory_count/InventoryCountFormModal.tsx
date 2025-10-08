@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../ui/Modal';
 import { InventoryCount, Warehouse, Location, ModelGoods, OnhandByLocation, InventoryCountLine, StatusHistoryEvent } from '../../types';
@@ -8,6 +9,9 @@ import { Table, Column } from '../ui/Table';
 import { MultiSelectDropdown } from '../ui/MultiSelectDropdown';
 import { ViewCountDetailModal } from './ViewCountDetailModal';
 import { SystemDetailViewModal } from './SystemDetailViewModal';
+import { SectionCard } from '../SectionCard';
+import { useLanguage } from '../../hooks/useLanguage';
+import { StatusHistorySidebar } from '../ui/StatusHistorySidebar';
 
 type ModalMode = 'create' | 'edit' | 'view';
 
@@ -22,6 +26,7 @@ interface InventoryCountFormModalProps {
     ) => void;
   count: InventoryCount | null;
   warehouses: Warehouse[];
+  warehouseMap: Map<string, string>;
   locations: Location[];
   modelGoods: ModelGoods[];
   onhand: OnhandByLocation[];
@@ -38,25 +43,10 @@ const getInitialState = (): Omit<InventoryCount, 'id' | 'ic_no' | 'created_at' |
     selected_models: [],
 });
 
-const StatusHistorySidebar: React.FC<{ history: StatusHistoryEvent[] }> = ({ history = [] }) => (
-    <div className="w-full lg:w-1/3 lg:pl-6 lg:border-l lg:border-gray-200 dark:lg:border-gray-700">
-        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="History" className="w-5 h-5" />Status History</h3>
-        <ol className="relative border-l border-gray-200 dark:border-gray-700">
-            {history.slice().reverse().map(event => (
-                 <li key={event.id} className="mb-6 ml-6">
-                    <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3"><Icon name="CheckCircle" className="w-3 h-3 text-blue-800"/></span>
-                    <h4 className="font-semibold">{event.status}</h4>
-                    <time className="block mb-2 text-xs text-gray-400">on {new Date(event.timestamp).toLocaleString()} by {event.user}</time>
-                    {event.note && <p className="text-sm text-gray-500">{event.note}</p>}
-                </li>
-            ))}
-        </ol>
-    </div>
-);
-
 export const InventoryCountFormModal: React.FC<InventoryCountFormModalProps> = ({
-  isOpen, mode, onClose, onSave, count, warehouses, locations, modelGoods, onhand, onhandLots, onhandSerials
+  isOpen, mode, onClose, onSave, count, warehouses, warehouseMap, locations, modelGoods, onhand, onhandLots, onhandSerials
 }) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState(getInitialState());
   const [localLines, setLocalLines] = useState<InventoryCountLine[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -64,6 +54,8 @@ export const InventoryCountFormModal: React.FC<InventoryCountFormModalProps> = (
   const [systemDetailLine, setSystemDetailLine] = useState<InventoryCountLine | null>(null);
   
   const isEditable = mode === 'create' || (mode === 'edit' && count?.status === 'Draft');
+  const isViewMode = mode === 'view' || (mode === 'edit' && count?.status !== 'Draft');
+
 
   useEffect(() => {
     if (count) {
@@ -261,39 +253,55 @@ export const InventoryCountFormModal: React.FC<InventoryCountFormModalProps> = (
         }
       >
         <div className="flex flex-col lg:flex-row gap-6 h-full">
-            <div className="flex-grow lg:w-2/3">
-                 {count && (
-                    <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg grid grid-cols-4 gap-4 text-sm mb-4">
-                       <div><span className="font-medium text-gray-500">Status: </span><StatusBadge status={count.status} /></div>
-                       <div><span className="text-gray-500">Created by: </span><span className="font-semibold">{count.created_by}</span></div>
-                       <div><span className="text-gray-500">Created at: </span><span className="font-semibold">{new Date(count.created_at).toLocaleDateString()}</span></div>
-                       <div><span className="text-gray-500">Handler: </span><span className="font-semibold">{count.handler || '—'}</span></div>
-                    </div>
-                )}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <FormField label="Warehouse" required error={errors.wh_code}><select name="wh_code" value={formData.wh_code} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="">Select...</option>{warehouses.map(w => <option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}</select></FormField>
-                    <FormField label="Count Type" required><select name="count_type" value={formData.count_type} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="Full">Full Warehouse</option><option value="By Location">By Location</option><option value="By Item">By Item</option></select></FormField>
-                    
-                    {formData.count_type === 'By Location' && <FormField label="Locations"><MultiSelectDropdown options={availableLocations} selectedOptions={formData.selected_locations} onChange={(s) => setFormData(p => ({...p, selected_locations: s}))} placeholder="Select locations..." disabled={!isEditable || !formData.wh_code} /></FormField>}
-                    {formData.count_type === 'By Item' && <FormField label="Model Goods"><MultiSelectDropdown options={availableModels} selectedOptions={formData.selected_models} onChange={(s) => setFormData(p => ({...p, selected_models: s}))} placeholder="Select items..." disabled={!isEditable || !formData.wh_code} /></FormField>}
+            <div className="flex-grow lg:w-2/3 space-y-6">
+                 <SectionCard title={t('form.section.information')} icon="ClipboardList">
+                    {count && (
+                        <div className="p-3 mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg grid grid-cols-4 gap-4 text-sm">
+                           <div><span className="font-medium text-gray-500">Status: </span><StatusBadge status={count.status} /></div>
+                           <div><span className="text-gray-500">Created by: </span><span className="font-semibold">{count.created_by}</span></div>
+                           <div><span className="text-gray-500">Created at: </span><span className="font-semibold">{new Date(count.created_at).toLocaleDateString()}</span></div>
+                           <div><span className="text-gray-500">Handler: </span><span className="font-semibold">{count.handler || '—'}</span></div>
+                        </div>
+                    )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <FormField label="Warehouse" required error={errors.wh_code}><select name="wh_code" value={formData.wh_code} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="">Select...</option>{warehouses.map(w => <option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}</select></FormField>
+                        <FormField label="Count Type" required><select name="count_type" value={formData.count_type} onChange={handleChange} className="w-full" disabled={!isEditable}><option value="Full">Full Warehouse</option><option value="By Location">By Location</option><option value="By Item">By Item</option></select></FormField>
+                        
+                        {formData.count_type === 'By Location' && <FormField label="Locations"><MultiSelectDropdown options={availableLocations} selectedOptions={formData.selected_locations} onChange={(s) => setFormData(p => ({...p, selected_locations: s}))} placeholder="Select locations..." disabled={!isEditable || !formData.wh_code} /></FormField>}
+                        {formData.count_type === 'By Item' && <FormField label="Model Goods"><MultiSelectDropdown options={availableModels} selectedOptions={formData.selected_models} onChange={(s) => setFormData(p => ({...p, selected_models: s}))} placeholder="Select items..." disabled={!isEditable || !formData.wh_code} /></FormField>}
 
-                    <div className="lg:col-span-3"><FormField label="Note"><textarea name="note" value={formData.note || ''} onChange={handleChange} className="w-full" rows={2} disabled={!isEditable}></textarea></FormField></div>
-                </div>
+                        <div className="lg:col-span-3"><FormField label="Note"><textarea name="note" value={formData.note || ''} onChange={handleChange} className="w-full" rows={2} disabled={!isEditable}></textarea></FormField></div>
+                    </div>
+                </SectionCard>
                 
-                <div className="pt-4 mt-4 border-t dark:border-gray-600">
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-lg font-semibold">Count Plan</h3>
+                <SectionCard 
+                    title={t('form.section.countPlan')}
+                    icon="List"
+                    actions={
                         <div className="flex gap-2">
                             {isEditable && <button onClick={handleGeneratePlan} disabled={!formData.wh_code} className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 disabled:opacity-50"><Icon name="RefreshCw" className="w-4 h-4"/> Generate Plan</button>}
                             {isEditable && <button onClick={handleAddLine} disabled={!formData.wh_code} className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md bg-gray-600 text-white hover:bg-gray-700 disabled:opacity-50"><Icon name="Plus" className="w-4 h-4"/> Add Manual Line</button>}
                         </div>
-                    </div>
+                    }
+                >
                     <Table<InventoryCountLine> columns={lineColumns} data={localLines} />
                      {localLines.length === 0 && <p className="text-center text-gray-500 py-8">Generate a plan or add items manually to begin.</p>}
-                </div>
+                </SectionCard>
             </div>
 
-            {!isEditable && count?.history && <StatusHistorySidebar history={count.history} />}
+            {isViewMode && count && (
+                <div className="w-full lg:w-1/3 flex-shrink-0 space-y-6">
+                    <StatusHistorySidebar history={count.history} />
+                    <SectionCard title={t('form.section.warehouseInfo')} icon="Warehouse">
+                        <div className="space-y-3 text-sm">
+                            <div>
+                                <p className="font-semibold text-gray-600 dark:text-gray-300">Warehouse</p>
+                                <p>{warehouseMap.get(formData.wh_code) || formData.wh_code}</p>
+                            </div>
+                        </div>
+                    </SectionCard>
+                </div>
+            )}
         </div>
       </Modal>
 

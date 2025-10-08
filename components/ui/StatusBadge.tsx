@@ -23,9 +23,12 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     'Rejected': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
     'Cancelled': 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 line-through',
     
-    // Goods Issue Statuses
+    // Goods Issue/Transfer Statuses
     'Picking': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
     'AdjustmentRequested': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
+    'Created': 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300',
+    'Exporting': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
+    // FIX: Removed duplicate 'Receiving' key that was causing a compile error.
 
     // Inventory Count Statuses
     'Counting': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',

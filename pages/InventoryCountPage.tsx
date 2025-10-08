@@ -4,14 +4,20 @@ import { Icon } from '../components/Icons';
 import { Table, Column } from '../components/ui/Table';
 import { InventoryCountFormModal } from '../components/inventory_count/InventoryCountFormModal';
 import { Toast } from '../components/ui/Toast';
-import { FilterDrawer } from '../components/ui/FilterDrawer';
 import { useDebounce } from '../hooks/useDebounce';
 import { StatusBadge } from '../components/ui/StatusBadge';
+import { useLanguage } from '../hooks/useLanguage';
+import { Pagination } from '../components/ui/Pagination';
+import { Dropdown } from '../components/ui/Dropdown';
+import { ColumnVisibilityDropdown } from '../components/ui/ColumnVisibilityDropdown';
 
 type ModalMode = 'create' | 'edit' | 'view';
 const CURRENT_USER = "Alex Nguyen";
+const ITEMS_PER_PAGE = 8;
+const COLUMN_VISIBILITY_KEY = 'inventory_count_column_visibility';
 
 const InventoryCountPage: React.FC = () => {
+    const { t } = useLanguage();
     const [counts, setCounts] = useState<InventoryCount[]>([]);
     const [lines, setLines] = useState<Record<string, InventoryCountLine[]>>({});
     const [history, setHistory] = useState<Record<string, StatusHistoryEvent[]>>({});
@@ -30,9 +36,9 @@ const InventoryCountPage: React.FC = () => {
         count: null,
     });
     const [toastInfo, setToastInfo] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filters, setFilters] = useState<Record<string, string[]>>({});
+    const [filters, setFilters] = useState({ status: 'all', wh_code: 'all' });
+    const [currentPage, setCurrentPage] = useState(1);
 
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
     const warehouseMap = useMemo(() => new Map(warehouses.map(w => [w.wh_code, w.wh_name])), [warehouses]);
@@ -133,19 +139,34 @@ const InventoryCountPage: React.FC = () => {
         setToastInfo({ message: `Inventory Count saved as ${targetStatus}`, type: 'success' });
         setModalState({isOpen: false, mode: 'create', count: null});
     };
+    
+     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({ ...prev, [name]: value }));
+        setCurrentPage(1);
+    };
 
     const filteredCounts = useMemo(() => {
         return counts
             .filter(c => c.ic_no.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
             .filter(c => {
-                return Object.entries(filters).every(([key, values]) => {
-                    if (!Array.isArray(values) || values.length === 0) return true;
-                    return values.includes(c[key as keyof InventoryCount] as string);
-                });
+                 if (filters.status !== 'all' && c.status !== filters.status) return false;
+                 if (filters.wh_code !== 'all' && c.wh_code !== filters.wh_code) return false;
+                 return true;
             });
     }, [counts, debouncedSearchTerm, filters]);
 
-    const columns: Column<InventoryCount>[] = useMemo(() => [
+    const paginatedCounts = useMemo(() => {
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+        return filteredCounts.slice(start, end);
+    }, [filteredCounts, currentPage]);
+
+    const totalPages = useMemo(() => {
+        return Math.ceil(filteredCounts.length / ITEMS_PER_PAGE);
+    }, [filteredCounts]);
+
+    const allColumns: Column<InventoryCount>[] = useMemo(() => [
         { key: 'ic_no', header: 'Count No' },
         { key: 'status', header: 'Status', render: (c) => <StatusBadge status={c.status} /> },
         { key: 'wh_code', header: 'Warehouse', render: (c) => warehouseMap.get(c.wh_code) || c.wh_code },
@@ -155,78 +176,130 @@ const InventoryCountPage: React.FC = () => {
         { key: 'updated_at', header: 'Updated At', render: (c) => new Date(c.updated_at).toLocaleString() },
     ], [warehouseMap]);
 
+    const [visibleColumnKeys, setVisibleColumnKeys] = useState<Set<string>>(() => {
+        const saved = localStorage.getItem(COLUMN_VISIBILITY_KEY);
+        if (saved) {
+            return new Set(JSON.parse(saved));
+        }
+        return new Set(allColumns.map(c => c.key as string));
+    });
+
+    useEffect(() => {
+        localStorage.setItem(COLUMN_VISIBILITY_KEY, JSON.stringify(Array.from(visibleColumnKeys)));
+    }, [visibleColumnKeys]);
+
+    const handleColumnToggle = (key: string) => {
+        setVisibleColumnKeys(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(key)) {
+                if (newSet.size > 1) newSet.delete(key);
+            } else {
+                newSet.add(key);
+            }
+            return newSet;
+        });
+    };
+    const handleShowAll = () => setVisibleColumnKeys(new Set(allColumns.map(c => c.key as string)));
+    const handleHideAll = () => setVisibleColumnKeys(new Set(['ic_no']));
+    const columns = useMemo(() => allColumns.filter(col => visibleColumnKeys.has(col.key as string)), [allColumns, visibleColumnKeys]);
+
     return (
-        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
-            <header className="p-4 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex justify-between items-center">
-                    <button onClick={handleCreate} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700">
-                        <Icon name="Plus" className="w-4 h-4"/> Create
-                    </button>
-                    <div className="flex gap-2 items-center">
-                        <div className="relative">
+        <div className="space-y-4">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+                {t('menu.warehouseOps')} / <span className="font-semibold text-gray-800 dark:text-gray-200">{t('menu.inventoryCount')}</span>
+            </div>
+            <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
+                <header className="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center gap-2">
+                            <Icon name="Filter" className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                            <h2 className="text-lg font-semibold">{t('common.filter')}</h2>
+                        </div>
+                        <button onClick={handleCreate} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-blue-700">
+                            <Icon name="Plus" className="w-4 h-4"/> {t('common.create')}
+                        </button>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="relative flex-grow">
                            <Icon name="Search" className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"/>
                            <input 
                              type="text" 
                              placeholder="Search Count No..." 
                              value={searchTerm}
                              onChange={(e) => setSearchTerm(e.target.value)}
-                             className="w-64 pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+                             className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
                            />
                         </div>
-                        <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
-                            <Icon name="Filter" className="w-4 h-4"/> Filter
+                        <select name="status" value={filters.status} onChange={handleFilterChange} className="text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md py-2 px-3">
+                            <option value="all">All Statuses</option>
+                             {['Draft', 'New', 'Counting', 'Submitted', 'Completed', 'Cancelled'].map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                        <select name="wh_code" value={filters.wh_code} onChange={handleFilterChange} className="text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md py-2 px-3">
+                            <option value="all">All Warehouses</option>
+                            {warehouses.map(w => <option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}
+                        </select>
+                         <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <Icon name="Download" className="w-4 h-4"/> {t('common.exportExcel')}
                         </button>
-                         <button onClick={fetchData} className="p-2 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
-                           <Icon name="RefreshCw" className="w-4 h-4"/>
-                        </button>
+                        <Dropdown 
+                          trigger={
+                            <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <Icon name="Columns" className="w-4 h-4"/> {t('common.columnVisibility')}
+                            </button>
+                          }
+                        >
+                            <ColumnVisibilityDropdown
+                                allColumns={allColumns}
+                                visibleColumnKeys={visibleColumnKeys}
+                                onColumnToggle={handleColumnToggle}
+                                onShowAll={handleShowAll}
+                                onHideAll={handleHideAll}
+                            />
+                        </Dropdown>
                     </div>
-                </div>
-            </header>
+                </header>
 
-            {isLoading && <div className="p-8 text-center">Loading data...</div>}
-            {error && <div className="p-8 text-center text-red-500">Error: {error}</div>}
-            {!isLoading && !error && (
-                <Table<InventoryCount>
-                    columns={columns}
-                    data={filteredCounts}
-                    onRowDoubleClick={handleView}
-                />
-            )}
-            
-            {filteredCounts.length === 0 && !isLoading && (
-                <div className="text-center py-16">
-                    <h3 className="text-lg font-medium">No Inventory Counts Found</h3>
-                    <p className="text-sm text-gray-500 mt-1">Click 'Create' to start a new count.</p>
-                </div>
-            )}
+                {isLoading && <div className="p-8 text-center">{t('common.loading')}</div>}
+                {error && <div className="p-8 text-center text-red-500">{t('common.error')}: {error}</div>}
+                {!isLoading && !error && (
+                    <Table<InventoryCount>
+                        columns={columns}
+                        data={paginatedCounts}
+                        onRowDoubleClick={handleView}
+                    />
+                )}
+                
+                {paginatedCounts.length === 0 && !isLoading && (
+                    <div className="text-center py-16">
+                        <h3 className="text-lg font-medium">No Inventory Counts Found</h3>
+                        <p className="text-sm text-gray-500 mt-1">Click 'Create' to start a new count.</p>
+                    </div>
+                )}
+                
+                 {totalPages > 1 && (
+                    <footer className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                    </footer>
+                )}
 
-            {modalState.isOpen && (
-                <InventoryCountFormModal
-                    isOpen={modalState.isOpen}
-                    mode={modalState.mode}
-                    onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
-                    onSave={handleSave}
-                    count={modalState.count}
-                    warehouses={warehouses}
-                    locations={locations}
-                    modelGoods={modelGoods}
-                    onhand={onhand}
-                    onhandLots={onhandLots}
-                    onhandSerials={onhandSerials}
-                />
-            )}
-            {toastInfo && <Toast message={toastInfo.message} type={toastInfo.type} onClose={() => setToastInfo(null)} />}
-            <FilterDrawer
-                isOpen={isFilterOpen}
-                onClose={() => setIsFilterOpen(false)}
-                filters={filters}
-                onApplyFilters={setFilters}
-                onClearFilters={() => setFilters({})}
-                filterOptions={[
-                    { key: 'status', label: 'Status', options: ['Draft', 'New', 'Counting', 'Submitted', 'Completed', 'Cancelled']},
-                    { key: 'wh_code', label: 'Warehouse', options: warehouses.map(w => w.wh_code), optionLabels: warehouseMap }
-                ]}
-            />
+                {modalState.isOpen && (
+                    <InventoryCountFormModal
+                        isOpen={modalState.isOpen}
+                        mode={modalState.mode}
+                        onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+                        onSave={handleSave}
+                        count={modalState.count}
+                        warehouses={warehouses}
+                        warehouseMap={warehouseMap}
+                        locations={locations}
+                        modelGoods={modelGoods}
+                        onhand={onhand}
+                        onhandLots={onhandLots}
+                        onhandSerials={onhandSerials}
+                    />
+                )}
+                {toastInfo && <Toast message={toastInfo.message} type={toastInfo.type} onClose={() => setToastInfo(null)} />}
+            </div>
         </div>
     );
 };

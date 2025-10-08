@@ -1,0 +1,58 @@
+{
+  "GT-202405-001": [
+    {
+      "id": "GTL-1-1",
+      "gt_id": "GT-202405-001",
+      "model_code": "MDL-202311-00001",
+      "model_name": "Premium A4 Paper Ream (500 Sheets)",
+      "uom": "PCS",
+      "tracking_type": "None",
+      "qty_transfer": 50
+    }
+  ],
+  "GT-202405-002": [
+    {
+      "id": "GTL-2-1",
+      "gt_id": "GT-202405-002",
+      "model_code": "MDL-202311-00002",
+      "model_name": "Industrial Laser Printer, Model X",
+      "uom": "PCS",
+      "tracking_type": "Serial",
+      "qty_transfer": 2
+    }
+  ],
+  "GT-202405-003": [
+    {
+      "id": "GTL-3-1",
+      "gt_id": "GT-202405-003",
+      "model_code": "MDL-202311-00003",
+      "model_name": "Chemical Compound A (25kg Bag)",
+      "uom": "KG",
+      "tracking_type": "Lot",
+      "qty_transfer": 100
+    }
+  ],
+  "GT-202405-004": [
+    {
+      "id": "GTL-4-1",
+      "gt_id": "GT-202405-004",
+      "model_code": "MDL-202401-00007",
+      "model_name": "Laptop Pro 15-inch",
+      "uom": "PCS",
+      "tracking_type": "Serial",
+      "qty_transfer": 10
+    }
+  ],
+  "GT-202405-005": [],
+  "GT-202405-006": [
+    {
+      "id": "GTL-6-1",
+      "gt_id": "GT-202405-006",
+      "model_code": "MDL-202404-00013",
+      "model_name": "Smart Thermostat Model T2",
+      "uom": "PCS",
+      "tracking_type": "Serial",
+      "qty_transfer": 5
+    }
+  ]
+}
