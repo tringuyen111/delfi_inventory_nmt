@@ -180,7 +180,8 @@
           "gtType": "Goods Transfer Type",
           "source": "Source Warehouse",
           "destination": "Destination Warehouse",
-          "expectedDate": "Expected Transfer Date"
+          "expectedDate": "Expected Transfer Date",
+          "note": "Note"
         },
         "lines": {
           "title": "Transfer Plan",

@@ -99,7 +99,7 @@ const TopModelsList: React.FC<{ data: ModelGoods[]; title: string; }> = ({ data,
     </SectionCard>
 );
 
-const PendingActionsList: React.FC<{ data: PendingAction[]; onNavigate: (pageId: string, pageLabel: string) => void; title: string; }> = ({ data, onNavigate, title }) => {
+const PendingActionsList: React.FC<{ data: PendingAction[]; onNavigate: (pageId: string, pageLabel: string, docNo: string) => void; title: string; }> = ({ data, onNavigate, title }) => {
     const { t } = useLanguage();
     return (
         <SectionCard title={title} icon="ClipboardList">
@@ -116,7 +116,7 @@ const PendingActionsList: React.FC<{ data: PendingAction[]; onNavigate: (pageId:
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {data.length > 0 ? data.map(action => (
-                            <tr key={action.doc_no} onClick={() => onNavigate(action.page_id, action.page_label)} className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
+                            <tr key={action.doc_no} onClick={() => onNavigate(action.page_id, action.page_label, action.doc_no)} className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
                                 <td className="px-4 py-2">{t(action.type)}</td>
                                 <td className="px-4 py-2 font-mono text-gray-800 dark:text-gray-200">{action.doc_no}</td>
                                 <td className="px-4 py-2"><StatusBadge status={action.status} /></td>
@@ -137,7 +137,7 @@ const PendingActionsList: React.FC<{ data: PendingAction[]; onNavigate: (pageId:
 
 
 interface DashboardPageProps {
-    onNavigate: (pageId: string, pageLabel: string) => void;
+    onNavigate: (pageId: string, pageLabel: string, docNo?: string) => void;
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {

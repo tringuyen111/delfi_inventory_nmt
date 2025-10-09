@@ -180,7 +180,8 @@
           "gtType": "Loại điều chuyển",
           "source": "Kho nguồn",
           "destination": "Kho đích",
-          "expectedDate": "Ngày điều chuyển dự kiến"
+          "expectedDate": "Ngày điều chuyển dự kiến",
+          "note": "Ghi chú"
         },
         "lines": {
           "title": "Kế hoạch Điều chuyển",

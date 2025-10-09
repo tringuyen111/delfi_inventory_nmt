@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { GoodsTransfer, GoodsIssue, GoodsReceipt, Warehouse, ModelGoods, OnhandByLocation, GoodsTransferLine, DocStatus } from '../types';
+import { GoodsTransfer, GoodsIssue, GoodsReceipt, Warehouse, ModelGoods, OnhandByLocation, GoodsTransferLine, DocStatus, StatusHistoryEvent } from '../types';
 import { Icon } from '../components/Icons';
 import { Table, Column } from '../components/ui/Table';
 import { GoodsTransferFormModal } from '../components/goods_transfer/GoodsTransferFormModal';
@@ -19,12 +19,14 @@ const COLUMN_VISIBILITY_KEY = 'goods_transfer_column_visibility';
 interface GoodsTransferPageProps {
   docToOpen?: string | null;
   onDeepLinkHandled?: () => void;
+  onNavigate?: (pageId: string, pageLabelKey: string, docNo: string) => void;
 }
 
-const GoodsTransferPage: React.FC<GoodsTransferPageProps> = ({ docToOpen, onDeepLinkHandled }) => {
+const GoodsTransferPage: React.FC<GoodsTransferPageProps> = ({ docToOpen, onDeepLinkHandled, onNavigate }) => {
     const { t } = useLanguage();
     const [transfers, setTransfers] = useState<GoodsTransfer[]>([]);
     const [transferLines, setTransferLines] = useState<Record<string, GoodsTransferLine[]>>({});
+    const [transferHistory, setTransferHistory] = useState<Record<string, StatusHistoryEvent[]>>({});
     const [issues, setIssues] = useState<GoodsIssue[]>([]);
     const [receipts, setReceipts] = useState<GoodsReceipt[]>([]);
     const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
@@ -61,13 +63,26 @@ const GoodsTransferPage: React.FC<GoodsTransferPageProps> = ({ docToOpen, onDeep
             if (!transfersRes.ok || !linesRes.ok || !issuesRes.ok || !receiptsRes.ok || !whRes.ok || !modelsRes.ok || !onhandRes.ok) {
                 throw new Error('Failed to fetch required data for Goods Transfer');
             }
-            setTransfers(await transfersRes.json());
+            const transfersData: GoodsTransfer[] = await transfersRes.json();
+            setTransfers(transfersData);
             setTransferLines(await linesRes.json());
             setIssues(await issuesRes.json());
             setReceipts(await receiptsRes.json());
             setWarehouses(await whRes.json());
             setModelGoods(await modelsRes.json());
             setOnhand(await onhandRes.json());
+            
+            // MOCK HISTORY DATA
+            const historyData: Record<string, StatusHistoryEvent[]> = {};
+            transfersData.forEach(t => {
+                const history: StatusHistoryEvent[] = [{ id: `hist-${t.gt_no}-0`, doc_id: t.gt_no, status: 'Draft', user: t.created_by, timestamp: t.created_at, note: 'Document created.' }];
+                if(t.status !== 'Draft') {
+                    history.push({ id: `hist-${t.gt_no}-1`, doc_id: t.gt_no, status: 'Created', user: t.created_by, timestamp: new Date(new Date(t.created_at).getTime() + 5*60000).toISOString(), note: 'Transfer sent for processing.' });
+                }
+                historyData[t.gt_no] = history.sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+            });
+            setTransferHistory(historyData);
+
         } catch (e) {
             setError(e instanceof Error ? e.message : 'An unknown error occurred');
         } finally {
@@ -160,10 +175,14 @@ const GoodsTransferPage: React.FC<GoodsTransferPageProps> = ({ docToOpen, onDeep
     };
 
     const handleView = useCallback((transfer: GoodsTransfer) => {
-        const fullTransfer = { ...transfer, lines: transferLines[transfer.gt_no] || [] };
+        const fullTransfer = { 
+            ...transfer, 
+            lines: transferLines[transfer.gt_no] || [],
+            history: transferHistory[transfer.gt_no] || [],
+        };
         const newMode = transfer.status === 'Draft' ? 'edit' : 'view';
         setModalState({ isOpen: true, mode: newMode, transfer: fullTransfer });
-    }, [transferLines]);
+    }, [transferLines, transferHistory]);
 
     useEffect(() => {
         if (docToOpen && !isLoading && transfers.length > 0) {
@@ -183,6 +202,11 @@ const GoodsTransferPage: React.FC<GoodsTransferPageProps> = ({ docToOpen, onDeep
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
         setCurrentPage(1);
+    };
+
+    const handleNavigateToDoc = (pageId: string, pageLabelKey: string, docNo: string) => {
+        setModalState(prev => ({...prev, isOpen: false})); // Close current modal
+        onNavigate?.(pageId, pageLabelKey, docNo);
     };
 
     const filteredTransfers = useMemo(() => {
@@ -312,7 +336,7 @@ const GoodsTransferPage: React.FC<GoodsTransferPageProps> = ({ docToOpen, onDeep
                     </footer>
                 )}
 
-                {modalState.isOpen && <GoodsTransferFormModal isOpen={modalState.isOpen} mode={modalState.mode} onClose={() => setModalState({ ...modalState, isOpen: false })} onSave={handleSave} onCancel={handleCancel} transfer={modalState.transfer} warehouses={warehouses} warehouseMap={warehouseMap} modelGoods={modelGoods} onhand={onhand} issues={issues} receipts={receipts} />}
+                {modalState.isOpen && <GoodsTransferFormModal isOpen={modalState.isOpen} mode={modalState.mode} onClose={() => setModalState({ ...modalState, isOpen: false })} onSave={handleSave} onCancel={handleCancel} onNavigateToDoc={handleNavigateToDoc} transfer={modalState.transfer} warehouses={warehouses} warehouseMap={warehouseMap} modelGoods={modelGoods} onhand={onhand} issues={issues} receipts={receipts} />}
                 {toastInfo && <Toast message={toastInfo.message} type={toastInfo.type} onClose={() => setToastInfo(null)} />}
             </div>
         </div>

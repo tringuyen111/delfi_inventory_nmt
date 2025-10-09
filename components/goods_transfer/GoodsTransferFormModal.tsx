@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../ui/Modal';
 import { GoodsTransfer, Warehouse, ModelGoods, OnhandByLocation, GoodsTransferLine, GoodsIssue, GoodsReceipt } from '../../types';
@@ -10,6 +8,7 @@ import { Table, Column } from '../ui/Table';
 import { ConfirmationModal } from '../ui/ConfirmationModal';
 import { useLanguage } from '../../hooks/useLanguage';
 import { SectionCard } from '../SectionCard';
+import { StatusHistorySidebar } from '../ui/StatusHistorySidebar';
 
 type ModalMode = 'create' | 'edit' | 'view';
 
@@ -30,6 +29,7 @@ interface GoodsTransferFormModalProps {
   onhand: OnhandByLocation[];
   issues: GoodsIssue[];
   receipts: GoodsReceipt[];
+  onNavigateToDoc?: (pageId: string, pageLabelKey: string, docNo: string) => void;
 }
 
 const getInitialState = (): Omit<GoodsTransfer, 'id' | 'gt_no' | 'created_at' | 'updated_at' | 'created_by' | 'lines' | 'history' | 'linked_gi_no' | 'linked_gr_no'> => ({
@@ -42,7 +42,7 @@ const getInitialState = (): Omit<GoodsTransfer, 'id' | 'gt_no' | 'created_at' | 
 });
 
 export const GoodsTransferFormModal: React.FC<GoodsTransferFormModalProps> = ({
-  isOpen, mode, onClose, onSave, onCancel, transfer, warehouses, warehouseMap, modelGoods, onhand, issues, receipts
+  isOpen, mode, onClose, onSave, onCancel, transfer, warehouses, warehouseMap, modelGoods, onhand, issues, receipts, onNavigateToDoc
 }) => {
     const { t } = useLanguage();
     const [formData, setFormData] = useState(getInitialState());
@@ -173,6 +173,29 @@ export const GoodsTransferFormModal: React.FC<GoodsTransferFormModalProps> = ({
     }, [isEditable, formData, localLines, modelsInSourceWarehouse, onhandForSourceWarehouse, t, isViewMode]);
 
     const title = mode === 'create' ? t('pages.goodsTransfer.modal.createTitle') : t('pages.goodsTransfer.modal.viewTitle', {gtNo: transfer?.gt_no});
+    
+    const infoCardActions = (isViewMode && transfer) ? (
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => linkedGI && onNavigateToDoc?.('goods_issue', 'menu.goodsIssue', linkedGI.gi_no)}
+          disabled={!linkedGI}
+          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          title={linkedGI ? `Status: ${t(`statuses.${linkedGI.status}`)}` : 'Goods Issue not generated'}
+        >
+          <Icon name="ExternalLink" className="w-4 h-4" />
+          <span>{linkedGI?.gi_no || t('pages.goodsTransfer.modal.links.gi')}</span>
+        </button>
+        <button
+          onClick={() => linkedGR && onNavigateToDoc?.('goods_receipt', 'menu.goodsReceipt', linkedGR.gr_no)}
+          disabled={!linkedGR}
+          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          title={linkedGR ? `Status: ${t(`statuses.${linkedGR.status}`)}` : 'Goods Receipt not generated'}
+        >
+          <Icon name="Download" className="w-4 h-4" />
+          <span>{linkedGR?.gr_no || t('pages.goodsTransfer.modal.links.gr')}</span>
+        </button>
+      </div>
+    ) : undefined;
 
     return <>
         <Modal isOpen={isOpen} onClose={onClose} title={title} size="fullscreen" footer={
@@ -187,7 +210,7 @@ export const GoodsTransferFormModal: React.FC<GoodsTransferFormModalProps> = ({
         }>
             <div className="flex flex-col lg:flex-row gap-6 h-full">
                 <div className="flex-grow lg:w-2/3 space-y-6">
-                    <SectionCard title={t('form.section.information')} icon="ClipboardList">
+                    <SectionCard title={t('form.section.information')} icon="ClipboardList" actions={infoCardActions}>
                         {transfer && <div className="p-3 mb-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg grid grid-cols-4 gap-4 text-sm">
                            <div><span className="font-medium text-gray-500">Status: </span><StatusBadge status={transfer.status} /></div>
                            <div><span className="text-gray-500">Created by: </span><span className="font-semibold">{transfer.created_by}</span></div>
@@ -198,7 +221,11 @@ export const GoodsTransferFormModal: React.FC<GoodsTransferFormModalProps> = ({
                             <FormField label={t('pages.goodsTransfer.modal.form.source')} required error={errors.source_wh_code}><select name="source_wh_code" value={formData.source_wh_code} onChange={handleChange} disabled={!isEditable}><option value="">Select...</option>{warehouses.map(w => <option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}</select></FormField>
                             <FormField label={t('pages.goodsTransfer.modal.form.destination')} required error={errors.dest_wh_code}><select name="dest_wh_code" value={formData.dest_wh_code} onChange={handleChange} disabled={!isEditable}><option value="">Select...</option>{warehouses.filter(w=>w.wh_code !== formData.source_wh_code).map(w => <option key={w.id} value={w.wh_code}>{w.wh_name}</option>)}</select></FormField>
                             <FormField label={t('pages.goodsTransfer.modal.form.expectedDate')}><input type="date" name="expected_date" value={formData.expected_date || ''} onChange={handleChange} disabled={!isEditable} /></FormField>
-                            <div className="md:col-span-2"><FormField label="Note"><textarea name="note" value={formData.note || ''} onChange={handleChange} rows={1} disabled={!isEditable}></textarea></FormField></div>
+                            <div className="md:col-span-3">
+                                <FormField label={t('pages.goodsTransfer.modal.form.note')}>
+                                    <textarea name="note" value={formData.note || ''} onChange={handleChange} rows={2} disabled={!isEditable}></textarea>
+                                </FormField>
+                            </div>
                         </div>
                     </SectionCard>
 
@@ -210,7 +237,8 @@ export const GoodsTransferFormModal: React.FC<GoodsTransferFormModalProps> = ({
                         <Table columns={lineColumns} data={finalLines} />
                     </SectionCard>
                 </div>
-                {isViewMode && <div className="w-full lg:w-1/3 flex-shrink-0 space-y-6">
+                {isViewMode && transfer && <div className="w-full lg:w-1/3 flex-shrink-0 space-y-6">
+                    <StatusHistorySidebar history={transfer.history} />
                     <SectionCard title={t('form.section.warehouseInfo')} icon="Warehouse">
                         <div className="space-y-3 text-sm">
                             <div>
@@ -221,12 +249,6 @@ export const GoodsTransferFormModal: React.FC<GoodsTransferFormModalProps> = ({
                                 <p className="font-semibold text-gray-600 dark:text-gray-300">Destination Warehouse</p>
                                 <p>{warehouseMap.get(formData.dest_wh_code) || formData.dest_wh_code}</p>
                             </div>
-                        </div>
-                    </SectionCard>
-                    <SectionCard title={t('pages.goodsTransfer.modal.links.title')} icon="ExternalLink">
-                        <div className="space-y-2 text-sm">
-                            <p><strong>{t('pages.goodsTransfer.modal.links.gi')}:</strong> <span className="font-mono text-brand-primary">{linkedGI?.gi_no || t('pages.goodsTransfer.modal.links.notGenerated')}</span></p>
-                            <p><strong>{t('pages.goodsTransfer.modal.links.gr')}:</strong> <span className="font-mono text-brand-primary">{linkedGR?.gr_no || t('pages.goodsTransfer.modal.links.notGenerated')}</span></p>
                         </div>
                     </SectionCard>
                 </div>}

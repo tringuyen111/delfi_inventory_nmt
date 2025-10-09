@@ -134,10 +134,16 @@ function App() {
   }, [language, t, activePageId, menuData, activePageLabelKey]);
 
 
-  const handleNavigate = useCallback((pageId: string, pageLabelKey: string) => {
+  const handleNavigate = useCallback((pageId: string, pageLabelKey: string, docNo: string | null = null) => {
     setActivePageId(pageId);
     setActivePageLabelKey(pageLabelKey);
-    setDeepLinkDoc(null); // Clear deep link on normal navigation
+    
+    if (docNo) {
+      setDeepLinkDoc({ pageId, docNo });
+    } else {
+      setDeepLinkDoc(null); // Clear deep link on normal navigation
+    }
+
     const pathKeys = findPath(menuData, pageId);
     if (pathKeys) {
         setBreadcrumbPath(pathKeys.map(key => t(key)));
@@ -148,19 +154,7 @@ function App() {
   
   const handleNotificationClick = (notification: Notification) => {
     setReadNotifIds(prev => new Set(prev).add(notification.id));
-    
-    // Set the state that will be consumed by the target page
-    setDeepLinkDoc({ pageId: notification.pageId, docNo: notification.docNo });
-
-    // Manually perform navigation to keep the deep link state
-    setActivePageId(notification.pageId);
-    setActivePageLabelKey(notification.pageLabel);
-    const pathKeys = findPath(menuData, notification.pageId);
-    if (pathKeys) {
-        setBreadcrumbPath(pathKeys.map(key => t(key)));
-    } else {
-        setBreadcrumbPath([t(notification.pageLabel)]);
-    }
+    handleNavigate(notification.pageId, notification.pageLabel, notification.docNo);
   };
   
   const handleMarkAllRead = () => {
@@ -184,7 +178,7 @@ function App() {
       case 'onhand_inventory': return <OnhandPage />;
       case 'goods_receipt': return <GoodsReceiptPage docToOpen={docToOpen} onDeepLinkHandled={onDeepLinkHandled} />;
       case 'goods_issue': return <GoodsIssuePage docToOpen={docToOpen} onDeepLinkHandled={onDeepLinkHandled} />;
-      case 'goods_transfer': return <GoodsTransferPage docToOpen={docToOpen} onDeepLinkHandled={onDeepLinkHandled} />;
+      case 'goods_transfer': return <GoodsTransferPage docToOpen={docToOpen} onDeepLinkHandled={onDeepLinkHandled} onNavigate={handleNavigate} />;
       case 'inventory_count': return <InventoryCountPage docToOpen={docToOpen} onDeepLinkHandled={onDeepLinkHandled} />;
       case 'goods_receipt_ui': return <GoodsReceiptUIPage />;
       case 'reports': return <ReportsPage />;
