@@ -74,6 +74,9 @@ export const LineDetailModal: React.FC<LineDetailModalProps> = ({ isOpen, onClos
         try {
           const resource = line.tracking_type === 'Serial' ? 'serial' : 'lot';
           const res = await fetch(`./data/goods_receipt_${resource}_details.json`);
+          if (!res.ok) {
+            throw new Error(`Could not load ${resource} details. Status: ${res.status}`);
+          }
           const data = await res.json();
           setDetails(data[line.id] || []);
         } catch (error) {

@@ -109,6 +109,9 @@ export const OnhandDetailModal: React.FC<OnhandDetailModalProps> = ({ isOpen, on
                 if (url) {
                     try {
                         const res = await fetch(url);
+                        if (!res.ok) {
+                            throw new Error(`HTTP error! status: ${res.status}`);
+                        }
                         const data = await res.json();
                         const fetchedDetails = data[dataKey] || [];
 

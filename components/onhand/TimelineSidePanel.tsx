@@ -19,6 +19,9 @@ export const TimelineSidePanel: React.FC<TimelineSidePanelProps> = ({ isOpen, on
                 setIsLoading(true);
                 try {
                     const res = await fetch(`./data/${type}_timeline.json`);
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                    }
                     const data: {[key: string]: TimelineEvent[]} = await res.json();
                     setTimelineData(data[itemId] || []);
                 } catch (error) {
