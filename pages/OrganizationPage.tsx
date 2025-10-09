@@ -168,7 +168,7 @@ const OrganizationPage: React.FC = () => {
                 return org.org_code.toLowerCase().includes(search) ||
                        org.org_name.toLowerCase().includes(search) ||
                        (org.email && org.email.toLowerCase().includes(search)) ||
-                       (org.phone && org.phone.toLowerCase().includes(search));
+                       (org.phone && org.phone.includes(debouncedSearchTerm));
             })
             .filter(org => {
                 if (filters.status !== 'all' && org.status !== filters.status) return false;
