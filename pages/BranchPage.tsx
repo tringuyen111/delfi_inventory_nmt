@@ -41,14 +41,22 @@ const BranchPage: React.FC = () => {
                 fetch('./data/branches.json'),
                 fetch('./data/organizations.json'),
             ]);
-            if (!branchesRes.ok || !orgsRes.ok) {
-                throw new Error('Failed to fetch data');
-            }
+
+            if (!branchesRes.ok || !orgsRes.ok) throw new Error('Failed to fetch data');
+
             const branchesData: Branch[] = await branchesRes.json();
             const orgsData: Organization[] = await orgsRes.json();
             
-            setBranches(branchesData);
-            setOrganizations(orgsData);
+            const localOrgMap = new Map(orgsData.map(org => [org.org_code, org.org_name]));
+            const branchesWithOrgName = branchesData.map(branch => ({
+                ...branch,
+                org_name: localOrgMap.get(branch.org_code) || branch.org_code
+            }));
+
+            branchesWithOrgName.sort((a,b) => a.branch_name.localeCompare(b.branch_name));
+
+            setBranches(branchesWithOrgName);
+            setOrganizations(orgsData.filter(org => org.status === 'Active'));
         } catch (e) {
             setError(e instanceof Error ? e.message : 'An unknown error occurred');
         } finally {
@@ -59,12 +67,6 @@ const BranchPage: React.FC = () => {
      useEffect(() => {
         fetchData();
     }, [fetchData]);
-    
-    useEffect(() => {
-        if(organizations.length > 0) {
-             setBranches(prev => prev.map(b => ({ ...b, org_name: orgMap.get(b.org_code) })));
-        }
-    }, [organizations, orgMap]);
     
     const allColumns: Column<Branch>[] = useMemo(() => [
         { key: 'branch_code', header: t('pages.branch.table.code') },
@@ -142,39 +144,50 @@ const BranchPage: React.FC = () => {
         setModalState(prev => ({ ...prev, mode: 'edit' }));
     };
     
-    const handleSave = (branchToSave: Omit<Branch, 'id' | 'updated_at'>): Branch => {
-        let savedBranch: Branch;
-        if (modalState.mode === 'edit' && modalState.branch) {
-            savedBranch = { ...modalState.branch, ...branchToSave, updated_at: new Date().toISOString() };
-            setBranches(prev => prev.map(b => b.id === savedBranch.id ? savedBranch : b));
-            setToastInfo({ message: t('pages.branch.toast.updated'), type: 'success' });
-        } else {
-            const newBranchCode = branchToSave.branch_code.toUpperCase();
-            savedBranch = { 
-                ...branchToSave, 
-                id: newBranchCode,
-                branch_code: newBranchCode,
+    const handleSave = async (branchToSave: Partial<Branch>): Promise<Branch | null> => {
+        const isCreating = !branchToSave.id;
+
+        try {
+            const orgName = orgMap.get(branchToSave.org_code!) || branchToSave.org_code!;
+            const savedBranch: Branch = {
+                branch_code: '', branch_name: '', org_code: '', status: 'Active',
+                ...branchToSave,
+                id: isCreating ? branchToSave.branch_code! : branchToSave.id!,
                 updated_at: new Date().toISOString(),
-            };
-            setBranches(prev => [savedBranch, ...prev]);
-            setToastInfo({ message: t('pages.branch.toast.created'), type: 'success' });
+                org_name: orgName
+            } as Branch;
+
+            if (isCreating) {
+                setBranches(prev => [...prev, savedBranch].sort((a,b) => a.branch_name.localeCompare(b.branch_name)));
+                setToastInfo({ message: t('pages.branch.toast.created'), type: 'success' });
+            } else {
+                setBranches(prev => prev.map(b => (b.id === savedBranch.id ? savedBranch : b)));
+                setToastInfo({ message: t('pages.branch.toast.updated'), type: 'success' });
+            }
+            return savedBranch;
+        } catch (e) {
+            const error = e instanceof Error ? e.message : 'An unknown error occurred';
+            setToastInfo({ message: `Error: ${error}`, type: 'error' });
+            return null;
         }
-        return savedBranch;
     };
     
-    const handleSaveAndContinue = (branchToSave: Omit<Branch, 'id' | 'updated_at'>) => {
-        const savedBranch = handleSave(branchToSave);
-        setModalState(prev => ({ ...prev, mode: 'edit', branch: savedBranch }));
+    const handleSaveAndContinue = async (branchToSave: Partial<Branch>) => {
+        const savedBranch = await handleSave(branchToSave);
+        if (savedBranch) {
+            setModalState(prev => ({ ...prev, mode: 'edit', branch: savedBranch }));
+        }
     };
 
-    const handleSaveAndClose = (branchToSave: Omit<Branch, 'id' | 'updated_at'>) => {
-        handleSave(branchToSave);
-        setModalState({ isOpen: false, mode: 'create', branch: null });
+    const handleSaveAndClose = async (branchToSave: Partial<Branch>) => {
+        const savedBranch = await handleSave(branchToSave);
+        if (savedBranch) {
+            setModalState({ isOpen: false, mode: 'create', branch: null });
+        }
     };
 
     const filteredBranches = useMemo(() => {
         return branches
-            .map(b => ({ ...b, org_name: orgMap.get(b.org_code) || b.org_code }))
             .filter(branch => {
                 const search = debouncedSearchTerm.toLowerCase();
                 return branch.branch_code.toLowerCase().includes(search) ||
@@ -188,7 +201,7 @@ const BranchPage: React.FC = () => {
                 if (filters.status !== 'all' && branch.status !== filters.status) return false;
                 return true;
             });
-    }, [branches, debouncedSearchTerm, filters, orgMap]);
+    }, [branches, debouncedSearchTerm, filters]);
     
     const paginatedBranches = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE;

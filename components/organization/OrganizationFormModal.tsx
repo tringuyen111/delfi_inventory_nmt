@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 import { Organization } from '../../types';
@@ -13,16 +9,15 @@ interface OrganizationFormModalProps {
   isOpen: boolean;
   mode: ModalMode;
   onClose: () => void;
-  // FIX: Update the type to exclude `has_active_docs` as it's not managed by the form.
-  onSaveAndContinue: (org: Omit<Organization, 'id' | 'org_code' | 'updated_at' | 'has_active_docs'>) => void;
-  // FIX: Update the type to exclude `has_active_docs` as it's not managed by the form.
-  onSaveAndClose: (org: Omit<Organization, 'id' | 'org_code' | 'updated_at' | 'has_active_docs'>) => void;
+  onSaveAndContinue: (org: Partial<Organization>) => Promise<void>;
+  onSaveAndClose: (org: Partial<Organization>) => Promise<void>;
   onSwitchToEdit: () => void;
   organization: Organization | null;
   existingOrganizations: Organization[];
 }
 
-const INITIAL_STATE: Omit<Organization, 'id' | 'org_code' | 'updated_at' | 'has_active_docs'> = {
+const INITIAL_STATE: Omit<Organization, 'id' | 'updated_at' | 'has_active_docs'> = {
+    org_code: '',
     org_name: '',
     address: '',
     phone: '',
@@ -39,6 +34,7 @@ export const OrganizationFormModal: React.FC<OrganizationFormModalProps> = ({
   useEffect(() => {
     if (organization) {
       setFormData({
+        org_code: organization.org_code,
         org_name: organization.org_name,
         address: organization.address || '',
         phone: organization.phone || '',
@@ -86,18 +82,32 @@ export const OrganizationFormModal: React.FC<OrganizationFormModalProps> = ({
     return Object.keys(newErrors).length === 0;
   }
 
-  const handleSubmit = (andClose: boolean) => {
+  const handleSubmit = async (andClose: boolean) => {
     if (!validate()) return;
     
+    // Generate code on creation
+    let codeToSave = organization?.org_code;
+    if (!codeToSave) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        // This is a simplification. A real app might call a DB function for a safe sequence.
+        const seq = (existingOrganizations.length + 1).toString().padStart(4, '0');
+        codeToSave = `ORG-${year}${month}-${seq}`;
+    }
+
     const finalData = {
+        ...(organization || {}),
         ...formData,
+        org_code: codeToSave,
         org_name: formData.org_name.trim(),
+        has_active_docs: organization?.has_active_docs || false,
     };
     
     if (andClose) {
-        onSaveAndClose(finalData);
+        await onSaveAndClose(finalData);
     } else {
-        onSaveAndContinue(finalData);
+        await onSaveAndContinue(finalData);
     }
   };
 
@@ -145,15 +155,15 @@ export const OrganizationFormModal: React.FC<OrganizationFormModalProps> = ({
         </div>
 
         <FormField label="Phone" error={errors.phone}>
-            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full" disabled={isViewMode} />
+            <input type="tel" name="phone" value={formData.phone || ''} onChange={handleChange} className="w-full" disabled={isViewMode} />
         </FormField>
         <FormField label="Email" error={errors.email}>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full" disabled={isViewMode} />
+            <input type="email" name="email" value={formData.email || ''} onChange={handleChange} className="w-full" disabled={isViewMode} />
         </FormField>
         
         <div className="md:col-span-2">
             <FormField label="Address" error={errors.address}>
-                <textarea name="address" value={formData.address} onChange={handleChange} className="w-full" rows={3} maxLength={500} disabled={isViewMode}></textarea>
+                <textarea name="address" value={formData.address || ''} onChange={handleChange} className="w-full" rows={3} maxLength={500} disabled={isViewMode}></textarea>
             </FormField>
         </div>
 

@@ -43,6 +43,7 @@ const UomPage: React.FC = () => {
                 throw new Error('Failed to fetch Units of Measure');
             }
             const data: Uom[] = await response.json();
+            data.sort((a, b) => a.uom_code.localeCompare(b.uom_code));
             setUoms(data);
         } catch (e) {
             setError(e instanceof Error ? e.message : 'An unknown error occurred');
@@ -132,30 +133,48 @@ const UomPage: React.FC = () => {
         setModalState(prev => ({ ...prev, mode: 'edit' }));
     };
 
-    const handleSave = (uomToSave: Uom): Uom => {
-        let savedUom: Uom;
-        if (modalState.mode === 'edit' && modalState.uom) {
-            savedUom = { ...uomToSave, id: modalState.uom.id };
-            setUoms(prev => prev.map(u => u.id === savedUom.id ? savedUom : u));
-            setToastInfo({ message: t('pages.uom.toast.updated'), type: 'success' });
-        } else { // create mode
-            savedUom = { ...uomToSave, id: `uom-${Date.now()}` };
-            setUoms(prev => [savedUom, ...prev]);
-            setToastInfo({ message: t('pages.uom.toast.created'), type: 'success' });
+    const handleSave = async (uomToSave: Partial<Uom>): Promise<Uom | null> => {
+        // This is a mock save function as we are not using a real backend.
+        // It will only update the state in the browser.
+        const isCreating = !uomToSave.id;
+
+        try {
+            const savedUom: Uom = {
+                uom_code: '', uom_name: '', measurement_type: 'Piece', uom_type: 'Base', status: 'Active', is_used_in_model_goods: false,
+                ...uomToSave,
+                id: isCreating ? `uom-${Date.now()}` : uomToSave.id!,
+                updated_at: new Date().toISOString(),
+            } as Uom;
+
+            if (isCreating) {
+                setUoms(prev => [savedUom, ...prev].sort((a, b) => a.uom_code.localeCompare(b.uom_code)));
+                setToastInfo({ message: t('pages.uom.toast.created'), type: 'success' });
+            } else {
+                setUoms(prev => prev.map(u => (u.id === savedUom.id ? savedUom : u)));
+                setToastInfo({ message: t('pages.uom.toast.updated'), type: 'success' });
+            }
+            return savedUom;
+        } catch (e) {
+            const error = e instanceof Error ? e.message : 'An unknown error occurred';
+            setToastInfo({ message: `Error: ${error}`, type: 'error' });
+            return null;
         }
-        return savedUom;
+    };
+
+    const handleSaveAndContinue = async (uomToSave: Partial<Uom>) => {
+        const savedUom = await handleSave(uomToSave);
+        if (savedUom) {
+            setModalState(prev => ({ ...prev, mode: 'edit', uom: savedUom }));
+        }
     };
     
-    const handleSaveAndContinue = (uomToSave: Uom) => {
-        const savedUom = handleSave(uomToSave);
-        setModalState(prev => ({ ...prev, mode: 'edit', uom: savedUom }));
+    const handleSaveAndClose = async (uomToSave: Partial<Uom>) => {
+        const savedUom = await handleSave(uomToSave);
+        if (savedUom) {
+            setModalState({ isOpen: false, mode: 'create', uom: null });
+        }
     };
-
-    const handleSaveAndClose = (uomToSave: Uom) => {
-        handleSave(uomToSave);
-        setModalState({ isOpen: false, mode: 'create', uom: null });
-    };
-
+    
     const filteredUoms = useMemo(() => {
         return uoms
             .filter(uom => {

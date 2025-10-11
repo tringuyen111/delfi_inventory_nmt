@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 // FIX: Update type import from `../../types` which is now a valid module.
@@ -12,8 +10,8 @@ interface UomFormModalProps {
   isOpen: boolean;
   mode: ModalMode;
   onClose: () => void;
-  onSaveAndContinue: (uom: Uom) => void;
-  onSaveAndClose: (uom: Uom) => void;
+  onSaveAndContinue: (uom: Partial<Uom>) => Promise<void>;
+  onSaveAndClose: (uom: Partial<Uom>) => Promise<void>;
   onSwitchToEdit: () => void;
   uom: Uom | null;
   existingUoms: Uom[];
@@ -81,20 +79,19 @@ export const UomFormModal: React.FC<UomFormModalProps> = ({
     return Object.keys(newErrors).length === 0;
   }
 
-  const handleSubmit = (andClose: boolean) => {
+  const handleSubmit = async (andClose: boolean) => {
     if (!validate()) return;
     
-    const finalUom: Uom = {
-        ...(uom || { id: '', is_used_in_model_goods: false }),
+    const finalUom = {
+        ...(uom || { is_used_in_model_goods: false }),
         ...formData,
         uom_code: formData.uom_code.toUpperCase().trim(),
-        updated_at: new Date().toISOString(),
     };
     
     if (andClose) {
-        onSaveAndClose(finalUom);
+        await onSaveAndClose(finalUom);
     } else {
-        onSaveAndContinue(finalUom);
+        await onSaveAndContinue(finalUom);
     }
   };
 
@@ -170,7 +167,7 @@ export const UomFormModal: React.FC<UomFormModalProps> = ({
 
         <div className="md:col-span-2">
              <FormField label="Description">
-                <textarea name="description" value={formData.description} onChange={handleChange} className="w-full" rows={3} maxLength={500} disabled={isViewMode}></textarea>
+                <textarea name="description" value={formData.description || ''} onChange={handleChange} className="w-full" rows={3} maxLength={500} disabled={isViewMode}></textarea>
             </FormField>
         </div>
        

@@ -39,6 +39,7 @@ const OrganizationPage: React.FC = () => {
                 throw new Error('Failed to fetch Organizations');
             }
             const data: Organization[] = await response.json();
+            data.sort((a,b) => a.org_name.localeCompare(b.org_name));
             setOrganizations(data);
         } catch (e) {
             setError(e instanceof Error ? e.message : 'An unknown error occurred');
@@ -125,40 +126,44 @@ const OrganizationPage: React.FC = () => {
         setModalState(prev => ({ ...prev, mode: 'edit' }));
     };
     
-    const handleSave = (orgToSave: Omit<Organization, 'id' | 'org_code' | 'updated_at' | 'has_active_docs'>): Organization => {
-        let savedOrg: Organization;
-        if (modalState.mode === 'edit' && modalState.org) {
-            savedOrg = { ...modalState.org, ...orgToSave, updated_at: new Date().toISOString() };
-            setOrganizations(prev => prev.map(o => o.id === savedOrg.id ? savedOrg : o));
-            setToastInfo({ message: t('pages.organization.toast.updated'), type: 'success' });
-        } else { // create mode
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const seq = (organizations.length + 1).toString().padStart(4, '0');
-            const newOrgCode = `ORG-${year}${month}-${seq}`;
-            
-            savedOrg = { 
-                ...orgToSave, 
-                id: newOrgCode, 
-                org_code: newOrgCode, 
-                updated_at: now.toISOString(),
-                has_active_docs: false
-            };
-            setOrganizations(prev => [savedOrg, ...prev]);
-            setToastInfo({ message: t('pages.organization.toast.created'), type: 'success' });
+    const handleSave = async (orgToSave: Partial<Organization>): Promise<Organization | null> => {
+        const isCreating = !orgToSave.id;
+
+        try {
+            const savedOrg: Organization = {
+                org_code: '', org_name: '', status: 'Active', has_active_docs: false,
+                ...orgToSave,
+                id: isCreating ? orgToSave.org_code! : orgToSave.id!,
+                updated_at: new Date().toISOString(),
+            } as Organization;
+        
+             if (isCreating) {
+                setOrganizations(prev => [savedOrg, ...prev].sort((a,b) => a.org_name.localeCompare(b.org_name)));
+                setToastInfo({ message: t('pages.organization.toast.created'), type: 'success' });
+            } else {
+                setOrganizations(prev => prev.map(o => (o.id === savedOrg.id ? savedOrg : o)));
+                setToastInfo({ message: t('pages.organization.toast.updated'), type: 'success' });
+            }
+            return savedOrg;
+        } catch (e) {
+            const error = e instanceof Error ? e.message : 'An unknown error occurred';
+            setToastInfo({ message: `Error: ${error}`, type: 'error' });
+            return null;
         }
-        return savedOrg;
     };
     
-    const handleSaveAndContinue = (orgToSave: Omit<Organization, 'id' | 'org_code' | 'updated_at' | 'has_active_docs'>) => {
-        const savedOrg = handleSave(orgToSave);
-        setModalState(prev => ({ ...prev, mode: 'edit', org: savedOrg }));
+    const handleSaveAndContinue = async (orgToSave: Partial<Organization>) => {
+        const savedOrg = await handleSave(orgToSave);
+        if (savedOrg) {
+            setModalState(prev => ({ ...prev, mode: 'edit', org: savedOrg }));
+        }
     };
 
-    const handleSaveAndClose = (orgToSave: Omit<Organization, 'id' | 'org_code' | 'updated_at' | 'has_active_docs'>) => {
-        handleSave(orgToSave);
-        setModalState({ isOpen: false, mode: 'create', org: null });
+    const handleSaveAndClose = async (orgToSave: Partial<Organization>) => {
+        const savedOrg = await handleSave(orgToSave);
+        if (savedOrg) {
+            setModalState({ isOpen: false, mode: 'create', org: null });
+        }
     };
 
     const filteredOrgs = useMemo(() => {

@@ -86,25 +86,29 @@ function App() {
     localStorage.setItem('read_notifications', JSON.stringify(Array.from(readNotifIds)));
   }, [readNotifIds]);
 
-  const unreadCount = notifications.length - readNotifIds.size;
+  const unreadCount = notifications.filter(n => !readNotifIds.has(n.id)).length;
 
   useEffect(() => {
     const fetchMenuAndNotifs = async () => {
       setIsMenuLoading(true);
       try {
-        const [menuRes, notifRes] = await Promise.all([
+        const [menuRes, notifsRes] = await Promise.all([
           fetch('./menu.json'),
           fetch('./data/notifications.json')
         ]);
+
         if (!menuRes.ok) throw new Error('Failed to load menu');
-        if (!notifRes.ok) throw new Error('Failed to load notifications');
-        
+        if (!notifsRes.ok) throw new Error('Failed to load notifications');
+
         const menu: MenuItemType[] = await menuRes.json();
-        const notifs: Notification[] = await notifRes.json();
+        const notifsData: Notification[] = await notifsRes.json();
+        
+        // Sort notifications by timestamp descending, as the DB would have
+        notifsData.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
         setMenuData(menu);
-        setNotifications(notifs.sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
-
+        setNotifications(notifsData);
+        
         // Set initial breadcrumb for dashboard
         const initialPath = findPath(menu, 'dashboard');
         if(initialPath) {

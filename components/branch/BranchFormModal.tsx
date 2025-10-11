@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 import { Branch, Organization } from '../../types';
@@ -11,8 +9,8 @@ interface BranchFormModalProps {
   isOpen: boolean;
   mode: ModalMode;
   onClose: () => void;
-  onSaveAndContinue: (branch: Omit<Branch, 'id' | 'updated_at'>) => void;
-  onSaveAndClose: (branch: Omit<Branch, 'id' | 'updated_at'>) => void;
+  onSaveAndContinue: (branch: Partial<Branch>) => Promise<void>;
+  onSaveAndClose: (branch: Partial<Branch>) => Promise<void>;
   onSwitchToEdit: () => void;
   branch: Branch | null;
   existingBranches: Branch[];
@@ -87,7 +85,7 @@ export const BranchFormModal: React.FC<BranchFormModalProps> = ({
     return Object.keys(newErrors).length === 0;
   }
 
-  const handleSubmit = (andClose: boolean) => {
+  const handleSubmit = async (andClose: boolean) => {
     if (!validate()) return;
     
     // Inactivation confirmation
@@ -99,15 +97,16 @@ export const BranchFormModal: React.FC<BranchFormModalProps> = ({
     }
 
     const finalData = {
+        ...(branch || {}), // for 'id' on edit
         ...formData,
         branch_code: formData.branch_code.toUpperCase().trim(),
         branch_name: formData.branch_name.trim(),
     };
     
     if (andClose) {
-        onSaveAndClose(finalData);
+        await onSaveAndClose(finalData);
     } else {
-        onSaveAndContinue(finalData);
+        await onSaveAndContinue(finalData);
     }
   };
 
@@ -159,15 +158,15 @@ export const BranchFormModal: React.FC<BranchFormModalProps> = ({
         </div>
 
         <FormField label="Phone" error={errors.phone}>
-            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full" disabled={isViewMode} />
+            <input type="tel" name="phone" value={formData.phone || ''} onChange={handleChange} className="w-full" disabled={isViewMode} />
         </FormField>
         <FormField label="Email" error={errors.email}>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full" disabled={isViewMode} />
+            <input type="email" name="email" value={formData.email || ''} onChange={handleChange} className="w-full" disabled={isViewMode} />
         </FormField>
         
         <div className="md:col-span-2">
             <FormField label="Address" error={errors.address}>
-                <textarea name="address" value={formData.address} onChange={handleChange} className="w-full" rows={3} maxLength={500} disabled={isViewMode}></textarea>
+                <textarea name="address" value={formData.address || ''} onChange={handleChange} className="w-full" rows={3} maxLength={500} disabled={isViewMode}></textarea>
             </FormField>
         </div>
 
